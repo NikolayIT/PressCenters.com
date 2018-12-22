@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <CodeAnalysisRuleSet>..\..\Rules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\..\stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.3.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.1-beta.61" PrivateAssets="all">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\PressCenters.Common\PressCenters.Common.csproj" />
+    <ProjectReference Include="..\..\Data\PressCenters.Data.Common\PressCenters.Data.Common.csproj" />
+    <ProjectReference Include="..\..\Data\PressCenters.Data.Models\PressCenters.Data.Models.csproj" />
+    <ProjectReference Include="..\..\Data\PressCenters.Data\PressCenters.Data.csproj" />
+    <ProjectReference Include="..\..\Services\PressCenters.Services.Data\PressCenters.Services.Data.csproj" />
+    <ProjectReference Include="..\..\Services\PressCenters.Services.Mapping\PressCenters.Services.Mapping.csproj" />
+    <ProjectReference Include="..\..\Services\PressCenters.Services.Messaging\PressCenters.Services.Messaging.csproj" />
+    <ProjectReference Include="..\..\Services\PressCenters.Services\PressCenters.Services.csproj" />
+  </ItemGroup>
+
+</Project>
