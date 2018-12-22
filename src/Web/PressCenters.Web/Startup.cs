@@ -2,17 +2,6 @@
 {
     using System.Reflection;
 
-    using PressCenters.Data;
-    using PressCenters.Data.Common;
-    using PressCenters.Data.Common.Repositories;
-    using PressCenters.Data.Models;
-    using PressCenters.Data.Repositories;
-    using PressCenters.Data.Seeding;
-    using PressCenters.Services.Data;
-    using PressCenters.Services.Mapping;
-    using PressCenters.Services.Messaging;
-    using PressCenters.Web.ViewModels;
-
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
@@ -24,6 +13,17 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
+
+    using PressCenters.Data;
+    using PressCenters.Data.Common;
+    using PressCenters.Data.Common.Repositories;
+    using PressCenters.Data.Models;
+    using PressCenters.Data.Repositories;
+    using PressCenters.Data.Seeding;
+    using PressCenters.Services.Data;
+    using PressCenters.Services.Mapping;
+    using PressCenters.Services.Messaging;
+    using PressCenters.Web.ViewModels;
 
     public class Startup
     {

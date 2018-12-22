@@ -4,15 +4,6 @@
     using System.Diagnostics;
     using System.IO;
 
-    using PressCenters.Data;
-    using PressCenters.Data.Common;
-    using PressCenters.Data.Common.Repositories;
-    using PressCenters.Data.Models;
-    using PressCenters.Data.Repositories;
-    using PressCenters.Data.Seeding;
-    using PressCenters.Services.Data;
-    using PressCenters.Services.Messaging;
-
     using CommandLine;
 
     using Microsoft.AspNetCore.Identity;
@@ -21,6 +12,15 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
+
+    using PressCenters.Data;
+    using PressCenters.Data.Common;
+    using PressCenters.Data.Common.Repositories;
+    using PressCenters.Data.Models;
+    using PressCenters.Data.Repositories;
+    using PressCenters.Data.Seeding;
+    using PressCenters.Services.Data;
+    using PressCenters.Services.Messaging;
 
     public static class Program
     {

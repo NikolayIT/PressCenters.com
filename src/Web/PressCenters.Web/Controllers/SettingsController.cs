@@ -4,12 +4,12 @@
     using System.Linq;
     using System.Threading.Tasks;
 
+    using Microsoft.AspNetCore.Mvc;
+
     using PressCenters.Data.Common.Repositories;
     using PressCenters.Data.Models;
     using PressCenters.Services.Mapping;
     using PressCenters.Web.ViewModels.Settings;
-
-    using Microsoft.AspNetCore.Mvc;
 
     public class SettingsController : BaseController
     {

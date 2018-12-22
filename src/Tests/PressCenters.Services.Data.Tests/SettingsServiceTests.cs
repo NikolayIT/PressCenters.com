@@ -4,14 +4,14 @@
     using System.Linq;
     using System.Threading.Tasks;
 
+    using Microsoft.EntityFrameworkCore;
+
+    using Moq;
+
     using PressCenters.Data;
     using PressCenters.Data.Common.Repositories;
     using PressCenters.Data.Models;
     using PressCenters.Data.Repositories;
-
-    using Microsoft.EntityFrameworkCore;
-
-    using Moq;
 
     using Xunit;
 

@@ -3,11 +3,11 @@
     using System;
     using System.Linq;
 
-    using PressCenters.Common;
-    using PressCenters.Data.Models;
-
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.DependencyInjection;
+
+    using PressCenters.Common;
+    using PressCenters.Data.Models;
 
     public static class ApplicationDbContextSeeder
     {

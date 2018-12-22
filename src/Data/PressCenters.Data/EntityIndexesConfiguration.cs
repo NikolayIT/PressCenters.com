@@ -2,9 +2,9 @@
 {
     using System.Linq;
 
-    using PressCenters.Data.Common.Models;
-
     using Microsoft.EntityFrameworkCore;
+
+    using PressCenters.Data.Common.Models;
 
     internal static class EntityIndexesConfiguration
     {

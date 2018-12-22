@@ -2,9 +2,9 @@
 {
     using System;
 
-    using PressCenters.Data.Common;
-
     using Microsoft.EntityFrameworkCore;
+
+    using PressCenters.Data.Common;
 
     public class DbQueryRunner : IDbQueryRunner
     {
