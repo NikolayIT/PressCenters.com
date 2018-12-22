@@ -26,6 +26,18 @@
 
         public DbSet<Setting> Settings { get; set; }
 
+        public DbSet<Source> Sources { get; set; }
+
+        public DbSet<News> News { get; set; }
+
+        public DbSet<MainNewsSource> MainNewsSources { get; set; }
+
+        public DbSet<MainNews> MainNews { get; set; }
+
+        public DbSet<WorkerTask> WorkerTasks { get; set; }
+
+        public DbSet<ContactFormEntry> ContactFormEntries { get; set; }
+
         public override int SaveChanges() => this.SaveChanges(true);
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
