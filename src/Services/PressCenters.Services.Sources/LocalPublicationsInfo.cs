@@ -1,4 +1,4 @@
-﻿namespace PressCenters.Sources
+﻿namespace PressCenters.Services.Sources
 {
     public class LocalPublicationsInfo
     {

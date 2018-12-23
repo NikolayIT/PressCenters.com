@@ -1,4 +1,4 @@
-﻿namespace PressCenters.Worker.MainNewsProviders
+﻿namespace PressCenters.Services.Sources.MainNews
 {
     using AngleSharp;
 

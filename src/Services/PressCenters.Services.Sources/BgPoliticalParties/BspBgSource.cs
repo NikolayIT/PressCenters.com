@@ -1,4 +1,4 @@
-﻿namespace PressCenters.Sources.BgPoliticalParties
+﻿namespace PressCenters.Services.Sources.BgPoliticalParties
 {
     using System;
     using System.Collections.Generic;

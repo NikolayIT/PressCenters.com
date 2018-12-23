@@ -1,4 +1,4 @@
-﻿namespace PressCenters.Sources.BgStateCompanies
+﻿namespace PressCenters.Services.Sources.BgStateCompanies
 {
     using System;
     using System.Collections.Generic;
