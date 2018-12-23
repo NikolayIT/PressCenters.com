@@ -45,7 +45,6 @@
             var provider = new FscBgSource();
             var result = provider.GetLatestPublications(new LocalPublicationsInfo { LastLocalId = string.Empty });
             Assert.True(result.News.Count() >= 10);
-            Assert.True(int.Parse(result.LastNewsIdentifier) > 7991);
         }
     }
 }

@@ -17,8 +17,7 @@
                     .Select(x => this.NormalizeUrl(x, "http://www.mh.government.bg/"))
                     .ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
-            var remoteDataResult = new RemoteDataResult { News = news, LastNewsIdentifier = string.Empty };
-            return remoteDataResult;
+            return new RemoteDataResult { News = news, };
         }
 
         internal RemoteNews ParseRemoteNews(string url)

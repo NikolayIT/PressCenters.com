@@ -66,7 +66,6 @@
             var provider = new ApiBgSource();
             var result = provider.GetLatestPublications(new LocalPublicationsInfo { LastLocalId = string.Empty });
             Assert.True(result.News.Count() >= 9);
-            Assert.Equal(string.Empty, result.LastNewsIdentifier);
         }
     }
 }

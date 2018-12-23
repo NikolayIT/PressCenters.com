@@ -22,15 +22,7 @@
                     .ToList();
 
             var news = links.Select(this.ParseRemoteNews).ToList();
-            var remoteDataResult = new RemoteDataResult
-                                       {
-                                           News = news,
-                                           LastNewsIdentifier =
-                                               this.ExtractIdFromUrl(
-                                                   news.OrderByDescending(x => x.RemoteId.ToInteger())
-                                                       .FirstOrDefault()?.OriginalUrl),
-                                       };
-            return remoteDataResult;
+            return new RemoteDataResult { News = news, };
         }
 
         internal RemoteNews ParseRemoteNews(string url)

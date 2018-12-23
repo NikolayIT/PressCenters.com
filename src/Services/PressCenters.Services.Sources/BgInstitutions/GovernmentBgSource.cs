@@ -3,11 +3,8 @@
     using System;
     using System.Globalization;
     using System.Linq;
-    using System.Web;
 
     using AngleSharp;
-
-    using PressCenters.Common;
 
     public class GovernmentBgSource : BaseSource
     {
@@ -19,14 +16,7 @@
                 x => this.NormalizeUrl(x.Attributes["href"].Value, "http://www.government.bg/")).ToList();
 
             var news = links.Select(this.ParseRemoteNews).ToList();
-            var remoteDataResult = new RemoteDataResult
-                                   {
-                                       News = news,
-                                       LastNewsIdentifier = this.ExtractIdFromUrl(
-                                           news.OrderByDescending(x => x.RemoteId.ToInteger()).FirstOrDefault()
-                                               ?.OriginalUrl),
-                                   };
-            return remoteDataResult;
+            return new RemoteDataResult { News = news, };
         }
 
         internal RemoteNews ParseRemoteNews(string url)

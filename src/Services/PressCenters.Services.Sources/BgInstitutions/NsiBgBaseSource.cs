@@ -21,15 +21,7 @@
                     .Where(x => this.ExtractIdFromUrl(x).ToInteger() > localInfo.LastLocalId.ToInteger())
                     .ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
-            var remoteDataResult = new RemoteDataResult
-                                       {
-                                           News = news,
-                                           LastNewsIdentifier =
-                                               this.ExtractIdFromUrl(
-                                                   news.OrderByDescending(x => x.PostDate)
-                                               .FirstOrDefault()?.OriginalUrl),
-                                       };
-            return remoteDataResult;
+            return new RemoteDataResult { News = news, };
         }
 
         internal RemoteNews ParseRemoteNews(string url)

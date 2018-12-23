@@ -95,11 +95,7 @@
         {
             var provider = new NsiBgNewsSource();
             var result = provider.GetLatestPublications(new LocalPublicationsInfo { LastLocalId = string.Empty });
-
             Assert.True(result.News.Count() >= 10);
-
-            Assert.True(int.TryParse(result.LastNewsIdentifier, out var i));
-            Assert.True(i > 10000);
         }
 
         [Fact]
@@ -107,11 +103,7 @@
         {
             var provider = new NsiBgPressSource();
             var result = provider.GetLatestPublications(new LocalPublicationsInfo { LastLocalId = string.Empty });
-
             Assert.True(result.News.Count() >= 10);
-
-            Assert.True(int.TryParse(result.LastNewsIdentifier, out var i));
-            Assert.True(i > 10000);
         }
     }
 }

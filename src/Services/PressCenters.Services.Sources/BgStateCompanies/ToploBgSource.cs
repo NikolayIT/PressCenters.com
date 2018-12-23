@@ -1,65 +1,40 @@
 ﻿namespace PressCenters.Services.Sources.BgStateCompanies
 {
     using System;
-    using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
-    using System.Web;
 
     using AngleSharp;
-
-    using PressCenters.Common;
 
     public class ToploBgSource : BaseSource
     {
         public override RemoteDataResult GetLatestPublications(LocalPublicationsInfo localInfo)
         {
-            var address = "http://toplo.bg/all-news/";
+            var address = "https://toplo.bg/news";
             var document = this.BrowsingContext.OpenAsync(address).Result;
-            var links =
-                document.QuerySelectorAll(".Desktop .PageElementsMargin .RowsContainer .DataContainer .Button")
-                    .Select(x => x.Attributes["href"].Value)
-                    .Select(x => this.NormalizeUrl(x, "http://toplo.bg"))
-                    .Where(x => this.ExtractIdFromUrl(x).ToInteger() > localInfo.LastLocalId.ToInteger())
-                    .ToList();
+            var links = document.QuerySelectorAll(".post a")
+                .Select(x => this.NormalizeUrl(x.Attributes["href"]?.Value, "https://toplo.bg/")).ToList();
+
             var news = links.Select(this.ParseRemoteNews).ToList();
-
-            var lastIdentifier = localInfo.LastLocalId;
-            if (news.Any())
-            {
-                lastIdentifier =
-                    this.ExtractIdFromUrl(news.OrderByDescending(x => x.PostDate).FirstOrDefault()?.OriginalUrl);
-            }
-
-            var remoteDataResult = new RemoteDataResult { News = news, LastNewsIdentifier = lastIdentifier, };
-            return remoteDataResult;
+            return new RemoteDataResult { News = news, };
         }
 
         internal RemoteNews ParseRemoteNews(string url)
         {
             var document = this.BrowsingContext.OpenAsync(url).Result;
-            var titleElement = document.QuerySelector(".Title .Table .Cell");
+            var titleElement = document.QuerySelector(".l9 .card-title strong");
             var title = titleElement.TextContent.Trim();
 
-            var bulgarianMonthNames = new List<string>
-                                          {
-                                              "януари", "февруари", "март", "април", "май", "юни", "юли", "август",
-                                              "септември", "октомври", "ноември", "декември",
-                                          };
-            var dayOfMonth = document.QuerySelector(".Title .Info .Value").InnerHtml.ToInteger();
-            var monthName = document.QuerySelector(".Title .Info .Desc").InnerHtml;
-            var monthIndex = bulgarianMonthNames.FindIndex(x => x.StartsWith(monthName)) + 1;
-            var time = new DateTime(DateTime.Now.Year, monthIndex, dayOfMonth, 8, 0, 0);
-            if (time.Date == DateTime.Now.Date)
-            {
-                time = DateTime.Now;
-            }
+            var timeElement = document.QuerySelector(".l9 .post_author_date .post_content_date");
+            var timeAsString = timeElement?.TextContent?.Trim();
+            var time = DateTime.ParseExact(timeAsString, "dd MMMM, yyyy", CultureInfo.GetCultureInfo("bg-BG"));
 
-            var contentElement = document.QuerySelector(".RowEntry .Data");
-            this.NormalizeUrlsRecursively(contentElement, "http://toplo.bg/");
+            var contentElement = document.QuerySelector(".l9 .card-content .card-content");
+            this.NormalizeUrlsRecursively(contentElement, "https://toplo.bg/");
             var content = contentElement.InnerHtml.Trim();
 
-            // toplo.bg have no images in their news
-            var imageUrl = "/Content/Logos/toplo.bg.png";
+            var imageElement = document.QuerySelector(".l9 .card-image img.img-blog");
+            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"), "https://toplo.bg/")?.Trim();
 
             var news = new RemoteNews
                            {
@@ -76,14 +51,11 @@
 
         internal string ExtractIdFromUrl(string url)
         {
-            if (url == null)
-            {
-                return null;
-            }
-
-            var uri = new Uri(url);
-            var parameters = HttpUtility.ParseQueryString(uri.Query);
-            return parameters["id"];
+            var uri = new Uri(url.Trim('/'));
+            return uri.Segments[uri.Segments.Length - 4] +
+                   uri.Segments[uri.Segments.Length - 3] +
+                   uri.Segments[uri.Segments.Length - 2] +
+                   uri.Segments[uri.Segments.Length - 1];
         }
     }
 }

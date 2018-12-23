@@ -11,8 +11,8 @@
     public class ToploBgSourceTests
     {
         [Theory]
-        [InlineData("http://toplo.bg/single-news/?id=32", "32")]
-        [InlineData("http://toplo.bg/single-news/?id=17&asd=1", "17")]
+        [InlineData("https://toplo.bg/news/2018/12/13/smetkinoemvri", "2018/12/13/smetkinoemvri")]
+        [InlineData("https://toplo.bg/news/2018/11/06/puskameparnoto", "2018/11/06/puskameparnoto")]
         public void ExtractIdFromUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new ToploBgSource();
@@ -23,18 +23,19 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "http://toplo.bg/single-news/?id=29";
+            const string NewsUrl = "https://toplo.bg/news/2018/12/17/kolednaigra2018";
             var provider = new ToploBgSource();
             var news = provider.ParseRemoteNews(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Възстановено топлоподаване в следните квартали:", news.Title);
-            Assert.Equal("29", news.RemoteId);
+            Assert.Equal("Коледна игра 2018", news.Title);
+            Assert.Equal("2018/12/17/kolednaigra2018", news.RemoteId);
             Assert.Null(news.ShortContent);
-            Assert.Equal(new DateTime(2017, 2, 08, 8, 0, 0), news.PostDate);
-            Assert.Contains("„Топлофикация София” ЕАД  уведомява  своите  клиенти", news.Content);
-            Assert.Contains("ул. „Искърско шосе“, бул. „Цветан Лазаров“", news.Content);
-            Assert.Contains("Пресцентър “Топлофикация  София” ЕАД", news.Content);
-            Assert.Equal("/Content/Logos/toplo.bg.png", news.ImageUrl);
+            Assert.Equal(new DateTime(2018, 12, 17), news.PostDate.Date);
+            Assert.Contains("Днес, 17.12.2018, в навечерието на коледните и новогодишни празници стартираме традиционната ни", news.Content);
+            Assert.Contains("Организаторът на „Коледната игра“ не е отговорен", news.Content);
+            Assert.Contains("или на фейсбук страницата", news.Content);
+            Assert.DoesNotContain("images/blog/1200x350.png", news.Content);
+            Assert.Equal("https://toplo.bg/assets/images/blog/1200x350.png", news.ImageUrl);
         }
 
         [Fact]

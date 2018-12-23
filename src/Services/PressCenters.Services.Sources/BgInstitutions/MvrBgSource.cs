@@ -19,13 +19,7 @@
                     x => this.NormalizeUrl(x.Attributes["href"].Value, "https://www.mvr.bg/")).ToList();
 
             var news = links.Select(this.ParseRemoteNews).ToList();
-            var remoteDataResult = new RemoteDataResult
-                                   {
-                                       News = news,
-                                       LastNewsIdentifier = this.ExtractIdFromUrl(
-                                           news.OrderByDescending(x => x.PostDate).FirstOrDefault()?.OriginalUrl),
-                                   };
-            return remoteDataResult;
+            return new RemoteDataResult { News = news, };
         }
 
         internal RemoteNews ParseRemoteNews(string url)
