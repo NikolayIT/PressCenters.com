@@ -36,10 +36,10 @@
             {
                 this.logger.LogInformation($"Getting main new from {source.Name}");
                 var lastNews =
-                    this.mainNewsRepository.All().Where(x => x.MainNewsSourceId == source.Id)
+                    this.mainNewsRepository.All().Where(x => x.SourceId == source.Id)
                         .OrderByDescending(x => x.Id)
                         .FirstOrDefault();
-                var instance = ReflectionHelpers.GetInstance<BaseMainNewsProvider>(source.ClassName);
+                var instance = ReflectionHelpers.GetInstance<BaseMainNewsProvider>(source.TypeName);
                 var news = instance.GetMainNews();
                 if (lastNews?.Title == news.Title)
                 {
@@ -54,7 +54,7 @@
                         Title = news.Title,
                         OriginalUrl = news.OriginalUrl,
                         ImageUrl = news.ImageUrl,
-                        MainNewsSourceId = source.Id,
+                        SourceId = source.Id,
                         ShortTitle = news.ShortTitle,
                     });
             }

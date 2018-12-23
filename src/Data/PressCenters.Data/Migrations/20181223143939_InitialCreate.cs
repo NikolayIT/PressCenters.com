@@ -85,9 +85,9 @@
                     ModifiedOn = table.Column<DateTime>(nullable: true),
                     IsDeleted = table.Column<bool>(nullable: false),
                     DeletedOn = table.Column<DateTime>(nullable: true),
-                    ClassName = table.Column<string>(nullable: true),
+                    TypeName = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
-                    Website = table.Column<string>(nullable: true),
+                    Url = table.Column<string>(nullable: true),
                 },
                 constraints: table =>
                 {
@@ -276,14 +276,14 @@
                     ShortTitle = table.Column<string>(nullable: true),
                     ImageUrl = table.Column<string>(nullable: true),
                     OriginalUrl = table.Column<string>(nullable: true),
-                    MainNewsSourceId = table.Column<int>(nullable: false),
+                    SourceId = table.Column<int>(nullable: false),
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MainNews", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MainNews_MainNewsSources_MainNewsSourceId",
-                        column: x => x.MainNewsSourceId,
+                        name: "FK_MainNews_MainNewsSources_SourceId",
+                        column: x => x.SourceId,
                         principalTable: "MainNewsSources",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -373,9 +373,9 @@
                 column: "IsDeleted");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MainNews_MainNewsSourceId",
+                name: "IX_MainNews_SourceId",
                 table: "MainNews",
-                column: "MainNewsSourceId");
+                column: "SourceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MainNewsSources_IsDeleted",
