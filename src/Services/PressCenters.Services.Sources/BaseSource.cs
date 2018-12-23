@@ -1,4 +1,8 @@
-﻿namespace PressCenters.Services.Sources
+﻿using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("PressCenters.Services.Sources.Tests")]
+
+namespace PressCenters.Services.Sources
 {
     using System;
 
