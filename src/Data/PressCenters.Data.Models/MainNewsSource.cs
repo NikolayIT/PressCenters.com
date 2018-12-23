@@ -6,12 +6,11 @@
 
     public class MainNewsSource : BaseDeletableModel<int>
     {
-        // TODO: Rename to TypeName for better consistency
-        public string ClassName { get; set; }
+        public string TypeName { get; set; }
 
         public string Name { get; set; }
 
-        public string Website { get; set; }
+        public string Url { get; set; }
 
         public virtual ICollection<MainNews> MainNews { get; set; }
     }

@@ -12,8 +12,8 @@
 
         public string OriginalUrl { get; set; }
 
-        public int MainNewsSourceId { get; set; }
+        public int SourceId { get; set; }
 
-        public virtual MainNewsSource MainNewsSource { get; set; }
+        public virtual MainNewsSource Source { get; set; }
     }
 }

@@ -239,13 +239,13 @@ namespace PressCenters.Data.Migrations
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<int>("MainNewsSourceId");
-
                     b.Property<DateTime?>("ModifiedOn");
 
                     b.Property<string>("OriginalUrl");
 
                     b.Property<string>("ShortTitle");
+
+                    b.Property<int>("SourceId");
 
                     b.Property<string>("Title");
 
@@ -253,7 +253,7 @@ namespace PressCenters.Data.Migrations
 
                     b.HasIndex("IsDeleted");
 
-                    b.HasIndex("MainNewsSourceId");
+                    b.HasIndex("SourceId");
 
                     b.ToTable("MainNews");
                 });
@@ -263,8 +263,6 @@ namespace PressCenters.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("ClassName");
 
                     b.Property<DateTime>("CreatedOn");
 
@@ -276,7 +274,9 @@ namespace PressCenters.Data.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<string>("Website");
+                    b.Property<string>("TypeName");
+
+                    b.Property<string>("Url");
 
                     b.HasKey("Id");
 
@@ -460,9 +460,9 @@ namespace PressCenters.Data.Migrations
 
             modelBuilder.Entity("PressCenters.Data.Models.MainNews", b =>
                 {
-                    b.HasOne("PressCenters.Data.Models.MainNewsSource", "MainNewsSource")
+                    b.HasOne("PressCenters.Data.Models.MainNewsSource", "Source")
                         .WithMany("MainNews")
-                        .HasForeignKey("MainNewsSourceId")
+                        .HasForeignKey("SourceId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
