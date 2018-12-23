@@ -17,6 +17,7 @@
     using PressCenters.Data.Common.Repositories;
     using PressCenters.Data.Models;
     using PressCenters.Data.Repositories;
+    using PressCenters.Data.Seeding;
     using PressCenters.Services.Data;
 
     public static class Program
@@ -28,12 +29,13 @@
             isService = false;
 #endif
 
-            var builder = new HostBuilder().ConfigureServices(ConfigureServices).ConfigureLogging(
+            var builder = new HostBuilder().ConfigureLogging(
                 x =>
                 {
                     x.ClearProviders();
                     x.AddProvider(new OneLineConsoleLoggerProvider());
-                });
+                }).ConfigureServices(ConfigureServices);
+
             if (isService)
             {
                 await builder.RunAsServiceAsync();
@@ -58,6 +60,19 @@
                 .AddEntityFrameworkStores<ApplicationDbContext>().AddUserStore<ApplicationUserStore>()
                 .AddRoleStore<ApplicationRoleStore>().AddDefaultTokenProviders();
 
+            // Identity stores
+            services.AddTransient<IUserStore<ApplicationUser>, ApplicationUserStore>();
+            services.AddTransient<IRoleStore<ApplicationRole>, ApplicationRoleStore>();
+
+            // Seed data on application startup
+            using (var serviceScope = services.BuildServiceProvider().CreateScope())
+            {
+                var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                dbContext.Database.Migrate();
+                ApplicationDbContextSeeder.Seed(dbContext, serviceScope.ServiceProvider);
+            }
+
+            // Data services
             services.AddScoped(typeof(IDeletableEntityRepository<>), typeof(EfDeletableEntityRepository<>));
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
             services.AddScoped<IDbQueryRunner, DbQueryRunner>();
