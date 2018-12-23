@@ -45,18 +45,58 @@
             </div>
         </nav>
     </header>
+
+    <div class="container clearfix">
+        <div class="float-left">
+            <h1>PressCenters.com</h1>
+            <p class="lead">Всички прессъобщения на едно място</p>
+        </div>
+        <div class="float-right text-center">
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- Main_728x90 -->
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:728px;height:90px"
+                 data-ad-client="ca-pub-4541634013740958"
+                 data-ad-slot="1694586025"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
     
     <div class="container">
         <partial name="_CookieConsentPartial" />
         <main role="main" class="pb-3">
-            @this.RenderBody()
+            <div class="row">
+                <div class="col-lg-8 g-mb-50 g-mb-0--lg">
+                    @this.RenderBody()
+                </div>
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <div class="g-mb-20">
+                        <vc:main-news></vc:main-news>
+                    </div>
+                    <div class="g-mb-20">
+                        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                        <!-- PressCenters_Sidebar -->
+                        <ins class="adsbygoogle"
+                             style="display: inline-block; width: 250px; height: 250px"
+                             data-ad-client="ca-pub-4541634013740958"
+                             data-ad-slot="4703852426"></ins>
+                        <script>
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                        </script>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
-    
-    <footer class="dzsparallaxer auto-init height-is-based-on-content use-loading mode-scroll">
-        <div class="u-bg-overlay__inner g-bg-black-opacity-0_3 g-color-white-opacity-0_8 text-center g-py-20">
-            <div class="container">
-                &copy; @DateTime.UtcNow.Year - PressCenters - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+
+    <footer>
+        <div class="container">
+            <div class="card-body bg-light p-3">
+                <div class="align-content-center"><a href="/">PressCenters.com</a> v2.0 &copy; 2016-@(DateTime.UtcNow.Year) - <a href="https://github.com/NikolayIT/PressCenters.com" target="_blank">Open source system</a></div>
+                Информацията, публикувана в този сайт, в общия случай е публично достъпна и споделена от оригиналния автор с цел препубликуване. Към всяка новина в сайта е сложена препратка към оригиналния автор на публикацията. PressCenters.com не носи отговорност за съдържанието на препубликуваните новини. При използване на информация от сайта, моля цитирайте оригиналния автор.
             </div>
         </div>
     </footer>
