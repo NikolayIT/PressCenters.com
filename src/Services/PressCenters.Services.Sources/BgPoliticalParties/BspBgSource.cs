@@ -52,6 +52,11 @@
             var dateAsString = document.QuerySelector(".meta_date").InnerHtml.Trim();
             var monthName = dateAsString.Substring(0, 3).ToLower();
             var monthIndex = bulgarianMonthNames.FindIndex(x => x.StartsWith(monthName)) + 1;
+            if (monthIndex == 0)
+            {
+                monthIndex = DateTime.UtcNow.Month;
+            }
+
             var dayOfMonth = dateAsString.Substring(4, 2).ToInteger();
             var year = dateAsString.Substring(dateAsString.Length - 4, 4).ToInteger();
             var time = new DateTime(year, monthIndex, dayOfMonth, 8, 0, 0);
