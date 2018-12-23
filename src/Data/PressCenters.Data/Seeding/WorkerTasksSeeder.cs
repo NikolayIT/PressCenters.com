@@ -15,8 +15,14 @@
                                   new WorkerTask
                                   {
                                       TypeName = "PressCenters.Worker.Tasks.DbCleanupTask",
-                                      Parameters = "{}",
+                                      Parameters = "{\"Recreate\":true}",
                                       Priority = 0,
+                                  },
+                                  new WorkerTask
+                                  {
+                                      TypeName = "PressCenters.Worker.Tasks.MainNewsGetterTask",
+                                      Parameters = "{\"Recreate\":true}",
+                                      Priority = 10000,
                                   },
                               };
 

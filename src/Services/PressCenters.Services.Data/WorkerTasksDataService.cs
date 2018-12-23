@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using System.Threading.Tasks;
 
     using PressCenters.Data.Common.Repositories;
     using PressCenters.Data.Models;
@@ -34,15 +35,15 @@
             this.workerTasks.SaveChangesAsync().GetAwaiter().GetResult();
         }
 
-        public void Add(WorkerTask workerTask)
+        public async Task Add(WorkerTask workerTask)
         {
             if (workerTask == null)
             {
                 throw new ArgumentNullException(nameof(workerTask), "Worker task to add is required.");
             }
 
-            this.workerTasks.Add(workerTask);
-            this.workerTasks.SaveChangesAsync().GetAwaiter().GetResult();
+            await this.workerTasks.AddAsync(workerTask);
+            await this.workerTasks.SaveChangesAsync();
         }
     }
 }

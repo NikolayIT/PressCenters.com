@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Services\PressCenters.Services.Sources\PressCenters.Services.Sources.csproj" />
     <ProjectReference Include="..\PressCenters.Worker.Common\PressCenters.Worker.Common.csproj" />
   </ItemGroup>
 

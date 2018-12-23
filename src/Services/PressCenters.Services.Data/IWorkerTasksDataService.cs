@@ -1,5 +1,7 @@
 ﻿namespace PressCenters.Services.Data
 {
+    using System.Threading.Tasks;
+
     using PressCenters.Data.Models;
 
     public interface IWorkerTasksDataService
@@ -8,6 +10,6 @@
 
         void Update(WorkerTask workerTask);
 
-        void Add(WorkerTask workerTask);
+        Task Add(WorkerTask workerTask);
     }
 }

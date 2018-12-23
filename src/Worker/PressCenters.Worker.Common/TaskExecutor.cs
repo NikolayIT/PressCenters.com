@@ -170,7 +170,7 @@
                         var nextTask = task.Recreate(workerTask);
                         if (nextTask != null)
                         {
-                            this.workerTasksData.Add(nextTask);
+                            await this.workerTasksData.Add(nextTask);
                         }
 
                         this.workerTasksData.Update(workerTask);

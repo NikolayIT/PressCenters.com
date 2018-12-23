@@ -6,6 +6,7 @@
 
     public class MainNewsSource : BaseDeletableModel<int>
     {
+        // TODO: Rename to TypeName for better consistency
         public string ClassName { get; set; }
 
         public string Name { get; set; }
