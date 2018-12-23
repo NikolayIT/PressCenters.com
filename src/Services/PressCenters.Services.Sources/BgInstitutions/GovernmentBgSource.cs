@@ -11,82 +11,63 @@
 
     public class GovernmentBgSource : BaseSource
     {
-        private const string DefaultImageUrl = "http://www.government.bg/fce/001/tmpl/bigimg/gerb.jpg";
-
         public override RemoteDataResult GetLatestPublications(LocalPublicationsInfo localInfo)
         {
-            var address = "http://www.government.bg/cgi-bin/e-cms/vis/vis.pl?s=001&p=0212&g=";
+            var address = "http://www.government.bg/bg/prestsentar/novini";
             var document = this.BrowsingContext.OpenAsync(address).Result;
-            var links =
-                document.QuerySelectorAll("a[href^='/cgi-bin/e-cms/vis/vis.pl?s=001&p=0212&n=']")
-                    .Take(25)
-                    .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, "http://www.government.bg/"))
-                    .Where(x => this.ExtractIdFromUrl(x).ToInteger() > localInfo.LastLocalId.ToInteger())
-                    .ToList();
+            var links = document.QuerySelectorAll(".articles .item a").Select(
+                x => this.NormalizeUrl(x.Attributes["href"].Value, "http://www.government.bg/")).ToList();
 
             var news = links.Select(this.ParseRemoteNews).ToList();
             var remoteDataResult = new RemoteDataResult
-                                       {
-                                           News = news,
-                                           LastNewsIdentifier =
-                                               this.ExtractIdFromUrl(
-                                                   news.OrderByDescending(x => x.RemoteId.ToInteger())
-                                                       .FirstOrDefault()?.OriginalUrl),
-                                       };
+                                   {
+                                       News = news,
+                                       LastNewsIdentifier = this.ExtractIdFromUrl(
+                                           news.OrderByDescending(x => x.RemoteId.ToInteger()).FirstOrDefault()
+                                               ?.OriginalUrl),
+                                   };
             return remoteDataResult;
         }
 
         internal RemoteNews ParseRemoteNews(string url)
         {
             var document = this.BrowsingContext.OpenAsync(url).Result;
+            var titleElement = document.QuerySelector(".view h1");
+            var title = titleElement.TextContent.Trim();
 
-            // Awful selectors, awful site...
-            // [0] => Title
-            // [1] => Date
-            // [2] => Content
-            var mainNewsElements =
-                document.QuerySelectorAll(
-                    "body > table > tbody > tr:nth-child(2) > td > table:nth-child(3) > tbody > tr > td:nth-child(3) > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td");
-            var title = mainNewsElements[0].TextContent.Trim();
-            var time = DateTime.ParseExact(
-                mainNewsElements[1]?.TextContent?.Trim(),
-                "dd MMMM yyyy",
-                CultureInfo.GetCultureInfo("bg-BG"),
-                DateTimeStyles.AllowWhiteSpaces);
-            time = time.Date == DateTime.Now.Date ? DateTime.Now : time.AddHours(12);
+            var timeElement = document.QuerySelector(".view p");
+            var timeAsString = timeElement.TextContent;
+            var time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
 
-            var contentElement = mainNewsElements[2];
-            this.NormalizeUrlsRecursively(contentElement, "http://www.government.bg/");
-            var imageElement = mainNewsElements[2].QuerySelector("img");
-            var imageUrl = imageElement?.Attributes?["src"]?.Value ?? DefaultImageUrl;
-            if (imageElement != null)
-            {
-                this.RemoveRecursively(contentElement, imageElement.Parent);
-            }
+            var imageElement = document.QuerySelector(".view .gallery img");
+            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"), "http://www.government.bg/").Trim();
+
+            var contentElement = document.QuerySelector(".view");
+            this.RemoveRecursively(contentElement, titleElement);
+            this.RemoveRecursively(contentElement, timeElement);
+            this.RemoveRecursively(contentElement, document.QuerySelector(".view .gallery"));
+            this.NormalizeUrlsRecursively(contentElement, "https://www.government.bg/");
+            var content = contentElement.InnerHtml.Trim();
 
             var news = new RemoteNews
-                           {
-                               Title = title,
-                               OriginalUrl = url,
-                               RemoteId = this.ExtractIdFromUrl(url),
-                               PostDate = time,
-                               ShortContent = null,
-                               Content = contentElement.InnerHtml.Trim(),
-                               ImageUrl = this.NormalizeUrl(imageUrl, "http://www.government.bg/"),
-                           };
+                       {
+                           OriginalUrl = url,
+                           RemoteId = this.ExtractIdFromUrl(url),
+                           Title = title,
+                           Content = content,
+                           PostDate = time,
+                           ShortContent = null,
+                           ImageUrl = imageUrl,
+                       };
             return news;
         }
 
         internal string ExtractIdFromUrl(string url)
         {
-            if (string.IsNullOrWhiteSpace(url))
-            {
-                return "0";
-            }
-
-            var queryString = url.Substring(url.IndexOf('?')).Split('#')[0];
-            var parameters = HttpUtility.ParseQueryString(queryString);
-            var id = parameters["n"] ?? string.Empty;
+            var uri = new Uri(url);
+            var id = !string.IsNullOrWhiteSpace(uri.Segments[uri.Segments.Length - 1])
+                         ? uri.Segments[uri.Segments.Length - 1].Trim('/')
+                         : uri.Segments[uri.Segments.Length - 2].Trim('/');
             return id;
         }
     }
