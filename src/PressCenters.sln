@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PressCenters.Worker.Common"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PressCenters.Worker.Tasks", "Worker\PressCenters.Worker.Tasks\PressCenters.Worker.Tasks.csproj", "{7F3042A2-739B-48DA-9363-5ADEFC3B6550}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PressCenters.Worker.Runner", "Worker\PressCenters.Worker.Runner\PressCenters.Worker.Runner.csproj", "{443A3AA8-3BA8-477B-B744-592CFB151076}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -121,6 +123,10 @@ Global
 		{7F3042A2-739B-48DA-9363-5ADEFC3B6550}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F3042A2-739B-48DA-9363-5ADEFC3B6550}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F3042A2-739B-48DA-9363-5ADEFC3B6550}.Release|Any CPU.Build.0 = Release|Any CPU
+		{443A3AA8-3BA8-477B-B744-592CFB151076}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{443A3AA8-3BA8-477B-B744-592CFB151076}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{443A3AA8-3BA8-477B-B744-592CFB151076}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{443A3AA8-3BA8-477B-B744-592CFB151076}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -142,6 +148,7 @@ Global
 		{E88B30CD-DD2D-446B-BF39-FE667001C4C7} = {7A731632-6714-44E2-A9E4-069EBA9E666C}
 		{032782CF-CD24-4C18-A437-7214838085B9} = {F1E14308-019E-43F9-AE91-86A7A42E7090}
 		{7F3042A2-739B-48DA-9363-5ADEFC3B6550} = {F1E14308-019E-43F9-AE91-86A7A42E7090}
+		{443A3AA8-3BA8-477B-B744-592CFB151076} = {F1E14308-019E-43F9-AE91-86A7A42E7090}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {384484BE-4680-4529-9CC2-AD37BA4D12D1}
