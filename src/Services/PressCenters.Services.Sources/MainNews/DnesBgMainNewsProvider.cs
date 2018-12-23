@@ -1,15 +1,19 @@
 ﻿namespace PressCenters.Services.Sources.MainNews
 {
-    using AngleSharp;
+    using System.Text;
 
     public class DnesBgMainNewsProvider : BaseMainNewsProvider
     {
+        private const string BaseUrl = "https://www.dnes.bg";
+
         public override RemoteMainNews GetMainNews()
         {
-            var document = this.BrowsingContext.OpenAsync("http://www.dnes.bg/").Result;
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            var document = this.GetDocument(BaseUrl, Encoding.GetEncoding("windows-1251"));
+
             var titleElement = document.QuerySelector(".top-news-wrapper .left .top-news .image-title > a");
             var title = titleElement.TextContent.Trim();
-            var url = "http://www.dnes.bg" + titleElement.Attributes["href"].Value.Trim();
+            var url = BaseUrl + titleElement.Attributes["href"].Value.Trim();
 
             var imageElement = document.QuerySelector(".top-news-wrapper .left .top-news .first a img");
             var imageUrl = imageElement?.Attributes["src"]?.Value?.Trim();

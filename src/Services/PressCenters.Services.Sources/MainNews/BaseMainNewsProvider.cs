@@ -1,17 +1,32 @@
 ﻿namespace PressCenters.Services.Sources.MainNews
 {
+    using System.Net;
+    using System.Text;
+
     using AngleSharp;
+    using AngleSharp.Dom;
+    using AngleSharp.Parser.Html;
 
     public abstract class BaseMainNewsProvider
     {
-        protected BaseMainNewsProvider()
+        public abstract RemoteMainNews GetMainNews();
+
+        // TODO: Async
+        public IDocument GetDocument(string url)
         {
             var configuration = Configuration.Default.WithDefaultLoader();
-            this.BrowsingContext = AngleSharp.BrowsingContext.New(configuration);
+            var browsingContext = AngleSharp.BrowsingContext.New(configuration);
+            return browsingContext.OpenAsync(url).GetAwaiter().GetResult();
         }
 
-        protected IBrowsingContext BrowsingContext { get; }
-
-        public abstract RemoteMainNews GetMainNews();
+        // TODO: Async
+        public IDocument GetDocument(string url, Encoding encoding)
+        {
+            var parser = new HtmlParser();
+            var webClient = new WebClient { Encoding = encoding };
+            var html = webClient.DownloadString(url);
+            var document = parser.Parse(html);
+            return document;
+        }
     }
 }

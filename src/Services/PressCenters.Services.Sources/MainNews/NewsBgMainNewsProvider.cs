@@ -1,12 +1,12 @@
 ﻿namespace PressCenters.Services.Sources.MainNews
 {
-    using AngleSharp;
-
     public class NewsBgMainNewsProvider : BaseMainNewsProvider
     {
+        private const string BaseUrl = "https://news.bg";
+
         public override RemoteMainNews GetMainNews()
         {
-            var document = this.BrowsingContext.OpenAsync("https://news.bg/").Result;
+            var document = this.GetDocument(BaseUrl);
 
             var titleElement = document.QuerySelector("#content-main .main-news a.main-thumb .news-info h2");
             var title = titleElement.TextContent.Trim();

@@ -1,20 +1,21 @@
 ﻿namespace PressCenters.Services.Sources.MainNews
 {
-    using AngleSharp;
-
     public class VestiBgMainNewsProvider : BaseMainNewsProvider
     {
+        private const string BaseUrl = "https://www.vesti.bg";
+
         public override RemoteMainNews GetMainNews()
         {
-            var document = this.BrowsingContext.OpenAsync("http://www.vesti.bg/").Result;
-            var titleElement = document.QuerySelector(".main-news .main-news-first h2 a span");
+            var document = this.GetDocument(BaseUrl);
+
+            var titleElement = document.QuerySelector(".leading h2");
             var title = titleElement.TextContent.Trim();
 
-            var urlElement = document.QuerySelector(".main-news .main-news-first h2 a");
+            var urlElement = document.QuerySelector(".leading a");
             var url = urlElement.Attributes["href"].Value.Trim();
 
-            var imageElement = document.QuerySelector(".main-news .main-news-first .img-link img");
-            var imageUrl = imageElement?.Attributes["src"]?.Value?.Trim();
+            var imageElement = document.QuerySelector(".leading img");
+            var imageUrl = imageElement?.Attributes["data-original"]?.Value?.Trim();
 
             var news = new RemoteMainNews
             {

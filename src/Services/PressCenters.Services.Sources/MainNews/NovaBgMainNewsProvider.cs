@@ -1,12 +1,12 @@
 ﻿namespace PressCenters.Services.Sources.MainNews
 {
-    using AngleSharp;
-
     public class NovaBgMainNewsProvider : BaseMainNewsProvider
     {
+        private const string BaseUrl = "https://nova.bg";
+
         public override RemoteMainNews GetMainNews()
         {
-            var document = this.BrowsingContext.OpenAsync("https://nova.bg/").Result;
+            var document = this.GetDocument(BaseUrl);
 
             var titleElement = document.QuerySelector(".main-accent-wrapper .thumb-title h1 a");
             var title = titleElement.TextContent.Trim();
@@ -23,7 +23,6 @@
                 OriginalUrl = url,
                 ImageUrl = imageUrl,
             };
-
             return news;
         }
     }
