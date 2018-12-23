@@ -4,17 +4,18 @@
     using System.Linq;
 
     using AngleSharp;
+    using AngleSharp.Extensions;
 
     public class PrbBgSource : BaseSource
     {
         public override RemoteDataResult GetLatestPublications(LocalPublicationsInfo localInfo)
         {
-            var address = "http://www.prb.bg/bg/news/aktualno/";
+            var address = "https://www.prb.bg/bg/news/aktualno";
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links =
-                document.QuerySelectorAll(".list-group-item > h3 > a")
+                document.QuerySelectorAll(".list-field .list-content a")
                     .Select(x => x.Attributes?["href"]?.Value)
-                    .Select(x => this.NormalizeUrl(x, "http://www.prb.bg/"))
+                    .Select(x => this.NormalizeUrl(x, "https://www.prb.bg/"))
                     .ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
             var remoteDataResult = new RemoteDataResult { News = news, LastNewsIdentifier = string.Empty };
@@ -24,22 +25,23 @@
         internal RemoteNews ParseRemoteNews(string url)
         {
             var document = this.BrowsingContext.OpenAsync(url).Result;
-            var titleElement = document.QuerySelector(".article h1");
+            var timeElement = document.QuerySelector(".article-title time");
+            var titleElement = document.QuerySelector(".article-title");
+            this.RemoveRecursively(titleElement, timeElement);
             var title = titleElement.TextContent.Trim();
 
-            var timeElement = document.QuerySelector(".article time");
             var timeAsString = timeElement.Attributes["datetime"].Value;
             var time = DateTime.Parse(timeAsString);
 
-            var contentElement = document.QuerySelector(".article");
+            var contentElement = document.QuerySelector(".narrow-content .text");
             this.RemoveRecursively(contentElement, titleElement);
             this.RemoveRecursively(contentElement, timeElement);
             this.RemoveRecursively(contentElement, document.QuerySelector(".tab-container"));
-            this.NormalizeUrlsRecursively(contentElement, "http://www.prb.bg/");
+            this.NormalizeUrlsRecursively(contentElement, "https://www.prb.bg/");
             var content = contentElement.InnerHtml.Trim();
 
-            var imageElement = document.QuerySelector(".article img");
-            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"), "http://www.prb.bg/").Trim();
+            var imageElement = document.QuerySelector(".slide img");
+            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"), "https://www.prb.bg/").Trim();
 
             var news = new RemoteNews
                            {
