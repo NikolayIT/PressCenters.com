@@ -14,79 +14,52 @@
         public void ExtractIdFromUrlShouldWorkCorrectly()
         {
             var provider = new MvrBgSource();
-            var result = provider.ExtractIdFromUrl("http://press.mvr.bg/NEWS/news160121_06.htm");
-            Assert.Equal("160121_06", result);
+            var result = provider.ExtractIdFromUrl("https://www.mvr.bg/press/актуална-информация/актуална-информация/новини/преглед/новини/създадена-е-организация-за-спокойното-протичане-на-идните-празнични-и-почивни-дни");
+            Assert.Equal("създадена-е-организация-за-спокойното-протичане-на-идните-празнични-и-почивни-дни", result);
         }
 
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "http://press.mvr.bg/NEWS/news170207_03.htm";
+            const string NewsUrl = "https://www.mvr.bg/press/%D0%B0%D0%BA%D1%82%D1%83%D0%B0%D0%BB%D0%BD%D0%B0-%D0%B8%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%86%D0%B8%D1%8F/%D0%B0%D0%BA%D1%82%D1%83%D0%B0%D0%BB%D0%BD%D0%B0-%D0%B8%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%86%D0%B8%D1%8F/%D0%B0%D0%BA%D1%82%D1%83%D0%B0%D0%BB%D0%BD%D0%BE/%D0%BF%D1%80%D0%B5%D0%B3%D0%BB%D0%B5%D0%B4/%D0%B0%D0%BA%D1%82%D1%83%D0%B0%D0%BB%D0%BD%D0%BE/%D1%80%D1%8F%D0%B7%D0%BA%D0%B0%D1%82%D0%B0-%D0%BF%D1%80%D0%BE%D0%BC%D1%8F%D0%BD%D0%B0-%D0%BD%D0%B0-%D0%B2%D1%80%D0%B5%D0%BC%D0%B5%D1%82%D0%BE-%D0%BA%D1%80%D0%B8%D0%B5-%D0%BE%D0%BF%D0%B0%D1%81%D0%BD%D0%BE%D1%81%D1%82%D0%B8-%D0%BD%D0%B0-%D0%BF%D1%8A%D1%82%D1%8F";
             var provider = new MvrBgSource();
             var news = provider.ParseRemoteNews(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Пътна полиция разработва карта на най-опасните пътища", news.Title);
-            Assert.Equal("Целта е  анализ на причините и набелязване на мерки за намаляване на тежките пътни инциденти", news.ShortContent);
-            Assert.Contains("най-опасните пътища в България, сочи статистика", news.Content);
-            Assert.Contains("произшествия в района са намалели драстично.", news.Content);
-            Assert.Equal("http://press.mvr.bg/NR/rdonlyres/6FCC2F41-FDB5-439A-BDFC-0E2ADB1FDBED/0/GDNPhome.gif", news.ImageUrl);
-            Assert.Equal(new DateTime(2017, 2, 7, 0, 0, 0), news.PostDate);
-            Assert.Equal("170207_03", news.RemoteId);
+            Assert.Equal("Рязката промяна на времето крие опасности на пътя", news.Title);
+            Assert.Equal("Пътна полиция съветва: Поемайте на път добре подготвени", news.ShortContent);
+            Assert.Contains("Времето осезателно се промени днес, за утре се очакват значителни валежи от дъжд в южните райони, и от сняг", news.Content);
+            Assert.Contains("При попадане в рискова ситуация сигнализирайте първо на телефона за спешни случаи 112, след това потърсете за съдействие близки и приятели.", news.Content);
+            Assert.DoesNotContain("https://www.mvr.bg/GetImage.ashx?id=d4f8176a-def9-42d8-8f24-ce0d3c503554&height=460&width=1260", news.Content);
+            Assert.DoesNotContain("<script>", news.Content);
+            Assert.DoesNotContain("glyphicon-edit", news.Content);
+            Assert.DoesNotContain("<legend>Изображения</legend>", news.Content);
+            Assert.Equal("https://www.mvr.bg/GetImage.ashx?id=d4f8176a-def9-42d8-8f24-ce0d3c503554&height=460&width=1260", news.ImageUrl);
+            Assert.Equal(new DateTime(2018, 11, 27), news.PostDate.Date);
+            Assert.Equal("рязката-промяна-на-времето-крие-опасности-на-пътя", news.RemoteId);
         }
 
         [Fact]
-        public void ParseRemoteNewsWithRelatedDocumentsShouldWorkCorrectly()
+        public void ParseRemoteNewsWithoutImageShouldWorkCorrectly()
         {
-            const string NewsUrl = "http://press.mvr.bg/Archive/News/News_2016/news160121_01.htm";
+            const string NewsUrl = "https://www.mvr.bg/press/%D0%B0%D0%BA%D1%82%D1%83%D0%B0%D0%BB%D0%BD%D0%B0-%D0%B8%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%86%D0%B8%D1%8F/%D0%B0%D0%BA%D1%82%D1%83%D0%B0%D0%BB%D0%BD%D0%B0-%D0%B8%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%86%D0%B8%D1%8F/%D0%B0%D0%BA%D1%82%D1%83%D0%B0%D0%BB%D0%BD%D0%BE/%D0%BF%D1%80%D0%B5%D0%B3%D0%BB%D0%B5%D0%B4/%D0%B0%D0%BA%D1%82%D1%83%D0%B0%D0%BB%D0%BD%D0%BE/72-%D0%B3%D0%BE%D0%B4%D0%B8%D1%88%D0%B5%D0%BD-%D0%B5-%D0%BE%D1%82%D0%B2%D0%B5%D0%B4%D0%B5%D0%BD-%D0%B2-%D1%81%D1%82%D0%BE%D0%BB%D0%B8%D1%87%D0%BD%D0%BE%D1%82%D0%BE-%D0%BF%D1%8A%D1%80%D0%B2%D0%BE-%D1%80%D0%B0%D0%B9%D0%BE%D0%BD%D0%BD%D0%BE-%D1%83%D0%BF%D1%80%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5";
             var provider = new MvrBgSource();
             var news = provider.ParseRemoteNews(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal(
-                "9969 нарушения на пътя са установени в страната от 11 до 17 януари",
-                news.Title);
+            Assert.Equal("72-годишен е отведен в столичното Първо районно управление", news.Title);
             Assert.Null(news.ShortContent);
-            Assert.Contains("Според данните, предоставени от ГД", news.Content);
-            Assert.Contains("безопасността на пътя", news.Content);
-            Assert.Contains("http://press.mvr.bg/NR/rdonlyres/552F1CAD-22F3-4B23-B98F-62152420D6D0/0/CopyofDeynostPK1117012016.xls", news.Content);
-            Assert.Equal("http://press.mvr.bg/NR/rdonlyres/60151086-F744-488C-91DC-A12130687CFC/0/POLICEISKA_KOLA_otpred.jpg", news.ImageUrl);
-            Assert.Equal(new DateTime(2016, 1, 21, 0, 0, 0), news.PostDate);
-            Assert.Equal("160121_01", news.RemoteId);
+            Assert.Contains("В късния следобед днес 72-годишен мъж дошъл на входа на Президентството и поискал среща.", news.Content);
+            Assert.Contains("Образувано е досъдебно производство, изясняват се всички обстоятелства по случая.", news.Content);
+            Assert.Null(news.ImageUrl);
+            Assert.Equal(new DateTime(2018, 12, 3), news.PostDate);
+            Assert.Equal("72-годишен-е-отведен-в-столичното-първо-районно-управление", news.RemoteId);
         }
 
         [Fact]
-        public void ParseRemoteNewsWithOneOfTheFirstNews()
-        {
-            const string NewsUrl = "http://press.mvr.bg/Archive/News/News_2010/News_I_III_Q/news100106_02.htm";
-            var provider = new MvrBgSource();
-            var news = provider.ParseRemoteNews(NewsUrl);
-            Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Полицаи задържаха почти 300 хил. кутии контрабандни цигари", news.Title);
-            Assert.Equal("Контрабандният тютюн бил маскиран като шивашки материал, предотвратена е щета за бюджета от 1 млн. лв., задържан е шофьорът на товарния автомобил; при друга акция  в с. Катуница пловдивски полицаи и митничари разкриха към 500 бутилки с неистински бандерол \nПубликуваме снимки от операцията в Благоевград /1-3/; Катуница /4,5/", news.ShortContent);
-            Assert.Contains("Български товарен автомобил, превозвал контрабандно цигари", news.Content);
-            Assert.Contains("производство по чл. 244, ал. 1 от НК.", news.Content);
-            Assert.Equal("http://press.mvr.bg/NR/rdonlyres/27D02D2F-393C-4662-8558-077602BA6F71/0/0106.jpg", news.ImageUrl);
-            Assert.Equal(new DateTime(2010, 1, 6, 15, 38, 0), news.PostDate);
-            Assert.Equal("100106_02", news.RemoteId);
-        }
-
-        [Fact]
-        public void GetNewsShouldReturnResults()
+        public void GetLatestPublicationsShouldReturnResults()
         {
             var provider = new MvrBgSource();
-            var result = provider.GetLatestPublications(new LocalPublicationsInfo { LastLocalId = "160118_01" });
-            Assert.True(result.News.Count() >= 9);
-            Assert.True(
-                result.LastNewsIdentifier.StartsWith(DateTime.Now.ToString("yyMMdd_"))
-                || result.LastNewsIdentifier.StartsWith(DateTime.Now.AddDays(-1).ToString("yyMMdd_"))
-                || result.LastNewsIdentifier.StartsWith(DateTime.Now.AddDays(-2).ToString("yyMMdd_"))
-                || result.LastNewsIdentifier.StartsWith(DateTime.Now.AddDays(-3).ToString("yyMMdd_")));
-        }
-
-        [Fact]
-        public void GetNewsShouldNotThrowAnExceptionWhenLastLocalIdIsBiggerOrEqualToTheCurrentLastNewsId()
-        {
-            var provider = new MvrBgSource();
-            provider.GetLatestPublications(new LocalPublicationsInfo { LastLocalId = "999999_99" });
+            var result = provider.GetLatestPublications(new LocalPublicationsInfo { LastLocalId = string.Empty });
+            Assert.True(result.News.Count() >= 8);
         }
     }
 }
