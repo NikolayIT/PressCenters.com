@@ -8,12 +8,14 @@
 
     public abstract class MhGovernmentBgBaseSource : BaseSource
     {
+        public override string BaseUrl { get; } = "http://www.mh.government.bg/";
+
         public override IEnumerable<RemoteNews> GetLatestPublications()
         {
             var address = this.GetNewsListUrl();
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll(".news h2 a").Select(x => x.Attributes["href"].Value)
-                .Select(x => this.NormalizeUrl(x, "http://www.mh.government.bg/")).ToList();
+                .Select(x => this.NormalizeUrl(x, this.BaseUrl)).ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
             return news;
         }
@@ -22,16 +24,16 @@
         {
             var document = this.BrowsingContext.OpenAsync(url).Result;
             var title = document.QuerySelector("h1").TextContent.Trim();
-            var imageUrl = "http://www.mh.government.bg/static/images/Ministry_of_Health-heraldic.95741c3e92f7.svg";
+            var imageUrl = $"{this.BaseUrl}static/images/Ministry_of_Health-heraldic.95741c3e92f7.svg";
 
             var contentElement = document.QuerySelector(".single_news");
-            this.NormalizeUrlsRecursively(contentElement, "http://www.mh.government.bg/");
+            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
             var content = contentElement.InnerHtml;
 
             var documentElement = document.QuerySelector(".single_news + .panel");
             if (documentElement != null)
             {
-                this.NormalizeUrlsRecursively(documentElement, "http://www.mh.government.bg/");
+                this.NormalizeUrlsRecursively(documentElement, this.BaseUrl);
                 content += documentElement.InnerHtml;
             }
 

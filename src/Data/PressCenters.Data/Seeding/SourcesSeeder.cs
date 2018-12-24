@@ -45,15 +45,15 @@
                               ("PressCenters.Services.Sources.BgInstitutions.PrbBgSource", "Прокуратурата",
                                   "Прокуратура на Република България",
                                   "Прокуратурата на Република България (ПРБ) е структура на държавното обвинение в системата на съдебната власт на Република България. ПРБ е независима част от съдебната система, отделна от съда.",
-                                  "http://www.prb.bg/bg/"),
+                                  "https://www.prb.bg/bg/"),
                               ("PressCenters.Services.Sources.BgInstitutions.PresidentBgSource", "Президентството",
                                   "Президентство на Република България",
                                   "Президентът на България е държавният глава на Република България, който е сред органите на държавната власт.",
-                                  "http://www.president.bg/"),
+                                  "https://www.president.bg/"),
                               ("PressCenters.Services.Sources.BgStateCompanies.ToploBgSource", "Топлофикация",
                                   "Топлофикация София ЕАД",
                                   "„Топлофикация София” EАД е най-старата топлофикационна система в България. По мащабите на производство и периметъра на обслужване „Топлофикация София” EАД е най-голямото дружество в страната и на Балканския полуостров.",
-                                  "http://toplo.bg/"),
+                                  "https://toplo.bg/"),
                               ("PressCenters.Services.Sources.BgPoliticalParties.GerbBgSource", "ГЕРБ", "ПП ГЕРБ",
                                   "ПП ГЕРБ е дясноцентристка консервативна политическа партия в България. Тя е основана на 3 декември 2006 година по инициатива на тогавашния кмет на София Бойко Борисов на основата на създаденото по-рано през същата година гражданско сдружение с име „Граждани за европейско развитие на България“ и абревиатура „ГЕРБ“.",
                                   "http://gerb.bg/"),
@@ -65,7 +65,7 @@
 
             foreach (var source in sources)
             {
-                if (!dbContext.MainNewsSources.Any(x => x.TypeName == source.TypeName))
+                if (!dbContext.Sources.Any(x => x.TypeName == source.TypeName))
                 {
                     dbContext.Sources.Add(
                         new Source

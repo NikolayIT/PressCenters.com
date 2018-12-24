@@ -9,12 +9,14 @@
 
     public abstract class NsiBgBaseSource : BaseSource
     {
+        public override string BaseUrl { get; } = "http://www.nsi.bg/";
+
         public override IEnumerable<RemoteNews> GetLatestPublications()
         {
             var address = this.GetNewsListUrl();
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll(".view-content .views-field-title a")
-                .Select(x => x.Attributes["href"].Value).Select(x => this.NormalizeUrl(x, "http://www.nsi.bg"))
+                .Select(x => x.Attributes["href"].Value).Select(x => this.NormalizeUrl(x, this.BaseUrl))
                 .ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
             return news;

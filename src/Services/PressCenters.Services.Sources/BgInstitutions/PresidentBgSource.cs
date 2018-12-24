@@ -11,12 +11,14 @@
 
     public class PresidentBgSource : BaseSource
     {
+        public override string BaseUrl { get; } = "https://www.president.bg/";
+
         public override IEnumerable<RemoteNews> GetLatestPublications()
         {
-            var address = "https://www.president.bg/news/";
+            var address = $"{this.BaseUrl}news/";
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll(".inside-article-box > a").Select(
-                x => this.NormalizeUrl(x.Attributes["href"].Value, "http://www.president.bg/")).ToList();
+                x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl)).ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
             return news;
         }
@@ -32,11 +34,11 @@
             var time = DateTime.ParseExact(timeAsString, "d MMMM yyyy | HH:mm", CultureInfo.GetCultureInfo("bg-BG"));
 
             var contentElement = document.QuerySelector(".print-content .index-news-bdy");
-            this.NormalizeUrlsRecursively(contentElement, "http://www.president.bg/");
+            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
             var content = contentElement.InnerHtml.Trim();
 
             var imageElement = document.QuerySelector(".print-content img");
-            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"), "http://www.president.bg/").Trim();
+            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"), this.BaseUrl).Trim();
 
             var news = new RemoteNews
             {
@@ -52,19 +54,7 @@
 
         internal string ExtractIdFromUrl(string originalUrl)
         {
-            if (originalUrl == null)
-            {
-                return null;
-            }
-
-            if (originalUrl.StartsWith("https"))
-            {
-                return originalUrl.GetStringBetween("https://www.president.bg/news", "/");
-            }
-            else
-            {
-                return originalUrl.GetStringBetween("http://www.president.bg/news", "/");
-            }
+            return originalUrl?.GetStringBetween("/news", "/");
         }
     }
 }

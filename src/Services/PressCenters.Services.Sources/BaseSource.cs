@@ -16,18 +16,20 @@ namespace PressCenters.Services.Sources
             this.BrowsingContext = AngleSharp.BrowsingContext.New(configuration);
         }
 
+        public abstract string BaseUrl { get; }
+
         protected IBrowsingContext BrowsingContext { get; }
 
         public abstract IEnumerable<RemoteNews> GetLatestPublications();
 
-        protected string NormalizeUrl(string url, string siteUrl)
+        protected string NormalizeUrl(string url, string baseUrl)
         {
             if (string.IsNullOrWhiteSpace(url))
             {
                 return null;
             }
 
-            if (!Uri.TryCreate(new Uri(siteUrl), url, out var result))
+            if (!Uri.TryCreate(new Uri(baseUrl), url, out var result))
             {
                 return url;
             }

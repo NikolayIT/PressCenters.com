@@ -4,7 +4,7 @@
     {
         protected override string GetNewsListUrl()
         {
-            return "http://www.mh.government.bg/bg/novini/aktualno/";
+            return $"{this.BaseUrl}bg/novini/aktualno/";
         }
     }
 }

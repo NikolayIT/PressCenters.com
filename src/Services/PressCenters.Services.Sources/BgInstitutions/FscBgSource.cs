@@ -10,12 +10,14 @@
 
     public class FscBgSource : BaseSource
     {
+        public override string BaseUrl { get; } = "http://www.fsc.bg/";
+
         public override IEnumerable<RemoteNews> GetLatestPublications()
         {
-            var address = "http://www.fsc.bg/bg/novini/";
+            var address = $"{this.BaseUrl}bg/novini/";
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll(".news-box-listing a")
-                .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, "http://www.fsc.bg/")).ToList();
+                .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl)).ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
             return news;
         }
@@ -28,7 +30,7 @@
 
             var timeElement = document.QuerySelector("#content-left-inner .article_date");
             var time = DateTime.ParseExact(timeElement.TextContent, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-            time = time.Date == DateTime.Now.Date ? DateTime.Now : time.AddHours(12);
+            time = time.Date == DateTime.UtcNow.Date ? DateTime.Now : time;
 
             var contentElement = document.QuerySelector("#content-left-inner");
             contentElement.RemoveElement(titleElement);
@@ -43,7 +45,7 @@
                 RemoteId = this.ExtractIdFromUrl(url),
                 PostDate = time,
                 Content = contentElement.InnerHtml.Trim(),
-                ImageUrl = this.NormalizeUrl(imageUrl, "http://www.fsc.bg/"),
+                ImageUrl = this.NormalizeUrl(imageUrl, this.BaseUrl),
             };
             return news;
         }
@@ -56,13 +58,13 @@
                 return "0";
             }
 
-            int startIndex = url.LastIndexOf("-", StringComparison.Ordinal);
+            var startIndex = url.LastIndexOf("-", StringComparison.Ordinal);
             if (startIndex == -1)
             {
                 return string.Empty;
             }
 
-            int endIndex = url.LastIndexOf(EndString, StringComparison.Ordinal);
+            var endIndex = url.LastIndexOf(EndString, StringComparison.Ordinal);
             if (endIndex == -1)
             {
                 return string.Empty;

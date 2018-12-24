@@ -8,7 +8,7 @@
     {
         protected override string GetNewsListUrl()
         {
-            return "http://www.nsi.bg/bg/pressreleases_list";
+            return $"{this.BaseUrl}bg/pressreleases_list";
         }
 
         protected override string GetContent(IHtmlCollection<IElement> imageAndContent)
@@ -18,7 +18,7 @@
 
         protected override string GetImageUrl(IHtmlCollection<IElement> imageAndContent)
         {
-            return "http://www.nsi.bg/sites/default/files/styles/medium/public/files/events/images/___NSILogo_117.jpg";
+            return $"{this.BaseUrl}sites/default/files/styles/medium/public/files/events/images/___NSILogo_117.jpg";
         }
 
         protected override string ChooseUrlSegmentForId(Uri uri)

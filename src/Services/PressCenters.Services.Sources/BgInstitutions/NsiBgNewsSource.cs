@@ -8,7 +8,7 @@
     {
         protected override string GetNewsListUrl()
         {
-            return "http://www.nsi.bg/bg/events_list";
+            return $"{this.BaseUrl}bg/events_list";
         }
 
         protected override string GetContent(IHtmlCollection<IElement> imageAndContent)

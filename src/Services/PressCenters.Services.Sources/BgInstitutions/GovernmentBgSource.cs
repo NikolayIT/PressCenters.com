@@ -9,12 +9,14 @@
 
     public class GovernmentBgSource : BaseSource
     {
+        public override string BaseUrl { get; } = "http://www.government.bg/";
+
         public override IEnumerable<RemoteNews> GetLatestPublications()
         {
-            var address = "http://www.government.bg/bg/prestsentar/novini";
+            var address = $"{this.BaseUrl}bg/prestsentar/novini";
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll(".articles .item a").Select(
-                x => this.NormalizeUrl(x.Attributes["href"].Value, "http://www.government.bg/")).Distinct().ToList();
+                x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl)).Distinct().ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
             return news;
         }
@@ -30,13 +32,13 @@
             var time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
 
             var imageElement = document.QuerySelector(".view .gallery img");
-            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"), "http://www.government.bg/").Trim();
+            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"), this.BaseUrl).Trim();
 
             var contentElement = document.QuerySelector(".view");
             this.RemoveRecursively(contentElement, titleElement);
             this.RemoveRecursively(contentElement, timeElement);
             this.RemoveRecursively(contentElement, document.QuerySelector(".view .gallery"));
-            this.NormalizeUrlsRecursively(contentElement, "https://www.government.bg/");
+            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
             var content = contentElement.InnerHtml.Trim();
 
             var news = new RemoteNews

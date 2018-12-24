@@ -79,7 +79,7 @@
         {
             var provider = new NsiBgNewsSource();
             var result = provider.GetLatestPublications();
-            Assert.True(result.Count() >= 10);
+            Assert.Equal(10, result.Count());
         }
 
         [Fact]
@@ -87,7 +87,7 @@
         {
             var provider = new NsiBgPressSource();
             var result = provider.GetLatestPublications();
-            Assert.True(result.Count() >= 10);
+            Assert.Equal(10, result.Count());
         }
     }
 }

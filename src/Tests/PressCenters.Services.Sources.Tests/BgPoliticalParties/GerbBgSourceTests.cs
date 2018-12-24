@@ -28,7 +28,7 @@
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Министри от правителството на Бойко Борисов представиха управленската програма на ГЕРБ пред 400 жители на 23 МИР София", news.Title);
             Assert.Equal("43048", news.RemoteId);
-            Assert.Equal(new DateTime(2017, 2, 9, 8, 0, 0), news.PostDate);
+            Assert.Equal(new DateTime(2017, 2, 9), news.PostDate);
             Assert.Contains("Образованието, сигурността, справедливостта и доходите", news.Content);
             Assert.Contains("ГЕРБ трябва да имат самочувствие", news.Content);
             Assert.Contains("актуални въпроси, зададени от присъстващите.", news.Content);

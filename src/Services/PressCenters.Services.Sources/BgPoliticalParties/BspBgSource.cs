@@ -10,12 +10,14 @@
 
     public class BspBgSource : BaseSource
     {
+        public override string BaseUrl { get; } = "http://bsp.bg/";
+
         public override IEnumerable<RemoteNews> GetLatestPublications()
         {
-            var address = "http://bsp.bg/news.html";
+            var address = $"{this.BaseUrl}news.html";
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll(".post-content h3 a").Select(x => x.Attributes["href"].Value)
-                .Select(x => this.NormalizeUrl(x, "http://bsp.bg")).ToList();
+                .Select(x => this.NormalizeUrl(x, this.BaseUrl)).ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
             return news;
         }
@@ -41,21 +43,21 @@
 
             var dayOfMonth = dateAsString.Substring(4, 2).ToInteger();
             var year = dateAsString.Substring(dateAsString.Length - 4, 4).ToInteger();
-            var time = new DateTime(year, monthIndex, dayOfMonth, 8, 0, 0);
-            if (time.Date == DateTime.Now.Date)
+            var time = new DateTime(year, monthIndex, dayOfMonth);
+            if (time.Date == DateTime.UtcNow.Date)
             {
                 time = DateTime.Now;
             }
 
             var contentElement = document.QuerySelector(".post-content");
-            this.NormalizeUrlsRecursively(contentElement, "http://bsp.bg/");
+            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
             this.RemoveRecursively(contentElement, document.QuerySelector(".post-content h2"));
             this.RemoveRecursively(contentElement, document.QuerySelector(".post-content .social-buttons"));
             this.RemoveRecursively(contentElement, document.QuerySelector(".post-content .item_meta"));
             var content = contentElement.InnerHtml.Trim();
 
             var imageElement = document.QuerySelector(".post-poster img");
-            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"), "http://bsp.bg/").Trim();
+            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"), this.BaseUrl).Trim();
 
             var news = new RemoteNews
                            {

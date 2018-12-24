@@ -8,12 +8,14 @@
 
     public class PrbBgSource : BaseSource
     {
+        public override string BaseUrl { get; } = "https://www.prb.bg/";
+
         public override IEnumerable<RemoteNews> GetLatestPublications()
         {
-            var address = "https://www.prb.bg/bg/news/aktualno";
+            var address = $"{this.BaseUrl}bg/news/aktualno";
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll(".list-field .list-content a")
-                .Select(x => x.Attributes?["href"]?.Value).Select(x => this.NormalizeUrl(x, "https://www.prb.bg/"))
+                .Select(x => x.Attributes?["href"]?.Value).Select(x => this.NormalizeUrl(x, this.BaseUrl))
                 .ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
             return news;
@@ -34,11 +36,11 @@
             this.RemoveRecursively(contentElement, titleElement);
             this.RemoveRecursively(contentElement, timeElement);
             this.RemoveRecursively(contentElement, document.QuerySelector(".tab-container"));
-            this.NormalizeUrlsRecursively(contentElement, "https://www.prb.bg/");
+            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
             var content = contentElement.InnerHtml.Trim();
 
             var imageElement = document.QuerySelector(".slide img");
-            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"), "https://www.prb.bg/").Trim();
+            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"), this.BaseUrl).Trim();
 
             var news = new RemoteNews
                            {

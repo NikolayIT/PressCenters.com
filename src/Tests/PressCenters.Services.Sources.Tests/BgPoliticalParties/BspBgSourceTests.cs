@@ -28,7 +28,7 @@
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Корнелия Нинова: 6 партии внесохме 6000 подписа за отличен 6 на изборите", news.Title);
             Assert.Equal("11649", news.RemoteId);
-            Assert.Equal(new DateTime(2017, 2, 8, 8, 0, 0), news.PostDate);
+            Assert.Equal(new DateTime(2017, 2, 8), news.PostDate);
             Assert.Contains("6 партии в коалиция", news.Content);
             Assert.Contains("Корнелия Нинова подчерта, че", news.Content);
             Assert.Contains("политики; икономика, здравеопазване, социална политика и сигурност.", news.Content);

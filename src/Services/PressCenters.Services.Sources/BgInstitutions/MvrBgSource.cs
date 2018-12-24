@@ -10,12 +10,14 @@
 
     public class MvrBgSource : BaseSource
     {
+        public override string BaseUrl { get; } = "https://www.mvr.bg/";
+
         public override IEnumerable<RemoteNews> GetLatestPublications()
         {
-            var address = "https://www.mvr.bg/press/актуална-информация/актуална-информация/актуално";
+            var address = $"{this.BaseUrl}press/актуална-информация/актуална-информация/актуално";
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll(".article__list .article .article__description a")
-                .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, "https://www.mvr.bg/")).Distinct().ToList();
+                .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl)).Distinct().ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
             return news;
         }
@@ -36,13 +38,13 @@
             }
 
             var imageElement = document.QuerySelector("#image_source");
-            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"), "https://www.mvr.bg/")?.Trim();
+            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"), this.BaseUrl)?.Trim();
 
             var contentElement = document.QuerySelector(".article__container");
             this.RemoveRecursively(contentElement, document.QuerySelector(".article__container div.row"));
             this.RemoveRecursively(contentElement, document.QuerySelector(".article__container script"));
             this.RemoveRecursively(contentElement, document.QuerySelector(".article__container .pull-right"));
-            this.NormalizeUrlsRecursively(contentElement, "https://www.mvr.bg/");
+            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
             var content = contentElement.InnerHtml.Trim();
 
             var news = new RemoteNews

@@ -11,12 +11,14 @@
 
     public class GerbBgSource : BaseSource
     {
+        public override string BaseUrl { get; } = "http://gerb.bg/";
+
         public override IEnumerable<RemoteNews> GetLatestPublications()
         {
-            var address = "http://gerb.bg/bg/news/spisyk-novini-1.html";
+            var address = $"{this.BaseUrl}bg/news/spisyk-novini-1.html";
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll("#container-main-ajax article p a")
-                .Select(x => x.Attributes["href"].Value).Select(x => this.NormalizeUrl(x, "http://gerb.bg")).ToList();
+                .Select(x => x.Attributes["href"].Value).Select(x => this.NormalizeUrl(x, this.BaseUrl)).ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
             return news;
         }
@@ -29,10 +31,10 @@
 
             var dateAsString = document.QuerySelector(".news-info .date").InnerHtml;
             var time = DateTime.ParseExact(dateAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
-            time = time.Date == DateTime.Now.Date ? DateTime.Now : time.AddHours(8);
+            time = time.Date == DateTime.UtcNow.Date ? DateTime.Now : time;
 
             var contentElement = document.QuerySelector(".news-info");
-            this.NormalizeUrlsRecursively(contentElement, "http://gerb.bg/");
+            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
             this.RemoveRecursively(contentElement, document.QuerySelector(".news-info .social"));
             this.RemoveRecursively(contentElement, document.QuerySelector(".news-info .date"));
             this.RemoveRecursively(contentElement, document.QuerySelector(".news-info h1"));
@@ -41,7 +43,7 @@
             var content = contentElement.InnerHtml.Trim();
 
             var imageElement = document.QuerySelector("#slider img");
-            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"), "http://gerb.bg/")?.Trim();
+            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"), this.BaseUrl)?.Trim();
 
             var news = new RemoteNews
                            {
