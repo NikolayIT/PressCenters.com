@@ -1,13 +1,14 @@
 ﻿namespace PressCenters.Services.Sources.BgInstitutions
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     using AngleSharp;
 
     public class PrbBgSource : BaseSource
     {
-        public override RemoteDataResult GetLatestPublications()
+        public override IEnumerable<RemoteNews> GetLatestPublications()
         {
             var address = "https://www.prb.bg/bg/news/aktualno";
             var document = this.BrowsingContext.OpenAsync(address).Result;
@@ -15,7 +16,7 @@
                 .Select(x => x.Attributes?["href"]?.Value).Select(x => this.NormalizeUrl(x, "https://www.prb.bg/"))
                 .ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
-            return new RemoteDataResult { News = news, };
+            return news;
         }
 
         internal RemoteNews ParseRemoteNews(string url)

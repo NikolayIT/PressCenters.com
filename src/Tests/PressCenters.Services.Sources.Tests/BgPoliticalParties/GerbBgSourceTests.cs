@@ -46,7 +46,7 @@
         {
             var provider = new GerbBgSource();
             var result = provider.GetLatestPublications();
-            Assert.True(result.News.Count() >= 12);
+            Assert.True(result.Count() >= 12);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿namespace PressCenters.Services.Sources.BgInstitutions
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
     using System.Net;
@@ -9,14 +10,14 @@
 
     public class MvrBgSource : BaseSource
     {
-        public override RemoteDataResult GetLatestPublications()
+        public override IEnumerable<RemoteNews> GetLatestPublications()
         {
             var address = "https://www.mvr.bg/press/актуална-информация/актуална-информация/актуално";
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll(".article__list .article .article__description a")
                 .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, "https://www.mvr.bg/")).Distinct().ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
-            return new RemoteDataResult { News = news, };
+            return news;
         }
 
         internal RemoteNews ParseRemoteNews(string url)

@@ -38,9 +38,9 @@
             }
 
             var instance = ReflectionHelpers.GetInstance<BaseSource>(input.TypeName);
-            var result = instance.GetLatestPublications();
+            var publications = instance.GetLatestPublications();
             var added = 0;
-            foreach (var remoteNews in result.News)
+            foreach (var remoteNews in publications)
             {
                 if (this.newsRepository.AllWithDeleted().Any(x => x.SourceId == source.Id && x.RemoteId == remoteNews.RemoteId))
                 {

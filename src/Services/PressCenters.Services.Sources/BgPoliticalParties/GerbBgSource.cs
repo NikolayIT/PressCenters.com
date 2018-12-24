@@ -1,6 +1,7 @@
 ﻿namespace PressCenters.Services.Sources.BgPoliticalParties
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
 
@@ -10,14 +11,14 @@
 
     public class GerbBgSource : BaseSource
     {
-        public override RemoteDataResult GetLatestPublications()
+        public override IEnumerable<RemoteNews> GetLatestPublications()
         {
             var address = "http://gerb.bg/bg/news/spisyk-novini-1.html";
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll("#container-main-ajax article p a")
                 .Select(x => x.Attributes["href"].Value).Select(x => this.NormalizeUrl(x, "http://gerb.bg")).ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
-            return new RemoteDataResult { News = news, };
+            return news;
         }
 
         internal RemoteNews ParseRemoteNews(string url)

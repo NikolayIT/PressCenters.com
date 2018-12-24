@@ -3,7 +3,6 @@
     using System;
     using System.Linq;
 
-    using PressCenters.Services.Sources;
     using PressCenters.Services.Sources.BgInstitutions;
 
     using Xunit;
@@ -42,7 +41,7 @@
         {
             var provider = new GovernmentBgSource();
             var result = provider.GetLatestPublications();
-            Assert.Equal(12, result.News.Count());
+            Assert.Equal(12, result.Count());
         }
     }
 }

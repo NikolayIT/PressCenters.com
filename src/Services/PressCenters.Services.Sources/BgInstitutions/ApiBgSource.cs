@@ -1,6 +1,7 @@
 ﻿namespace PressCenters.Services.Sources.BgInstitutions
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
 
@@ -8,13 +9,13 @@
 
     public class ApiBgSource : BaseSource
     {
-        public override RemoteDataResult GetLatestPublications()
+        public override IEnumerable<RemoteNews> GetLatestPublications()
         {
             var address = "http://www.api.bg/index.php/tools/blocks/news_list/rss?bID=606&cID=186&arHandle=Main";
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll("item > link").Select(x => x.InnerHtml).ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
-            return new RemoteDataResult { News = news, };
+            return news;
         }
 
         internal RemoteNews ParseRemoteNews(string url)

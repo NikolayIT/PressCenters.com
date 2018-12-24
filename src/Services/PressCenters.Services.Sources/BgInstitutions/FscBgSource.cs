@@ -1,6 +1,7 @@
 ﻿namespace PressCenters.Services.Sources.BgInstitutions
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
 
@@ -9,14 +10,14 @@
 
     public class FscBgSource : BaseSource
     {
-        public override RemoteDataResult GetLatestPublications()
+        public override IEnumerable<RemoteNews> GetLatestPublications()
         {
             var address = "http://www.fsc.bg/bg/novini/";
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll(".news-box-listing a")
                 .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, "http://www.fsc.bg/")).ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
-            return new RemoteDataResult { News = news, };
+            return news;
         }
 
         internal RemoteNews ParseRemoteNews(string url)

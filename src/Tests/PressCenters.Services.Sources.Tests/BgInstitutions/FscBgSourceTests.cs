@@ -44,7 +44,7 @@
         {
             var provider = new FscBgSource();
             var result = provider.GetLatestPublications();
-            Assert.True(result.News.Count() >= 10);
+            Assert.True(result.Count() >= 10);
         }
     }
 }

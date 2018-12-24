@@ -10,14 +10,14 @@
 
     public class BspBgSource : BaseSource
     {
-        public override RemoteDataResult GetLatestPublications()
+        public override IEnumerable<RemoteNews> GetLatestPublications()
         {
             var address = "http://bsp.bg/news.html";
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll(".post-content h3 a").Select(x => x.Attributes["href"].Value)
                 .Select(x => this.NormalizeUrl(x, "http://bsp.bg")).ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
-            return new RemoteDataResult { News = news, };
+            return news;
         }
 
         internal RemoteNews ParseRemoteNews(string url)

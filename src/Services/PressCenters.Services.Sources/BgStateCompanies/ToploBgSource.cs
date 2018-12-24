@@ -1,6 +1,7 @@
 ﻿namespace PressCenters.Services.Sources.BgStateCompanies
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
 
@@ -8,14 +9,14 @@
 
     public class ToploBgSource : BaseSource
     {
-        public override RemoteDataResult GetLatestPublications()
+        public override IEnumerable<RemoteNews> GetLatestPublications()
         {
             var address = "https://toplo.bg/news";
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll(".post a")
                 .Select(x => this.NormalizeUrl(x.Attributes["href"]?.Value, "https://toplo.bg/")).ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
-            return new RemoteDataResult { News = news, };
+            return news;
         }
 
         internal RemoteNews ParseRemoteNews(string url)

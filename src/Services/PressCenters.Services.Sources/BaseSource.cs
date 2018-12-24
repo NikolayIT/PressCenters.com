@@ -1,10 +1,9 @@
-﻿using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("PressCenters.Services.Sources.Tests")]
+﻿[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("PressCenters.Services.Sources.Tests")]
 
 namespace PressCenters.Services.Sources
 {
     using System;
+    using System.Collections.Generic;
 
     using AngleSharp;
     using AngleSharp.Dom;
@@ -19,7 +18,7 @@ namespace PressCenters.Services.Sources
 
         protected IBrowsingContext BrowsingContext { get; }
 
-        public abstract RemoteDataResult GetLatestPublications();
+        public abstract IEnumerable<RemoteNews> GetLatestPublications();
 
         protected string NormalizeUrl(string url, string siteUrl)
         {
@@ -28,8 +27,7 @@ namespace PressCenters.Services.Sources
                 return null;
             }
 
-            Uri result;
-            if (!Uri.TryCreate(new Uri(siteUrl), url, out result))
+            if (!Uri.TryCreate(new Uri(siteUrl), url, out var result))
             {
                 return url;
             }
