@@ -62,7 +62,7 @@
         public void GetNewsShouldReturnResults()
         {
             var provider = new MhGovernmentBgNewsSource();
-            var result = provider.GetLatestPublications(new LocalPublicationsInfo { LastLocalId = string.Empty });
+            var result = provider.GetLatestPublications();
 
             Assert.True(result.News.Count() >= 10);
         }
@@ -71,7 +71,7 @@
         public void GetEpidemicNewsShouldReturnResults()
         {
             var provider = new MhGovernmentBgEpidemicSource();
-            var result = provider.GetLatestPublications(new LocalPublicationsInfo { LastLocalId = string.Empty });
+            var result = provider.GetLatestPublications();
 
             Assert.True(result.News.Count() >= 10);
         }

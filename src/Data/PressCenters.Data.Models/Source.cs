@@ -11,7 +11,7 @@
             this.News = new HashSet<News>();
         }
 
-        public string ClassName { get; set; }
+        public string TypeName { get; set; }
 
         public string ShortName { get; set; }
 

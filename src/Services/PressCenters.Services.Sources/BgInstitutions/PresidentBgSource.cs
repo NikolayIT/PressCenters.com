@@ -10,16 +10,12 @@
 
     public class PresidentBgSource : BaseSource
     {
-        public override RemoteDataResult GetLatestPublications(LocalPublicationsInfo localInfo)
+        public override RemoteDataResult GetLatestPublications()
         {
             var address = "https://www.president.bg/news/";
             var document = this.BrowsingContext.OpenAsync(address).Result;
-            var links =
-                document.QuerySelectorAll(".inside-article-box > a")
-                    .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, "http://www.president.bg/"))
-                    .Where(x => this.ExtractIdFromUrl(x).ToInteger() > localInfo.LastLocalId.ToInteger())
-                    .ToList();
-
+            var links = document.QuerySelectorAll(".inside-article-box > a").Select(
+                x => this.NormalizeUrl(x.Attributes["href"].Value, "http://www.president.bg/")).ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
             return new RemoteDataResult { News = news, };
         }

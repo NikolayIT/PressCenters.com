@@ -10,16 +10,12 @@
 
     public class GerbBgSource : BaseSource
     {
-        public override RemoteDataResult GetLatestPublications(LocalPublicationsInfo localInfo)
+        public override RemoteDataResult GetLatestPublications()
         {
             var address = "http://gerb.bg/bg/news/spisyk-novini-1.html";
             var document = this.BrowsingContext.OpenAsync(address).Result;
-            var links =
-                document.QuerySelectorAll("#container-main-ajax article p a")
-                    .Select(x => x.Attributes["href"].Value)
-                    .Select(x => this.NormalizeUrl(x, "http://gerb.bg"))
-                    .Where(x => this.ExtractIdFromUrl(x).ToInteger() > localInfo.LastLocalId.ToInteger())
-                    .ToList();
+            var links = document.QuerySelectorAll("#container-main-ajax article p a")
+                .Select(x => x.Attributes["href"].Value).Select(x => this.NormalizeUrl(x, "http://gerb.bg")).ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
             return new RemoteDataResult { News = news, };
         }

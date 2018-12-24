@@ -19,12 +19,7 @@ namespace PressCenters.Services.Sources
 
         protected IBrowsingContext BrowsingContext { get; }
 
-        public virtual RemoteDataResult GetAllPublications()
-        {
-            return new RemoteDataResult();
-        }
-
-        public abstract RemoteDataResult GetLatestPublications(LocalPublicationsInfo localInfo);
+        public abstract RemoteDataResult GetLatestPublications();
 
         protected string NormalizeUrl(string url, string siteUrl)
         {

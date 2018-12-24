@@ -6,20 +6,15 @@
     using AngleSharp;
     using AngleSharp.Dom;
 
-    using PressCenters.Common;
-
     public abstract class NsiBgBaseSource : BaseSource
     {
-        public override RemoteDataResult GetLatestPublications(LocalPublicationsInfo localInfo)
+        public override RemoteDataResult GetLatestPublications()
         {
             var address = this.GetNewsListUrl();
             var document = this.BrowsingContext.OpenAsync(address).Result;
-            var links =
-                document.QuerySelectorAll(".view-content .views-field-title a")
-                    .Select(x => x.Attributes["href"].Value)
-                    .Select(x => this.NormalizeUrl(x, "http://www.nsi.bg"))
-                    .Where(x => this.ExtractIdFromUrl(x).ToInteger() > localInfo.LastLocalId.ToInteger())
-                    .ToList();
+            var links = document.QuerySelectorAll(".view-content .views-field-title a")
+                .Select(x => x.Attributes["href"].Value).Select(x => this.NormalizeUrl(x, "http://www.nsi.bg"))
+                .ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
             return new RemoteDataResult { News = news, };
         }

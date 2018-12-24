@@ -8,13 +8,12 @@
 
     public class ToploBgSource : BaseSource
     {
-        public override RemoteDataResult GetLatestPublications(LocalPublicationsInfo localInfo)
+        public override RemoteDataResult GetLatestPublications()
         {
             var address = "https://toplo.bg/news";
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll(".post a")
                 .Select(x => this.NormalizeUrl(x.Attributes["href"]?.Value, "https://toplo.bg/")).ToList();
-
             var news = links.Select(this.ParseRemoteNews).ToList();
             return new RemoteDataResult { News = news, };
         }

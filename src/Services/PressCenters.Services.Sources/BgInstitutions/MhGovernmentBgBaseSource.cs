@@ -7,15 +7,12 @@
 
     public abstract class MhGovernmentBgBaseSource : BaseSource
     {
-        public override RemoteDataResult GetLatestPublications(LocalPublicationsInfo localInfo)
+        public override RemoteDataResult GetLatestPublications()
         {
             var address = this.GetNewsListUrl();
             var document = this.BrowsingContext.OpenAsync(address).Result;
-            var links =
-                document.QuerySelectorAll(".news h2 a")
-                    .Select(x => x.Attributes["href"].Value)
-                    .Select(x => this.NormalizeUrl(x, "http://www.mh.government.bg/"))
-                    .ToList();
+            var links = document.QuerySelectorAll(".news h2 a").Select(x => x.Attributes["href"].Value)
+                .Select(x => this.NormalizeUrl(x, "http://www.mh.government.bg/")).ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
             return new RemoteDataResult { News = news, };
         }

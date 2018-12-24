@@ -64,7 +64,7 @@
         public void GetNewsShouldReturnResults()
         {
             var provider = new ApiBgSource();
-            var result = provider.GetLatestPublications(new LocalPublicationsInfo { LastLocalId = string.Empty });
+            var result = provider.GetLatestPublications();
             Assert.True(result.News.Count() >= 9);
         }
     }

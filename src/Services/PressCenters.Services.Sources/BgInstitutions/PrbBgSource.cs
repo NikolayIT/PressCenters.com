@@ -4,19 +4,16 @@
     using System.Linq;
 
     using AngleSharp;
-    using AngleSharp.Extensions;
 
     public class PrbBgSource : BaseSource
     {
-        public override RemoteDataResult GetLatestPublications(LocalPublicationsInfo localInfo)
+        public override RemoteDataResult GetLatestPublications()
         {
             var address = "https://www.prb.bg/bg/news/aktualno";
             var document = this.BrowsingContext.OpenAsync(address).Result;
-            var links =
-                document.QuerySelectorAll(".list-field .list-content a")
-                    .Select(x => x.Attributes?["href"]?.Value)
-                    .Select(x => this.NormalizeUrl(x, "https://www.prb.bg/"))
-                    .ToList();
+            var links = document.QuerySelectorAll(".list-field .list-content a")
+                .Select(x => x.Attributes?["href"]?.Value).Select(x => this.NormalizeUrl(x, "https://www.prb.bg/"))
+                .ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
             return new RemoteDataResult { News = news, };
         }

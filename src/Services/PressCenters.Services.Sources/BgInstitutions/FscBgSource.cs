@@ -7,20 +7,14 @@
     using AngleSharp;
     using AngleSharp.Extensions;
 
-    using PressCenters.Common;
-
     public class FscBgSource : BaseSource
     {
-        public override RemoteDataResult GetLatestPublications(LocalPublicationsInfo localInfo)
+        public override RemoteDataResult GetLatestPublications()
         {
             var address = "http://www.fsc.bg/bg/novini/";
             var document = this.BrowsingContext.OpenAsync(address).Result;
-            var links =
-                document.QuerySelectorAll(".news-box-listing a")
-                    .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, "http://www.fsc.bg/"))
-                    .Where(x => this.ExtractIdFromUrl(x).ToInteger() > localInfo.LastLocalId.ToInteger())
-                    .ToList();
-
+            var links = document.QuerySelectorAll(".news-box-listing a")
+                .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, "http://www.fsc.bg/")).ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
             return new RemoteDataResult { News = news, };
         }

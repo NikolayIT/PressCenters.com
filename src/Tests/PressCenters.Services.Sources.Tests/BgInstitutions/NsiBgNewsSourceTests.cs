@@ -94,7 +94,7 @@
         public void GetNewsShouldReturnResults()
         {
             var provider = new NsiBgNewsSource();
-            var result = provider.GetLatestPublications(new LocalPublicationsInfo { LastLocalId = string.Empty });
+            var result = provider.GetLatestPublications();
             Assert.True(result.News.Count() >= 10);
         }
 
@@ -102,7 +102,7 @@
         public void GetPressNewsShouldReturnResults()
         {
             var provider = new NsiBgPressSource();
-            var result = provider.GetLatestPublications(new LocalPublicationsInfo { LastLocalId = string.Empty });
+            var result = provider.GetLatestPublications();
             Assert.True(result.News.Count() >= 10);
         }
     }

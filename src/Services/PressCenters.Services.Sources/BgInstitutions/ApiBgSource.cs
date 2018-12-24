@@ -8,7 +8,7 @@
 
     public class ApiBgSource : BaseSource
     {
-        public override RemoteDataResult GetLatestPublications(LocalPublicationsInfo localInfo)
+        public override RemoteDataResult GetLatestPublications()
         {
             var address = "http://www.api.bg/index.php/tools/blocks/news_list/rss?bID=606&cID=186&arHandle=Main";
             var document = this.BrowsingContext.OpenAsync(address).Result;

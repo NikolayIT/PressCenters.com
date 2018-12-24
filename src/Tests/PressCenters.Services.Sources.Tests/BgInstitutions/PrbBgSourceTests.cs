@@ -43,7 +43,7 @@
         public void GetLatestPublicationsShouldReturnResults()
         {
             var provider = new PrbBgSource();
-            var result = provider.GetLatestPublications(new LocalPublicationsInfo { LastLocalId = string.Empty });
+            var result = provider.GetLatestPublications();
 
             Assert.True(result.News.Count() >= 10);
         }

@@ -42,7 +42,7 @@
         public void GetLatestPublicationsShouldReturnResults()
         {
             var provider = new ToploBgSource();
-            var result = provider.GetLatestPublications(new LocalPublicationsInfo { LastLocalId = null });
+            var result = provider.GetLatestPublications();
             Assert.True(result.News.Any());
         }
     }
