@@ -122,11 +122,11 @@
                     ModifiedOn = table.Column<DateTime>(nullable: true),
                     IsDeleted = table.Column<bool>(nullable: false),
                     DeletedOn = table.Column<DateTime>(nullable: true),
-                    ClassName = table.Column<string>(nullable: true),
+                    TypeName = table.Column<string>(nullable: true),
                     ShortName = table.Column<string>(nullable: true),
-                    LongName = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
-                    Website = table.Column<string>(nullable: true),
+                    Url = table.Column<string>(nullable: true),
                 },
                 constraints: table =>
                 {

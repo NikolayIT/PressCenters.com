@@ -15,11 +15,11 @@
 
         public string ShortName { get; set; }
 
-        public string LongName { get; set; }
+        public string Name { get; set; }
 
         public string Description { get; set; }
 
-        public string Website { get; set; }
+        public string Url { get; set; }
 
         public virtual ICollection<News> News { get; set; }
     }

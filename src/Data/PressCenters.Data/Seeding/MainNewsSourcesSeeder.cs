@@ -6,7 +6,7 @@
 
     using PressCenters.Data.Models;
 
-    public class MainNewsSourceSeeder : ISeeder
+    public class MainNewsSourcesSeeder : ISeeder
     {
         public void Seed(ApplicationDbContext dbContext, IServiceProvider serviceProvider)
         {
@@ -23,7 +23,7 @@
                                       ("Novini.bg", "https://novini.bg",
                                           "PressCenters.Services.Sources.MainNews.NoviniBgMainNewsProvider"),
                                       ("Vesti.bg", "https://www.vesti.bg",
-                                      "PressCenters.Services.Sources.MainNews.VestiBgMainNewsProvider"),
+                                          "PressCenters.Services.Sources.MainNews.VestiBgMainNewsProvider"),
                                   };
 
             foreach (var mainNewsSource in mainNewsSources)

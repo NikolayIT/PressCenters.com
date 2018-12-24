@@ -353,8 +353,6 @@ namespace PressCenters.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("ClassName");
-
                     b.Property<DateTime>("CreatedOn");
 
                     b.Property<DateTime?>("DeletedOn");
@@ -363,13 +361,15 @@ namespace PressCenters.Data.Migrations
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<string>("LongName");
-
                     b.Property<DateTime?>("ModifiedOn");
+
+                    b.Property<string>("Name");
 
                     b.Property<string>("ShortName");
 
-                    b.Property<string>("Website");
+                    b.Property<string>("TypeName");
+
+                    b.Property<string>("Url");
 
                     b.HasKey("Id");
 
