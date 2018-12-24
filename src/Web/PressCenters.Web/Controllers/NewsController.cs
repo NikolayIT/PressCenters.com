@@ -48,5 +48,16 @@
                         };
             return this.View(viewModel);
         }
+
+        public IActionResult ById(int id, string slug)
+        {
+            var news = this.newsRepository.All().Where(x => x.Id == id).To<NewsViewModel>().FirstOrDefault();
+            if (news == null)
+            {
+                return this.NotFound();
+            }
+
+            return this.View(news);
+        }
     }
 }

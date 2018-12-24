@@ -52,7 +52,7 @@
     <div class="container clearfix">
         <div class="float-left">
             <h1>PressCenters.com</h1>
-            <p class="lead">@this.ViewData["Title"]</p>
+            <p class="lead">@(this.ViewData["SubTitle"] ?? "Всички прессъобщения на едно място")</p>
         </div>
         <div class="float-right text-center">
             <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -71,7 +71,7 @@
         <partial name="_CookieConsentPartial" />
         <main role="main" class="pb-3">
             <div class="row">
-                <div class="col-lg-8 g-mb-50 g-mb-0--lg">
+                <div class="col-lg-8 g-mb-30 g-mb-0--lg">
                     @this.RenderBody()
                 </div>
                 <!-- Sidebar -->

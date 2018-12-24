@@ -1,0 +1,24 @@
+﻿@model PressCenters.Web.ViewModels.News.NewsViewModel
+@{
+    this.ViewData["Title"] = Model.Title;
+}
+
+<h2 class="g-mb-15">@Model.Title</h2>
+
+<div class="media g-font-size-12 g-color-gray-dark-v4 g-mb-20">
+    <div class="media-body align-self-center">
+        <a href="@Model.SourceUrl" taget="_blank">@Model.SourceName</a>
+        <span class="g-mx-6">/</span>
+        <span>@Model.CreatedOnAsString</span>
+        <span class="g-mx-6">/</span>
+        <a href="@Model.OriginalUrl" target="_blank">@Model.ShorterOriginalUrl</a>
+    </div>
+</div>
+
+<img class="img-fluid w-100 g-mb-20 g-mb-0--md" src="@Model.ImageUrl" alt="@Model.Title" title="@Model.Title">
+
+<hr />
+
+<div>
+    @Html.Raw(Model.Content) @* TODO: Sanitize! *@
+</div>

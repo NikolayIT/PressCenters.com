@@ -1,10 +1,9 @@
-﻿@using System.Globalization
-@model PressCenters.Web.ViewModels.News.NewsListViewModel
+﻿@model PressCenters.Web.ViewModels.News.NewsListViewModel
 @{
     this.ViewData["Title"] = "Всички прессъобщения на едно място";
     if (Model.CurrentPage != 1)
     {
-        this.ViewData["Title"] = "Актуални прессъобщения, страница " + Model.CurrentPage;
+        this.ViewData["Title"] = this.ViewData["SubTitle"] = "Актуални прессъобщения, страница " + Model.CurrentPage;
     }
 }
 
@@ -32,7 +31,7 @@
                     </span>
                 </li>
                 <li class="list-inline-item ml-auto">
-                    <span class="g-color-gray-dark-v5">@news.CreatedOn.ToString("ddd, dd MMM yyyy HH:mm", new CultureInfo("bg-BG"))</span>
+                    <span class="g-color-gray-dark-v5">@news.CreatedOnAsString</span>
                 </li>
             </ul>
         </div>
