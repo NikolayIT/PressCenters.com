@@ -1,6 +1,7 @@
 ﻿namespace PressCenters.Common
 {
     using System;
+    using System.Text.RegularExpressions;
 
     public static class StringExtensions
     {
@@ -31,6 +32,11 @@
         {
             int.TryParse(input, out var integerValue);
             return integerValue;
+        }
+
+        public static string StripHtml(this string input)
+        {
+            return Regex.Replace(input, "<.*?>", string.Empty);
         }
     }
 }

@@ -1,91 +1,61 @@
-﻿@{
-    this.ViewData["Title"] = "Home Page";
+﻿@using System.Globalization
+@model PressCenters.Web.ViewModels.Home.IndexViewModel
+@{
+    this.ViewData["Title"] = "Прессъобщения";
 }
 
 
-@for (int i = 0; i < 5; i++)
+@foreach (var news in this.Model.News)
 {
-    <!-- Article -->
-    <article class="g-mb-50">
-        <figure class="g-pos-rel">
-            <img class="img-fluid w-100 g-mb-20" src="../../assets/img-temp/600x450/img8.jpg" alt="Image description">
-            <figcaption class="g-pos-abs g-top-20 g-left-20">
-                <a class="btn btn-sm u-btn-yellow rounded-0" href="#!">Web Design</a>
-            </figcaption>
-        </figure>
+    <article class="g-mb-20 clearfix">
+        <div class="g-pos-rel px-2">
+            <h2 class="h4">
+                <a class="u-link-v5 g-color-black g-color-primary--hover" href="#!">@news.SourceShortName: @news.Title</a>
+            </h2>
+            
+            <div class="media">
+                <a class="d-flex mr-2">
+                    <img class="rounded g-width-100 g-height-60" src="@news.ImageUrl" alt="@news.Title" title="@news.Title" />
+                </a>
+                <p class="g-color-gray-dark-v4">
+                    @news.ShortContent
+                </p>
+            </div>
 
-        <div class="g-pos-rel px-4">
-            <ul class="d-flex justify-content-start align-items-end list-inline g-color-gray-dark-v5 g-font-size-13 g-mt-minus-45 g-mb-20">
-                <li class="list-inline-item mr-3">
-                    <img class="g-width-40 g-height-40 g-brd-around g-brd-2 g-brd-white rounded-circle mb-2" src="../../assets/img-temp/100x100/img6.jpg" alt="Image description">
-                    <h4 class="h6 g-font-weight-600 mb-0">
-
-                        <a class="g-color-gray-dark-v4" href="#!">James Woodman</a>
-
-                    </h4>
-                </li>
+            <ul class="d-flex justify-content-start align-items-end list-inline g-color-gray-dark-v5 g-font-size-13 g-mb-10">
                 <li class="list-inline-item">
-                    <span class="g-font-size-13">July 12, 2017</span>
+                    <span class="g-font-size-13">
+                        <a href="@news.SourceUrl" target="_blank">@news.SourceName</a>
+                    </span>
                 </li>
                 <li class="list-inline-item ml-auto">
-                    <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="#!">
-                        <i class="align-middle mr-1 icon-medical-022 u-line-icon-pro"></i>
-                    </a>
-                    <span class="g-color-gray-dark-v5">2.1k</span>
-                </li>
-                <li class="list-inline-item ml-3">
-                    <a class="u-link-v5 g-color-gray-dark-v5 g-color-primary--hover" href="#!">
-                        <i class="align-middle mr-1 icon-finance-206 u-line-icon-pro"></i>
-                    </a>
-                    <span class="g-color-gray-dark-v5">16</span>
+                    <span class="g-color-gray-dark-v5">@news.CreatedOn.ToString("ddd, dd MMM yyyy HH:mm", new CultureInfo("bg-BG"))</span>
                 </li>
             </ul>
-
-            <h2 class="h4">
-
-                <a class="u-link-v5 g-color-black g-color-primary--hover" href="#!">In the future, design principles won’t be about design</a>
-
-            </h2>
-
-            <p class="g-color-gray-dark-v4">
-                In an attempt to answer those questions, I poured over the biggest collections of design principles on the internet [1][2], and came to the following conclusion: corporate design principles are a set of shared guidelines that reflect the
-                core design values and vision of a company.
-            </p>
-
-            <a class="g-font-size-12 text-uppercase g-font-weight-600 g-color-gray-dark-v4 g-color-primary--hover" href="#!">Read More</a>
         </div>
     </article>
-    <!-- End Article -->
 }
+
 <!-- Pagination -->
-<nav id="stickyblock-end" class="text-center" aria-label="Page Navigation">
-    <ul class="list-inline">
-        <li class="list-inline-item float-left g-hidden-xs-down">
-            <a class="u-pagination-v1__item u-pagination-v1-4 g-brd-gray-light-v3 g-brd-primary--hover g-rounded-50 g-pa-7-16" href="#!" aria-label="Previous">
-                <span aria-hidden="true">
-
-                    <i class="fa fa-angle-left g-mr-5"></i> Previous
-
-                </span>
-                <span class="sr-only">Previous</span>
+<nav aria-label="Страници новини">
+    <ul class="pagination justify-content-center">
+        <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1" aria-label="Предишна">
+                <span aria-hidden="true">&laquo;</span>
             </a>
         </li>
-        <li class="list-inline-item">
-            <a class="u-pagination-v1__item u-pagination-v1-4 u-pagination-v1-4--active g-rounded-50 g-pa-7-14" href="#!">1</a>
-        </li>
-        <li class="list-inline-item">
-            <a class="u-pagination-v1__item u-pagination-v1-4 g-rounded-50 g-pa-7-14" href="#!">2</a>
-        </li>
-        <li class="list-inline-item float-right g-hidden-xs-down">
-            <a class="u-pagination-v1__item u-pagination-v1-4 g-brd-gray-light-v3 g-brd-primary--hover g-rounded-50 g-pa-7-16" href="#!" aria-label="Next">
-                <span aria-hidden="true">
-
-                    Next <i class="fa fa-angle-right g-ml-5"></i>
-
-                </span>
-                <span class="sr-only">Next</span>
+        <li class="page-item active"><a class="page-link" href="/News/List/1">1</a></li>
+        <li class="page-item"><a class="page-link" href="/News/List/2">2</a></li>
+        <li class="page-item"><a class="page-link" href="/News/List/3">3</a></li>
+        <li class="page-item"><a class="page-link" href="/News/List/4">4</a></li>
+        <li class="page-item"><a class="page-link" href="/News/List/5">...</a></li>
+        <li class="page-item"><a class="page-link" href="/News/List/1310">1310</a></li>
+        <li class="page-item"><a class="page-link" href="/News/List/1311">1311</a></li>
+        <li class="page-item"><a class="page-link" href="/News/List/1312">1312</a></li>
+        <li class="page-item">
+            <a class="page-link" href="/News/List/2" aria-label="Следваща">
+                <span aria-hidden="true">&raquo;</span>
             </a>
         </li>
     </ul>
 </nav>
-<!-- End Pagination -->
