@@ -13,7 +13,6 @@
             var news = provider.GetMainNews();
             Assert.NotNull(news.Title);
             Assert.True(news.Title.Length >= 10);
-            Assert.True(news.ShortTitle.Length >= 10);
             Assert.Contains("news.bg", news.OriginalUrl);
             Assert.StartsWith("http", news.OriginalUrl);
             Assert.StartsWith("http", news.ImageUrl);

@@ -14,16 +14,15 @@
             var urlElement = document.QuerySelector("#content-main .main-news a.main-thumb");
             var url = urlElement.Attributes["href"].Value.Trim();
 
-            var shortTitleElement = document.QuerySelector("#content-main .main-news a.main-thumb .news-info p");
-            var shortTitle = shortTitleElement?.TextContent?.Trim();
+            //// var shortTitleElement = document.QuerySelector("#content-main .main-news a.main-thumb .news-info p");
+            //// var shortTitle = shortTitleElement?.TextContent?.Trim();
 
             var imageElement = document.QuerySelector("#content-main .main-news a.main-thumb img.thumb");
             var imageUrl = imageElement?.Attributes["src"]?.Value?.Trim();
 
             var news = new RemoteMainNews
             {
-                Title = title,
-                ShortTitle = shortTitle,
+                Title = title, // $"{title} ({shortTitle})"
                 OriginalUrl = url,
                 ImageUrl = imageUrl,
             };

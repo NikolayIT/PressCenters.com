@@ -55,7 +55,6 @@
                         OriginalUrl = news.OriginalUrl,
                         ImageUrl = news.ImageUrl,
                         SourceId = source.Id,
-                        ShortTitle = news.ShortTitle,
                     });
             }
 

@@ -19,7 +19,6 @@
             var news = new RemoteMainNews
             {
                 Title = title,
-                ShortTitle = null,
                 OriginalUrl = url,
                 ImageUrl = imageUrl,
             };
