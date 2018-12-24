@@ -3,6 +3,7 @@
     using System;
     using System.Diagnostics;
     using System.IO;
+    using System.Linq;
 
     using CommandLine;
 
@@ -21,6 +22,7 @@
     using PressCenters.Data.Seeding;
     using PressCenters.Services.Data;
     using PressCenters.Services.Messaging;
+    using PressCenters.Services.Sources.BgInstitutions;
 
     public static class Program
     {
@@ -52,8 +54,37 @@
         private static int SandboxCode(SandboxOptions options, IServiceProvider serviceProvider)
         {
             var sw = Stopwatch.StartNew();
-            var settingsService = serviceProvider.GetService<ISettingsService>();
-            Console.WriteLine($"Count of settings: {settingsService.GetCount()}");
+
+            var newsRepository = serviceProvider.GetService<IDeletableEntityRepository<News>>();
+            var sourcesRepository = serviceProvider.GetService<IDeletableEntityRepository<Source>>();
+            var source = sourcesRepository.AllWithDeleted().FirstOrDefault(x => x.TypeName == "PressCenters.Services.Sources.BgInstitutions.MvrBgSource");
+            var sourceProvider = new MvrBgSource();
+            Console.WriteLine("Starting GetAllPublications...");
+            var news = sourceProvider.GetAllPublications();
+            Console.WriteLine("GetAllPublications done.");
+            foreach (var remoteNews in news)
+            {
+                if (newsRepository.AllWithDeleted().Any(x => x.SourceId == source.Id && x.RemoteId == remoteNews.RemoteId))
+                {
+                    // Already exists
+                    continue;
+                }
+
+                var dbNews = new News
+                           {
+                               Title = remoteNews.Title,
+                               OriginalUrl = remoteNews.OriginalUrl,
+                               ImageUrl = remoteNews.ImageUrl,
+                               Content = remoteNews.Content,
+                               CreatedOn = remoteNews.PostDate,
+                               Source = source,
+                               RemoteId = remoteNews.RemoteId,
+                           };
+                newsRepository.AddAsync(dbNews).GetAwaiter().GetResult();
+            }
+
+            newsRepository.SaveChangesAsync().GetAwaiter().GetResult();
+
             Console.WriteLine(sw.Elapsed);
             return 0;
         }
@@ -85,6 +116,7 @@
             services.AddTransient<IEmailSender, NullMessageSender>();
             services.AddTransient<ISmsSender, NullMessageSender>();
             services.AddTransient<ISettingsService, SettingsService>();
+            services.AddScoped<IWorkerTasksDataService, WorkerTasksDataService>();
         }
     }
 }

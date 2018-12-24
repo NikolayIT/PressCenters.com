@@ -39,6 +39,7 @@
     <ProjectReference Include="..\..\Services\PressCenters.Services.Data\PressCenters.Services.Data.csproj" />
     <ProjectReference Include="..\..\Services\PressCenters.Services.Mapping\PressCenters.Services.Mapping.csproj" />
     <ProjectReference Include="..\..\Services\PressCenters.Services.Messaging\PressCenters.Services.Messaging.csproj" />
+    <ProjectReference Include="..\..\Services\PressCenters.Services.Sources\PressCenters.Services.Sources.csproj" />
     <ProjectReference Include="..\..\Services\PressCenters.Services\PressCenters.Services.csproj" />
   </ItemGroup>
 

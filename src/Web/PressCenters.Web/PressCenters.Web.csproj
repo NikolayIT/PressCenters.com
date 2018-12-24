@@ -37,4 +37,8 @@
     <ProjectReference Include="..\..\Services\PressCenters.Services\PressCenters.Services.csproj" />
     <ProjectReference Include="..\PressCenters.Web.Infrastructure\PressCenters.Web.Infrastructure.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\images\sources\" />
+  </ItemGroup>
 </Project>
