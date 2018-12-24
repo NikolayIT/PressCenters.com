@@ -59,7 +59,7 @@
         {
             var provider = new MvrBgSource();
             var result = provider.GetLatestPublications();
-            Assert.True(result.News.Count() >= 8);
+            Assert.Equal(8, result.News.Count());
         }
     }
 }

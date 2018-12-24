@@ -13,7 +13,7 @@
             var address = "http://www.government.bg/bg/prestsentar/novini";
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll(".articles .item a").Select(
-                x => this.NormalizeUrl(x.Attributes["href"].Value, "http://www.government.bg/")).ToList();
+                x => this.NormalizeUrl(x.Attributes["href"].Value, "http://www.government.bg/")).Distinct().ToList();
             var news = links.Select(this.ParseRemoteNews).ToList();
             return new RemoteDataResult { News = news, };
         }

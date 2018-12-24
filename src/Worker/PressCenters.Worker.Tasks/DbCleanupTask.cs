@@ -4,6 +4,7 @@
     using System.Threading.Tasks;
 
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
 
     using PressCenters.Data.Common;
     using PressCenters.Data.Models;
@@ -13,21 +14,24 @@
     {
         private readonly IDbQueryRunner queryRunner;
 
+        private ILogger<DbCleanupTask> logger;
+
         public DbCleanupTask(IServiceProvider serviceProvider)
             : base(serviceProvider)
         {
             this.queryRunner = serviceProvider.GetService<IDbQueryRunner>();
+            this.logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<DbCleanupTask>();
         }
 
         protected override async Task<Output> DoWork(Input input)
         {
             await this.queryRunner.RunQueryAsync(
                 $"ALTER INDEX [PK_{nameof(News)}] ON [dbo].[{nameof(News)}] REBUILD;");
-            Console.WriteLine($"Index [PK_{nameof(News)}] rebuilt.");
+            this.logger.LogInformation($"Index [PK_{nameof(News)}] rebuilt.");
 
             await this.queryRunner.RunQueryAsync(
                 $"ALTER INDEX [PK_{nameof(MainNews)}] ON [dbo].[{nameof(MainNews)}] REBUILD;");
-            Console.WriteLine($"Index [PK_{nameof(MainNews)}] rebuilt.");
+            this.logger.LogInformation($"Index [PK_{nameof(MainNews)}] rebuilt.");
 
             return new Output();
         }

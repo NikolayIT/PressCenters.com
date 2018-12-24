@@ -42,7 +42,7 @@
         {
             var provider = new GovernmentBgSource();
             var result = provider.GetLatestPublications();
-            Assert.True(result.News.Count() >= 12);
+            Assert.Equal(12, result.News.Count());
         }
     }
 }

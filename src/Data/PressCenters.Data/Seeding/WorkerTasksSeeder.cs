@@ -33,6 +33,24 @@
                     dbContext.WorkerTasks.Add(workerTask);
                 }
             }
+
+            // Sources workers
+            const string LatestPublicationsTaskName = "PressCenters.Worker.Tasks.GetLatestPublicationsTask";
+            var sources = dbContext.Sources.Where(x => !x.IsDeleted).ToList();
+            foreach (var source in sources)
+            {
+                var parameters = $"{{\"Recreate\":true,\"TypeName\":\"{source.TypeName}\"}}";
+                if (!dbContext.WorkerTasks.Any(x => x.TypeName == LatestPublicationsTaskName && x.Parameters == parameters))
+                {
+                    dbContext.WorkerTasks.Add(
+                        new WorkerTask
+                        {
+                            TypeName = LatestPublicationsTaskName,
+                            Parameters = parameters,
+                            Priority = 5000,
+                        });
+                }
+            }
         }
     }
 }

@@ -31,17 +31,17 @@
 
         protected override async Task<Output> DoWork(Input input)
         {
-            var instance = ReflectionHelpers.GetInstance<BaseSource>(input.SourceTypeName);
+            var source = this.sourcesRepository.AllWithDeleted().FirstOrDefault(x => x.TypeName == input.TypeName);
+            if (source == null)
+            {
+                return new Output { Ok = false, Error = "Source type not found in the database." };
+            }
+
+            var instance = ReflectionHelpers.GetInstance<BaseSource>(input.TypeName);
             var result = instance.GetLatestPublications();
             var added = 0;
             foreach (var remoteNews in result.News)
             {
-                var source = this.sourcesRepository.AllWithDeleted().FirstOrDefault(x => x.TypeName == input.SourceTypeName);
-                if (source == null)
-                {
-                    return new Output { Ok = false, Error = "Source type not found in the database." };
-                }
-
                 if (this.newsRepository.AllWithDeleted().Any(x => x.SourceId == source.Id && x.RemoteId == remoteNews.RemoteId))
                 {
                     // Already exists
@@ -60,6 +60,7 @@
                                RemoteId = remoteNews.RemoteId,
                            };
                 await this.newsRepository.AddAsync(news);
+                this.logger.LogInformation($"New news: {source.ShortName}: \"{news.Title}\"");
                 added++;
             }
 
@@ -74,7 +75,7 @@
 
         public class Input : BaseTaskInput
         {
-            public string SourceTypeName { get; set; }
+            public string TypeName { get; set; }
         }
 
         public class Output : BaseTaskOutput
