@@ -9,20 +9,14 @@
 
     public class MhGovernmentBgNewsSourceTests
     {
-        [Fact]
-        public void ExtractIdFromPressUrlShouldWorkCorrectly()
+        [Theory]
+        [InlineData("http://www.mh.government.bg/bg/novini/epidemichna-obstanovka/spravka-za-epidemichnata-obstanovka-v-strana16-03", "epidemichna-obstanovka/spravka-za-epidemichnata-obstanovka-v-strana16-03")]
+        [InlineData("http://www.mh.government.bg/bg/novini/aktualno/komisiyata-po-izgotvyane-na-nacionalna-zdravna-kar/", "aktualno/komisiyata-po-izgotvyane-na-nacionalna-zdravna-kar")]
+        public void ExtractIdFromPressUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new MhGovernmentBgNewsSource();
-            var result = provider.ExtractIdFromUrl("http://www.mh.government.bg/bg/novini/epidemichna-obstanovka/spravka-za-epidemichnata-obstanovka-v-strana16-03");
-            Assert.Equal("epidemichna-obstanovka/spravka-za-epidemichnata-obstanovka-v-strana16-03", result);
-        }
-
-        [Fact]
-        public void ExtractIdFromPressUrlShouldWorkCorrectlyWithSlashAtTheEnd()
-        {
-            var provider = new MhGovernmentBgNewsSource();
-            var result = provider.ExtractIdFromUrl("http://www.mh.government.bg/bg/novini/aktualno/komisiyata-po-izgotvyane-na-nacionalna-zdravna-kar/");
-            Assert.Equal("aktualno/komisiyata-po-izgotvyane-na-nacionalna-zdravna-kar", result);
+            var result = provider.ExtractIdFromUrl(url);
+            Assert.Equal(id, result);
         }
 
         [Fact]
