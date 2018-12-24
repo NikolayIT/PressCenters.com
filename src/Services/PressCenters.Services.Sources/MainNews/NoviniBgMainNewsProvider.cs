@@ -1,7 +1,5 @@
 ﻿namespace PressCenters.Services.Sources.MainNews
 {
-    using System;
-
     public class NoviniBgMainNewsProvider : BaseMainNewsProvider
     {
         private const string BaseUrl = "https://novini.bg";

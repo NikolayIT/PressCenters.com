@@ -3,7 +3,6 @@
     using System;
     using System.Linq;
 
-    using PressCenters.Services.Sources;
     using PressCenters.Services.Sources.BgInstitutions;
 
     using Xunit;

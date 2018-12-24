@@ -2,8 +2,6 @@
 {
     using System;
 
-    using AutoMapper;
-
     using PressCenters.Data.Models;
     using PressCenters.Services.Mapping;
 
