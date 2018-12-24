@@ -243,8 +243,6 @@ namespace PressCenters.Data.Migrations
 
                     b.Property<string>("OriginalUrl");
 
-                    b.Property<string>("ShortTitle");
-
                     b.Property<int>("SourceId");
 
                     b.Property<string>("Title");
@@ -306,8 +304,6 @@ namespace PressCenters.Data.Migrations
                     b.Property<string>("OriginalUrl");
 
                     b.Property<string>("RemoteId");
-
-                    b.Property<string>("ShortContent");
 
                     b.Property<int?>("SourceId");
 

@@ -10,7 +10,7 @@ using PressCenters.Data;
 namespace PressCenters.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20181224163149_InitialCreate")]
+    [Migration("20181224174616_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -245,8 +245,6 @@ namespace PressCenters.Data.Migrations
 
                     b.Property<string>("OriginalUrl");
 
-                    b.Property<string>("ShortTitle");
-
                     b.Property<int>("SourceId");
 
                     b.Property<string>("Title");
@@ -308,8 +306,6 @@ namespace PressCenters.Data.Migrations
                     b.Property<string>("OriginalUrl");
 
                     b.Property<string>("RemoteId");
-
-                    b.Property<string>("ShortContent");
 
                     b.Property<int?>("SourceId");
 
