@@ -1,0 +1,99 @@
+﻿@using System.Globalization
+@model PressCenters.Web.ViewModels.News.NewsListViewModel
+@{
+    this.ViewData["Title"] = "Всички прессъобщения на едно място";
+    if (Model.CurrentPage != 1)
+    {
+        this.ViewData["Title"] = "Актуални прессъобщения, страница " + Model.CurrentPage;
+    }
+}
+
+@foreach (var news in this.Model.News)
+{
+    <article class="g-mb-20 clearfix">
+        <div class="g-pos-rel px-2">
+            <h2 class="h4">
+                <a class="u-link-v5 g-color-black g-color-primary--hover" href="@news.Url">@news.SourceShortName: @news.Title</a>
+            </h2>
+
+            <div class="media">
+                <a class="d-flex mr-2">
+                    <img class="rounded g-width-100 g-height-60" src="@news.ImageUrl" alt="@news.Title" title="@news.Title" />
+                </a>
+                <p class="g-color-gray-dark-v4">
+                    @news.ShortContent
+                </p>
+            </div>
+
+            <ul class="d-flex justify-content-start align-items-end list-inline g-color-gray-dark-v5 g-font-size-13 g-mb-10">
+                <li class="list-inline-item">
+                    <span class="g-font-size-13">
+                        <a href="@news.OriginalUrl" target="_blank">@news.SourceName</a>
+                    </span>
+                </li>
+                <li class="list-inline-item ml-auto">
+                    <span class="g-color-gray-dark-v5">@news.CreatedOn.ToString("ddd, dd MMM yyyy HH:mm", new CultureInfo("bg-BG"))</span>
+                </li>
+            </ul>
+        </div>
+    </article>
+}
+
+<!-- Pagination -->
+<nav aria-label="Страници новини">
+    <ul class="pagination justify-content-center">
+        @if (Model.CurrentPage > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-controller="News" asp-action="List" asp-route-id="@Model.PreviousPage" aria-label="Предишна">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+        }
+        @{
+            const int MorePagesToShow = 3;
+            var pagesToShow = new List<int>();
+            for (var i = 1; i <= MorePagesToShow; i++)
+            {
+                pagesToShow.Add(i);
+            }
+            for (var i = Model.CurrentPage - MorePagesToShow; i <= Model.CurrentPage + MorePagesToShow; i++)
+            {
+                if (i > 0)
+                {
+                    pagesToShow.Add(i);
+                }
+            }
+            for (var i = Model.PagesCount - MorePagesToShow + 1; i <= Model.PagesCount; i++)
+            {
+                if (i > 0)
+                {
+                    pagesToShow.Add(i);
+                }
+            }
+            pagesToShow = pagesToShow.Where(x => x <= Model.PagesCount).Distinct().OrderBy(x => x).ToList();
+        }
+        @for (var i = 0; i < pagesToShow.Count; i++)
+        {
+            var className = string.Empty;
+            var pageNumber = pagesToShow[i];
+            if (pageNumber == Model.CurrentPage)
+            {
+                className = "active";
+            }
+            if (i > 0 && pageNumber - 1 != pagesToShow[i - 1])
+            {
+                <li class="page-item @className"><a class="page-link" asp-controller="News" asp-action="List" asp-route-id="@(pagesToShow[i - 1] + 1)">...</a></li>
+            }
+            <li class="page-item @className"><a class="page-link" asp-controller="News" asp-action="List" asp-route-id="@pageNumber">@pageNumber</a></li>
+        }
+        @if (Model.CurrentPage < Model.PagesCount)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-controller="News" asp-action="List" asp-route-id="@Model.NextPage" aria-label="Следваща">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        }
+    </ul>
+</nav>

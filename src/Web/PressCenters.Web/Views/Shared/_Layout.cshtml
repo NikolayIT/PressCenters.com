@@ -20,7 +20,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PressCenters.com</a>
+                <a class="navbar-brand" href="/">PressCenters.com</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -29,16 +29,19 @@
                     <partial name="_LoginPartial" />
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Начало</a>
+                            <a class="nav-link text-dark" href="/">Начало</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Източници</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Sources" asp-action="Index">Източници</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Статистика</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Stats" asp-action="Index">Статистика</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Контакти</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Contacts" asp-action="Index">Контакти</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
                 </div>
@@ -49,7 +52,7 @@
     <div class="container clearfix">
         <div class="float-left">
             <h1>PressCenters.com</h1>
-            <p class="lead">Всички прессъобщения на едно място</p>
+            <p class="lead">@this.ViewData["Title"]</p>
         </div>
         <div class="float-right text-center">
             <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>

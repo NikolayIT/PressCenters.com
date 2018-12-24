@@ -130,7 +130,7 @@
 
             app.UseMvc(routes =>
             {
-                routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                routes.MapRoute("default", "{controller=News}/{action=List}/{id?}");
             });
         }
     }

@@ -5,10 +5,18 @@
 
     using PressCenters.Common;
     using PressCenters.Data.Models;
+    using PressCenters.Services;
     using PressCenters.Services.Mapping;
 
     public class NewsViewModel : IMapFrom<News>
     {
+        private readonly ISlugGenerator slugGenerator;
+
+        public NewsViewModel()
+        {
+            this.slugGenerator = new SlugGenerator();
+        }
+
         public int Id { get; set; }
 
         public string Title { get; set; }
@@ -32,8 +40,8 @@
 
         public string SourceName { get; set; }
 
-        public string SourceUrl { get; set; }
-
         public DateTime CreatedOn { get; set; }
+
+        public string Url => $"/News/{this.Id}/{this.slugGenerator.GenerateSlug(this.Title)}";
     }
 }
