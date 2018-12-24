@@ -2,6 +2,7 @@
 {
     using System;
     using System.Net;
+    using System.Text.RegularExpressions;
 
     using PressCenters.Common;
     using PressCenters.Data.Models;
@@ -27,8 +28,13 @@
         {
             get
             {
+                // TODO: Extract as a service
                 var strippedContent = WebUtility.HtmlDecode(this.Content?.StripHtml() ?? string.Empty);
-                return strippedContent?.Substring(0, Math.Min(230, strippedContent.Length)) + "...";
+                strippedContent = strippedContent.Replace("\n", " ");
+                strippedContent = strippedContent.Replace("\t", " ");
+                strippedContent = Regex.Replace(strippedContent, @"\s+", " ").Trim();
+                var shortContent = strippedContent.Substring(0, Math.Min(235, strippedContent.Length)) + "...";
+                return shortContent;
             }
         }
 
