@@ -25,7 +25,7 @@
             var news = provider.ParseRemoteNews(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Рязката промяна на времето крие опасности на пътя", news.Title);
-            Assert.Equal("Пътна полиция съветва: Поемайте на път добре подготвени", news.ShortContent);
+            Assert.Contains("Пътна полиция съветва: Поемайте на път добре подготвени", news.Content);
             Assert.Contains("Времето осезателно се промени днес, за утре се очакват значителни валежи от дъжд в южните райони, и от сняг", news.Content);
             Assert.Contains("При попадане в рискова ситуация сигнализирайте първо на телефона за спешни случаи 112, след това потърсете за съдействие близки и приятели.", news.Content);
             Assert.DoesNotContain("https://www.mvr.bg/GetImage.ashx?id=d4f8176a-def9-42d8-8f24-ce0d3c503554&height=460&width=1260", news.Content);
@@ -45,7 +45,6 @@
             var news = provider.ParseRemoteNews(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("72-годишен е отведен в столичното Първо районно управление", news.Title);
-            Assert.Null(news.ShortContent);
             Assert.Contains("В късния следобед днес 72-годишен мъж дошъл на входа на Президентството и поискал среща.", news.Content);
             Assert.Contains("Образувано е досъдебно производство, изясняват се всички обстоятелства по случая.", news.Content);
             Assert.Null(news.ImageUrl);

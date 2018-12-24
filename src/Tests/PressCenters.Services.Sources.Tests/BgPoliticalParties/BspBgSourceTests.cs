@@ -28,13 +28,12 @@
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Корнелия Нинова: 6 партии внесохме 6000 подписа за отличен 6 на изборите", news.Title);
             Assert.Equal("11649", news.RemoteId);
-            Assert.Equal("Въпросът с кого ще управляваме ще го решаваме с питане до цялата партия", news.ShortContent);
             Assert.Equal(new DateTime(2017, 2, 8, 8, 0, 0), news.PostDate);
             Assert.Contains("6 партии в коалиция", news.Content);
             Assert.Contains("Корнелия Нинова подчерта, че", news.Content);
             Assert.Contains("политики; икономика, здравеопазване, социална политика и сигурност.", news.Content);
+            Assert.Contains("Въпросът с кого ще управляваме ще го решаваме с питане до цялата партия", news.Content);
             Assert.DoesNotContain("Корнелия Нинова: 6 партии внесохме 6000 подписа за отличен 6 на изборите", news.Content);
-            Assert.DoesNotContain("<h4>Въпросът с кого ще управляваме ще го решаваме с питане до цялата партия", news.Content);
             Assert.DoesNotContain("Фев 08, 2017", news.Content);
             Assert.DoesNotContain("https://apis.google.com/js/platform.js", news.Content);
             Assert.Equal("http://bsp.bg/files/news/small/19d23c6b4a492a0f6d511624a45f6286.jpg", news.ImageUrl);

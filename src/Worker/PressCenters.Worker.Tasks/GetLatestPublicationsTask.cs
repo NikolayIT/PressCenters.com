@@ -51,7 +51,6 @@
                 var news = new News
                            {
                                Title = remoteNews.Title,
-                               ShortContent = remoteNews.ShortContent,
                                OriginalUrl = remoteNews.OriginalUrl,
                                ImageUrl = remoteNews.ImageUrl,
                                Content = remoteNews.Content,

@@ -38,11 +38,7 @@
             var imageElement = document.QuerySelector("#image_source");
             var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"), "https://www.mvr.bg/")?.Trim();
 
-            var shortContentElement = document.QuerySelector(".article__container h4");
-            var shortContent = shortContentElement?.InnerHtml?.Trim();
-
             var contentElement = document.QuerySelector(".article__container");
-            this.RemoveRecursively(contentElement, shortContentElement);
             this.RemoveRecursively(contentElement, document.QuerySelector(".article__container div.row"));
             this.RemoveRecursively(contentElement, document.QuerySelector(".article__container script"));
             this.RemoveRecursively(contentElement, document.QuerySelector(".article__container .pull-right"));
@@ -56,7 +52,6 @@
                            Title = title,
                            Content = content,
                            PostDate = time,
-                           ShortContent = shortContent != string.Empty ? shortContent : null,
                            ImageUrl = imageUrl,
                        };
             return news;

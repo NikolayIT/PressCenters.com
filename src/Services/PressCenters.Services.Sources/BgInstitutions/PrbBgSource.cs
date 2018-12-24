@@ -47,7 +47,6 @@
                                Title = title,
                                Content = content,
                                PostDate = time,
-                               ShortContent = null,
                                ImageUrl = imageUrl,
                            };
             return news;

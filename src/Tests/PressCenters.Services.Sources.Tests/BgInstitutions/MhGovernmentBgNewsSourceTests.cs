@@ -27,7 +27,6 @@
             var news = provider.ParseRemoteNews(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Становище на пациентски организации „Заедно с теб“ относно ваксината „Пентаксим“", news.Title);
-            Assert.Null(news.ShortContent);
             Assert.Contains("Пациентски организации „Заедно с теб“", news.Content);
             Assert.Contains("Становище на пациентски организации „Заедно с теб“ относно ваксината „Пентаксим“", news.Content);
             Assert.Equal("http://www.mh.government.bg/static/images/Ministry_of_Health-heraldic.95741c3e92f7.svg", news.ImageUrl);
@@ -43,7 +42,6 @@
             var news = provider.ParseRemoteNews(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Справка за епидемичната обстановка в страната за периода 04.12.2015 г. - 10.01.2016 г.", news.Title);
-            Assert.Null(news.ShortContent);
             Assert.Contains("През изминалата седмица са регистрирани общо 6", news.Content);
             Assert.Contains("През изминалата седмица не са регистрирани хранителни взривове и взривове от вътреболнични инфекции.", news.Content);
             Assert.Equal("http://www.mh.government.bg/static/images/Ministry_of_Health-heraldic.95741c3e92f7.svg", news.ImageUrl);

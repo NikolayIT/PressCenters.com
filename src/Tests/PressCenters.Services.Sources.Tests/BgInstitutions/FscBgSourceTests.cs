@@ -28,7 +28,6 @@
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Решения от заседание на КФН на 21.01.2016 г.", news.Title);
             Assert.Equal("7988", news.RemoteId);
-            Assert.Null(news.ShortContent);
             Assert.Equal(new DateTime(2016, 1, 22).Date, news.PostDate.Date);
             Assert.Contains("На заседанието си на 21.01.2016 г. КФН реши", news.Content);
             Assert.Contains("Република Италия и Република Португалия.", news.Content);

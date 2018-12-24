@@ -28,7 +28,6 @@
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Коледна игра 2018", news.Title);
             Assert.Equal("2018/12/17/kolednaigra2018", news.RemoteId);
-            Assert.Null(news.ShortContent);
             Assert.Equal(new DateTime(2018, 12, 17), news.PostDate.Date);
             Assert.Contains("Днес, 17.12.2018, в навечерието на коледните и новогодишни празници стартираме традиционната ни", news.Content);
             Assert.Contains("Организаторът на „Коледната игра“ не е отговорен", news.Content);

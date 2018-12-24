@@ -34,7 +34,6 @@
                            {
                                Title = title,
                                OriginalUrl = url,
-                               ShortContent = null,
                                Content = content,
                                ImageUrl = imageUrl,
                                PostDate = time,

@@ -28,7 +28,6 @@
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Апелативна прокуратура – Бургас протестира решение на съда, с което е изменена присъдата и намалено наказанието на Кирил Х., причинил смъртта на мъж, работил в неговия ресторант", news.Title);
             Assert.Equal("aktualno/apelativna-prokuratura-burgas-protestira-reshe-174", news.RemoteId);
-            Assert.Null(news.ShortContent);
             Assert.Equal(new DateTime(2018, 12, 21), news.PostDate.Date);
             Assert.Contains("Със свое решение от 30.11.2018 г.", news.Content);
             Assert.Contains("Тази част от съдебното решение е протестирана", news.Content);

@@ -28,7 +28,6 @@
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Румен Радев: Сигурността на европейските граждани започва от сигурността на границите на България", news.Title);
             Assert.Equal("3566", news.RemoteId);
-            Assert.Null(news.ShortContent);
             Assert.Equal(new DateTime(2017, 1, 30, 21, 11, 0), news.PostDate);
             Assert.Contains("Сигурността на европейските граждани започва от гарантирането", news.Content);
             Assert.Contains("Европейския парламент за предприетите", news.Content);

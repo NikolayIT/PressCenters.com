@@ -26,10 +26,6 @@
             var titleElement = document.QuerySelector(".post-content h2");
             var title = titleElement.TextContent.Trim();
 
-            var shortContentElement = document.QuerySelector(".post-content h4");
-            var shortContent = shortContentElement.TextContent.Trim();
-
-            // TODO: Extract month names (same as toplo.bg source)
             var bulgarianMonthNames = new List<string>
                                           {
                                               "януари", "февруари", "март", "април", "май", "юни", "юли", "август",
@@ -56,7 +52,6 @@
             this.RemoveRecursively(contentElement, document.QuerySelector(".post-content h2"));
             this.RemoveRecursively(contentElement, document.QuerySelector(".post-content .social-buttons"));
             this.RemoveRecursively(contentElement, document.QuerySelector(".post-content .item_meta"));
-            this.RemoveRecursively(contentElement, document.QuerySelector(".post-content h4"));
             var content = contentElement.InnerHtml.Trim();
 
             var imageElement = document.QuerySelector(".post-poster img");
@@ -69,7 +64,6 @@
                                Title = title,
                                Content = content,
                                PostDate = time,
-                               ShortContent = shortContent,
                                ImageUrl = imageUrl,
                            };
             return news;

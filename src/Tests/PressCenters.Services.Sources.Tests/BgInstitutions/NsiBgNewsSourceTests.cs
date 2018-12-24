@@ -37,7 +37,6 @@
             var news = provider.ParseRemoteNews(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Министерският съвет прие Националната статистическа програма за 2016 година", news.Title);
-            Assert.Null(news.ShortContent);
             Assert.Contains("На заседание, проведено на 20 януари 2016", news.Content);
             Assert.Contains("След обнародването в „Държавен вестник” документите ще бъдат публикувани на интернет сайта на НСИ.", news.Content);
             Assert.DoesNotContain("___NSILogo_117.jpg", news.Content);
@@ -54,7 +53,6 @@
             var news = provider.ParseRemoteNews(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Дейност на местата за настаняване през ноември 2015 година", news.Title);
-            Assert.Null(news.ShortContent);
             Assert.Contains("През ноември 2015 г. в страната са функционирали", news.Content);
             Assert.Contains("или с 0.8% повече в сравнение с ноември 2014 година.", news.Content);
             Assert.Equal("http://www.nsi.bg/sites/default/files/styles/medium/public/files/events/images/___NSILogo_117.jpg", news.ImageUrl);
@@ -70,7 +68,6 @@
             var news = provider.ParseRemoteNews(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Ключови показатели за България (към 30.12.2015 г.)", news.Title);
-            Assert.Null(news.ShortContent);
             Assert.Contains("http://www.nsi.bg/sites/default/files/files/pressreleases/KeyInd2015-12_2U0QR4H.pdf", news.Content);
             Assert.Equal("http://www.nsi.bg/sites/default/files/styles/medium/public/files/events/images/___NSILogo_117.jpg", news.ImageUrl);
             Assert.Equal(new DateTime(2015, 12, 30, 11, 0, 0), news.PostDate);

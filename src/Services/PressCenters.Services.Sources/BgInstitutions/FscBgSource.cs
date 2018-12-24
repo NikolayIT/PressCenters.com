@@ -42,7 +42,6 @@
                 OriginalUrl = url,
                 RemoteId = this.ExtractIdFromUrl(url),
                 PostDate = time,
-                ShortContent = null,
                 Content = contentElement.InnerHtml.Trim(),
                 ImageUrl = this.NormalizeUrl(imageUrl, "http://www.fsc.bg/"),
             };

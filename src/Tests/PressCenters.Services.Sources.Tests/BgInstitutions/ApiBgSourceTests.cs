@@ -33,7 +33,6 @@
             var news = provider.ParseRemoteNews(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("На 31 януари изтича валидността на годишните винетки за 2015 г.", news.Title);
-            Assert.Null(news.ShortContent);
             Assert.Contains("На дирекциите „Социално подпомогане“ досега са предоставени безплатни", news.Content);
             Assert.Contains("Пълният списък на дистрибуторската мрежа е публикуван на интернет страницата на АПИ", news.Content);
             Assert.True(!news.Content.Contains("16e9043a49410f09048c7f65c06248bd_f4527.jpg"));
@@ -50,7 +49,6 @@
             var news = provider.ParseRemoteNews(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("8 фирми подадоха оферти за строителството на Лот 2 от АМ „Тракия“", news.Title);
-            Assert.Null(news.ShortContent);
             Assert.Contains("„Днешното събитие е плод на един огромен и сериозен труд на всички служители в агенцията”", news.Content);
             Assert.Contains("националния бюджет чрез Оперативна програма „Транспорт“ 2007-2013 г.", news.Content);
             Assert.True(!news.Content.Contains("Logo-OPT.png"));
