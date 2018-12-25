@@ -45,14 +45,7 @@
             var imageElement = document.QuerySelector(".print-content img");
             var imageUrl = imageElement?.GetAttribute("src");
 
-            var news = new RemoteNews
-                       {
-                           Title = title,
-                           Content = content,
-                           PostDate = time,
-                           ImageUrl = imageUrl,
-                       };
-            return news;
+            return new RemoteNews(title, content, time, imageUrl);
         }
     }
 }

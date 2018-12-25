@@ -55,20 +55,14 @@
             var time = DateTime.ParseExact(timeElement.TextContent, "dd/MM/yyyy", CultureInfo.InvariantCulture);
             time = time.Date == DateTime.UtcNow.Date ? DateTime.Now : time;
 
+            var imageUrl = document.QuerySelector("#content-right img")?.Attributes?["src"]?.Value;
+
             var contentElement = document.QuerySelector("#content-left-inner");
             contentElement.RemoveElement(titleElement);
             contentElement.RemoveElement(timeElement);
+            var content = contentElement.InnerHtml.Trim();
 
-            var imageUrl = document.QuerySelector("#content-right img")?.Attributes?["src"]?.Value;
-
-            var news = new RemoteNews
-                       {
-                           Title = title,
-                           PostDate = time,
-                           Content = contentElement.InnerHtml.Trim(),
-                           ImageUrl = imageUrl,
-                       };
-            return news;
+            return new RemoteNews(title, content, time, imageUrl);
         }
     }
 }

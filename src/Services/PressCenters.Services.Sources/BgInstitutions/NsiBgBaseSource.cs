@@ -45,15 +45,8 @@
 
             var timeElement = document.QuerySelector(".submitted span");
             var time = DateTime.Parse(timeElement.Attributes["content"].Value);
-            var news = new RemoteNews
-                       {
-                           Title = title,
-                           Content = content,
-                           ImageUrl = imageUrl,
-                           PostDate = time,
-                       };
 
-            return news;
+            return new RemoteNews(title, content, time, imageUrl);
         }
 
         protected abstract string GetContent(IHtmlCollection<IElement> imageAndContent);

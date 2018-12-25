@@ -49,15 +49,7 @@
             var timeAsString = document.QuerySelector(".newsdate li time").Attributes["datetime"].Value;
             var time = DateTime.Parse(timeAsString);
 
-            var news = new RemoteNews
-                       {
-                           Title = title,
-                           Content = content,
-                           ImageUrl = imageUrl,
-                           PostDate = time,
-                       };
-
-            return news;
+            return new RemoteNews(title, content, time, imageUrl);
         }
 
         protected abstract string GetNewsListUrl();
