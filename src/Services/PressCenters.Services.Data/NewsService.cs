@@ -16,12 +16,12 @@
             this.newsRepository = newsRepository;
         }
 
-        public async Task AddAsync(RemoteNews remoteNews, int sourceId)
+        public async Task<bool> AddAsync(RemoteNews remoteNews, int sourceId)
         {
             if (this.newsRepository.AllWithDeleted().Any(x => x.SourceId == sourceId && x.RemoteId == remoteNews.RemoteId))
             {
                 // Already exists
-                return;
+                return false;
             }
 
             var dbNews = new News
@@ -37,6 +37,7 @@
 
             await this.newsRepository.AddAsync(dbNews);
             await this.newsRepository.SaveChangesAsync();
+            return true;
         }
     }
 }

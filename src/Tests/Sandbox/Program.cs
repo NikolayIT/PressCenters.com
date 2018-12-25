@@ -5,6 +5,7 @@
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
+    using System.Text;
 
     using CommandLine;
 
@@ -30,6 +31,7 @@
     {
         public static int Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.UTF8;
             Console.WriteLine($"{typeof(Program).Namespace} ({string.Join(" ", args)}) starts working...");
             var serviceCollection = new ServiceCollection();
             ConfigureServices(serviceCollection);
@@ -64,7 +66,7 @@
                 // Skip sources for testing purposes
                 if (new[] { 1, 7 }.Contains(source.Id))
                 {
-                    continue;
+                    // continue;
                 }
 
                 var sourceProvider = ReflectionHelpers.GetInstance<BaseSource>(source.TypeName);

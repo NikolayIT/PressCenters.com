@@ -1,8 +1,10 @@
 ﻿namespace PressCenters.Worker.Runner
 {
+    using System;
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
 
     using Microsoft.AspNetCore.Identity;
@@ -28,6 +30,17 @@
 #if DEBUG
             isService = false;
 #endif
+
+            if (isService)
+            {
+                var pathToExe = Process.GetCurrentProcess().MainModule.FileName;
+                var pathToContentRoot = Path.GetDirectoryName(pathToExe);
+                Directory.SetCurrentDirectory(pathToContentRoot);
+            }
+            else
+            {
+                Console.OutputEncoding = Encoding.UTF8;
+            }
 
             var builder = new HostBuilder().ConfigureLogging(
                 x =>

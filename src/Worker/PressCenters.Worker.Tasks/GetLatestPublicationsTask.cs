@@ -43,9 +43,11 @@
             var added = 0;
             foreach (var remoteNews in publications)
             {
-                await this.newsService.AddAsync(remoteNews, source.Id);
-                this.logger.LogInformation($"New news: {source.ShortName}: \"{remoteNews.Title}\"");
-                added++;
+                if (await this.newsService.AddAsync(remoteNews, source.Id))
+                {
+                    this.logger.LogInformation($"New news: {source.ShortName}: \"{remoteNews.Title}\"");
+                    added++;
+                }
             }
 
             return new Output { Added = added };

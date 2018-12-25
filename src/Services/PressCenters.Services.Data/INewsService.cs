@@ -6,6 +6,6 @@
 
     public interface INewsService
     {
-        Task AddAsync(RemoteNews remoteNews, int sourceId);
+        Task<bool> AddAsync(RemoteNews remoteNews, int sourceId);
     }
 }
