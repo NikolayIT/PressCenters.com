@@ -28,7 +28,6 @@
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
                 taskResult = new TOutput { Ok = false, Error = ex.ToString() };
             }
 

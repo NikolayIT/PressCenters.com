@@ -46,7 +46,7 @@
                 x =>
                 {
                     x.ClearProviders();
-                    x.AddProvider(new OneLineConsoleLoggerProvider());
+                    x.AddProvider(new OneLineConsoleLoggerProvider(!isService));
                 }).ConfigureServices(ConfigureServices);
 
             if (isService)

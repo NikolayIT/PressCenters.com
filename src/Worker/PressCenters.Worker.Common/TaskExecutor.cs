@@ -54,11 +54,6 @@
             {
                 await this.ExecuteNextTask();
 
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    Console.Title = "Idle";
-                }
-
                 // Wait 1 second
                 await Task.Delay(1000);
             }
@@ -117,11 +112,6 @@
                 return;
             }
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                Console.Title = $"[{DateTime.UtcNow}] {workerTask.TypeName}";
-            }
-
             this.logger.LogInformation($"{this.name} started work with task #{workerTask.Id}");
 
             // New scope is created for each task that's being executed
@@ -153,14 +143,14 @@
                                                   : stopwatch.Elapsed;
 
                         this.logger.LogInformation(
-                            $"Task {workerTask.Id} has completed successfully in {stopwatch.Elapsed} ({DateTime.UtcNow})");
+                            $"Task #{workerTask.Id} completed in {stopwatch.Elapsed} ({DateTime.UtcNow}) with result: {workerTask.Result}");
 
                         this.workerTasksData.Update(workerTask);
                     }
                     catch (Exception ex)
                     {
                         this.logger.LogError(
-                            $"{nameof(ITask.DoWork)} on task #{workerTask.Id} has thrown an exception: {ex}");
+                            $"Task #{workerTask.Id} has thrown an exception: {ex}");
 
                         workerTask.ProcessingComment = $"Error in {nameof(ITask.DoWork)}: {ex}";
                     }
