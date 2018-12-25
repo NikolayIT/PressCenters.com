@@ -17,11 +17,20 @@
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll(".articles .item a").Select(
                 x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl)).Distinct().ToList();
-            var news = links.Select(this.ParseRemoteNews).ToList();
+            var news = links.Select(this.GetPublication).ToList();
             return news;
         }
 
-        internal RemoteNews ParseRemoteNews(string url)
+        internal override string ExtractIdFromUrl(string url)
+        {
+            var uri = new Uri(url);
+            var id = !string.IsNullOrWhiteSpace(uri.Segments[uri.Segments.Length - 1])
+                         ? uri.Segments[uri.Segments.Length - 1].Trim('/')
+                         : uri.Segments[uri.Segments.Length - 2].Trim('/');
+            return id;
+        }
+
+        protected override RemoteNews ParseRemoteNews(string url)
         {
             var document = this.BrowsingContext.OpenAsync(url).Result;
             var titleElement = document.QuerySelector(".view h1");
@@ -32,7 +41,7 @@
             var time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
 
             var imageElement = document.QuerySelector(".view .gallery img");
-            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"), this.BaseUrl).Trim();
+            var imageUrl = imageElement?.GetAttribute("src");
 
             var contentElement = document.QuerySelector(".view");
             this.RemoveRecursively(contentElement, titleElement);
@@ -43,23 +52,12 @@
 
             var news = new RemoteNews
                        {
-                           OriginalUrl = url,
-                           RemoteId = this.ExtractIdFromUrl(url),
                            Title = title,
                            Content = content,
                            PostDate = time,
                            ImageUrl = imageUrl,
                        };
             return news;
-        }
-
-        internal string ExtractIdFromUrl(string url)
-        {
-            var uri = new Uri(url);
-            var id = !string.IsNullOrWhiteSpace(uri.Segments[uri.Segments.Length - 1])
-                         ? uri.Segments[uri.Segments.Length - 1].Trim('/')
-                         : uri.Segments[uri.Segments.Length - 2].Trim('/');
-            return id;
         }
     }
 }

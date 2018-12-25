@@ -20,7 +20,7 @@
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll(".article__list .article .article__description a.link--clear")
                 .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl)).Distinct().ToList();
-            var news = links.Select(this.ParseRemoteNews).Where(x => x != null).ToList();
+            var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
             return news;
         }
 
@@ -45,14 +45,23 @@
                 var document = parser.Parse(content);
                 var links = document.QuerySelectorAll(".article__list .article .article__description a.link--clear")
                     .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl)).Distinct().ToList();
-                var news = links.Select(this.ParseRemoteNews).Where(x => x != null).ToList();
+                var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
                 allNews = allNews.Concat(news).ToList();
             }
 
             return allNews;
         }
 
-        internal RemoteNews ParseRemoteNews(string url)
+        internal override string ExtractIdFromUrl(string url)
+        {
+            var uri = new Uri(url);
+            var id = !string.IsNullOrWhiteSpace(uri.Segments[uri.Segments.Length - 1])
+                         ? uri.Segments[uri.Segments.Length - 1].Trim('/')
+                         : uri.Segments[uri.Segments.Length - 2].Trim('/');
+            return WebUtility.UrlDecode(id);
+        }
+
+        protected override RemoteNews ParseRemoteNews(string url)
         {
             var document = this.BrowsingContext.OpenAsync(url).Result;
             var titleElement = document.QuerySelector(".article__description h1");
@@ -73,8 +82,7 @@
             }
 
             var imageElement = document.QuerySelector("#image_source");
-            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"), this.BaseUrl)?.Trim()
-                           ?? $"/images/sources/mvr.bg.jpg";
+            var imageUrl = imageElement?.GetAttribute("src") ?? $"/images/sources/mvr.bg.jpg";
 
             var contentElement = document.QuerySelector(".article__container");
             this.RemoveRecursively(contentElement, timeElement);
@@ -86,24 +94,13 @@
             var content = contentElement.InnerHtml.Trim();
 
             var news = new RemoteNews
-                       {
-                           OriginalUrl = url,
-                           RemoteId = this.ExtractIdFromUrl(url),
-                           Title = title,
-                           Content = content,
-                           PostDate = time,
-                           ImageUrl = imageUrl,
-                       };
+            {
+                Title = title,
+                Content = content,
+                PostDate = time,
+                ImageUrl = imageUrl,
+            };
             return news;
-        }
-
-        internal string ExtractIdFromUrl(string url)
-        {
-            var uri = new Uri(url);
-            var id = !string.IsNullOrWhiteSpace(uri.Segments[uri.Segments.Length - 1])
-                         ? uri.Segments[uri.Segments.Length - 1].Trim('/')
-                         : uri.Segments[uri.Segments.Length - 2].Trim('/');
-            return WebUtility.UrlDecode(id);
         }
     }
 }

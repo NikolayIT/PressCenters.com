@@ -24,7 +24,7 @@
         {
             const string NewsUrl = "https://toplo.bg/news/2018/12/17/kolednaigra2018";
             var provider = new ToploBgSource();
-            var news = provider.ParseRemoteNews(NewsUrl);
+            var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Коледна игра 2018", news.Title);
             Assert.Equal("2018/12/17/kolednaigra2018", news.RemoteId);

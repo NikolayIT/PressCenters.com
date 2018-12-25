@@ -22,6 +22,38 @@ namespace PressCenters.Services.Sources
 
         public abstract IEnumerable<RemoteNews> GetLatestPublications();
 
+        public RemoteNews GetPublication(string url)
+        {
+            var publication = this.ParseRemoteNews(url);
+
+            // Title
+            publication.Title = publication.Title?.Trim();
+
+            // Post date
+            if (publication.PostDate > DateTime.Now)
+            {
+                publication.PostDate = DateTime.Now;
+            }
+
+            // Original URL
+            publication.OriginalUrl = url;
+
+            // Image URL
+            if (publication.ImageUrl?.StartsWith("/images/sources/") == false)
+            {
+                publication.ImageUrl = this.NormalizeUrl(publication.ImageUrl?.Trim(), this.BaseUrl)?.Trim();
+            }
+
+            // Remote ID
+            publication.RemoteId = this.ExtractIdFromUrl(url);
+
+            return publication;
+        }
+
+        internal abstract string ExtractIdFromUrl(string url);
+
+        protected abstract RemoteNews ParseRemoteNews(string url);
+
         protected string NormalizeUrl(string url, string baseUrl)
         {
             if (string.IsNullOrWhiteSpace(url))

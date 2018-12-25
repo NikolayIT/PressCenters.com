@@ -24,7 +24,7 @@
         {
             const string NewsUrl = "https://www.president.bg/news3566/rumen-radev-sigurnostta-na-evropeyskite-grazhdani-zapochva-ot-sigurnostta-na-granitsite-na-balgariya.html";
             var provider = new PresidentBgSource();
-            var news = provider.ParseRemoteNews(NewsUrl);
+            var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Румен Радев: Сигурността на европейските граждани започва от сигурността на границите на България", news.Title);
             Assert.Equal("3566", news.RemoteId);

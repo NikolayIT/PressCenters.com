@@ -24,7 +24,7 @@
         {
             const string NewsUrl = "https://www.prb.bg/bg/news/aktualno/apelativna-prokuratura-burgas-protestira-reshe-174/";
             var provider = new PrbBgSource();
-            var news = provider.ParseRemoteNews(NewsUrl);
+            var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Апелативна прокуратура – Бургас протестира решение на съда, с което е изменена присъдата и намалено наказанието на Кирил Х., причинил смъртта на мъж, работил в неговия ресторант", news.Title);
             Assert.Equal("aktualno/apelativna-prokuratura-burgas-protestira-reshe-174", news.RemoteId);

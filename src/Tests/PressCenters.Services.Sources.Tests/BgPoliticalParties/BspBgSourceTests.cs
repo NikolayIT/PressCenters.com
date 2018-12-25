@@ -24,7 +24,7 @@
         {
             const string NewsUrl = "http://bsp.bg/news/view/11649-korneliya_ninova__6_partii_vnesohme_6000_podpisa_za_otlichen_6_na_izborite.html";
             var provider = new BspBgSource();
-            var news = provider.ParseRemoteNews(NewsUrl);
+            var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Корнелия Нинова: 6 партии внесохме 6000 подписа за отличен 6 на изборите", news.Title);
             Assert.Equal("11649", news.RemoteId);

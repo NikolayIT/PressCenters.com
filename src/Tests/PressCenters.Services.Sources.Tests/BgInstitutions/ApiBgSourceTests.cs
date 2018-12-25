@@ -30,7 +30,7 @@
         {
             const string NewsUrl = "http://www.api.bg/bg/prescentar/novini/na-31-yanuari-izticha-validnostta-na-godishnite-vinetki-za-2015-g/";
             var provider = new ApiBgSource();
-            var news = provider.ParseRemoteNews(NewsUrl);
+            var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("На 31 януари изтича валидността на годишните винетки за 2015 г.", news.Title);
             Assert.Contains("На дирекциите „Социално подпомогане“ досега са предоставени безплатни", news.Content);
@@ -46,7 +46,7 @@
         {
             const string NewsUrl = "http://www.api.bg/index.php/bg/prescentar/novini/8-firmi-podadoha-oferti-za-stroitelstvoto-na-lot-2-ot-am-trakiya/";
             var provider = new ApiBgSource();
-            var news = provider.ParseRemoteNews(NewsUrl);
+            var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("8 фирми подадоха оферти за строителството на Лот 2 от АМ „Тракия“", news.Title);
             Assert.Contains("„Днешното събитие е плод на един огромен и сериозен труд на всички служители в агенцията”", news.Content);

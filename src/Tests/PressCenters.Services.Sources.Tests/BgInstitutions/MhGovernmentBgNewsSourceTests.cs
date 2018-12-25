@@ -24,7 +24,7 @@
         {
             const string NewsUrl = "http://www.mh.government.bg/bg/novini/aktualno/stanovishe-na-pacientski-organizacii-zaedno-s-teb-/";
             var provider = new MhGovernmentBgNewsSource();
-            var news = provider.ParseRemoteNews(NewsUrl);
+            var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Становище на пациентски организации „Заедно с теб“ относно ваксината „Пентаксим“", news.Title);
             Assert.Contains("Пациентски организации „Заедно с теб“", news.Content);
@@ -39,7 +39,7 @@
         {
             const string NewsUrl = "http://www.mh.government.bg/bg/novini/epidemichna-obstanovka/spravka-za-epidemichnata-obstanovka-v-st-2016-01/";
             var provider = new MhGovernmentBgEpidemicSource();
-            var news = provider.ParseRemoteNews(NewsUrl);
+            var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Справка за епидемичната обстановка в страната за периода 04.12.2015 г. - 10.01.2016 г.", news.Title);
             Assert.Contains("През изминалата седмица са регистрирани общо 6", news.Content);

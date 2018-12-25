@@ -19,11 +19,16 @@
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll(".inside-article-box > a").Select(
                 x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl)).ToList();
-            var news = links.Select(this.ParseRemoteNews).ToList();
+            var news = links.Select(this.GetPublication).ToList();
             return news;
         }
 
-        internal RemoteNews ParseRemoteNews(string url)
+        internal override string ExtractIdFromUrl(string originalUrl)
+        {
+            return originalUrl?.GetStringBetween("/news", "/");
+        }
+
+        protected override RemoteNews ParseRemoteNews(string url)
         {
             var document = this.BrowsingContext.OpenAsync(url).Result;
             var titleElement = document.QuerySelector(".print-content h2");
@@ -38,23 +43,16 @@
             var content = contentElement.InnerHtml.Trim();
 
             var imageElement = document.QuerySelector(".print-content img");
-            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"), this.BaseUrl).Trim();
+            var imageUrl = imageElement?.GetAttribute("src");
 
             var news = new RemoteNews
-            {
-                OriginalUrl = url,
-                RemoteId = this.ExtractIdFromUrl(url),
-                Title = title,
-                Content = content,
-                PostDate = time,
-                ImageUrl = imageUrl,
-            };
+                       {
+                           Title = title,
+                           Content = content,
+                           PostDate = time,
+                           ImageUrl = imageUrl,
+                       };
             return news;
-        }
-
-        internal string ExtractIdFromUrl(string originalUrl)
-        {
-            return originalUrl?.GetStringBetween("/news", "/");
         }
     }
 }

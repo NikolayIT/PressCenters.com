@@ -19,11 +19,18 @@
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll("#container-main-ajax article p a")
                 .Select(x => x.Attributes["href"].Value).Select(x => this.NormalizeUrl(x, this.BaseUrl)).ToList();
-            var news = links.Select(this.ParseRemoteNews).ToList();
+            var news = links.Select(this.GetPublication).ToList();
             return news;
         }
 
-        internal RemoteNews ParseRemoteNews(string url)
+        internal override string ExtractIdFromUrl(string url)
+        {
+            var lastDash = url.LastIndexOf("-", StringComparison.InvariantCulture);
+            var id = url.GetStringBetween("-", ".html", lastDash);
+            return id;
+        }
+
+        protected override RemoteNews ParseRemoteNews(string url)
         {
             var document = this.BrowsingContext.OpenAsync(url).Result;
             var titleElement = document.QuerySelector(".news-info h1");
@@ -43,25 +50,16 @@
             var content = contentElement.InnerHtml.Trim();
 
             var imageElement = document.QuerySelector("#slider img");
-            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"), this.BaseUrl)?.Trim();
+            var imageUrl = imageElement?.GetAttribute("src");
 
             var news = new RemoteNews
-                           {
-                               OriginalUrl = url,
-                               RemoteId = this.ExtractIdFromUrl(url),
-                               Title = title,
-                               Content = content,
-                               PostDate = time,
-                               ImageUrl = imageUrl,
-                           };
+                       {
+                           Title = title,
+                           Content = content,
+                           PostDate = time,
+                           ImageUrl = imageUrl,
+                       };
             return news;
-        }
-
-        internal string ExtractIdFromUrl(string url)
-        {
-            var lastDash = url.LastIndexOf("-", StringComparison.InvariantCulture);
-            var id = url.GetStringBetween("-", ".html", lastDash);
-            return id;
         }
     }
 }

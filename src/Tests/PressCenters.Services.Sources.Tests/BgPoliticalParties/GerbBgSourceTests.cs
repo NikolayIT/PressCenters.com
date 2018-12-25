@@ -24,7 +24,7 @@
         {
             const string NewsUrl = "http://gerb.bg/bg/news/detail-ministri_ot_pravitelstvoto_na_boiko_borisov_predstaviha_upravlenskata_programa_na_gerb_pred_400_jite-43048.html";
             var provider = new GerbBgSource();
-            var news = provider.ParseRemoteNews(NewsUrl);
+            var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Министри от правителството на Бойко Борисов представиха управленската програма на ГЕРБ пред 400 жители на 23 МИР София", news.Title);
             Assert.Equal("43048", news.RemoteId);

@@ -17,11 +17,20 @@
             var links = document.QuerySelectorAll(".list-field .list-content a")
                 .Select(x => x.Attributes?["href"]?.Value).Select(x => this.NormalizeUrl(x, this.BaseUrl))
                 .ToList();
-            var news = links.Select(this.ParseRemoteNews).ToList();
+            var news = links.Select(this.GetPublication).ToList();
             return news;
         }
 
-        internal RemoteNews ParseRemoteNews(string url)
+        internal override string ExtractIdFromUrl(string url)
+        {
+            var uri = new Uri(url);
+            var id = !string.IsNullOrWhiteSpace(uri.Segments[uri.Segments.Length - 1])
+                         ? uri.Segments[uri.Segments.Length - 2] + uri.Segments[uri.Segments.Length - 1].Trim('/')
+                         : uri.Segments[uri.Segments.Length - 3] + uri.Segments[uri.Segments.Length - 2].Trim('/');
+            return id;
+        }
+
+        protected override RemoteNews ParseRemoteNews(string url)
         {
             var document = this.BrowsingContext.OpenAsync(url).Result;
             var timeElement = document.QuerySelector(".article-title time");
@@ -40,27 +49,16 @@
             var content = contentElement.InnerHtml.Trim();
 
             var imageElement = document.QuerySelector(".slide img");
-            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"), this.BaseUrl).Trim();
+            var imageUrl = imageElement?.GetAttribute("src");
 
             var news = new RemoteNews
-                           {
-                               OriginalUrl = url,
-                               RemoteId = this.ExtractIdFromUrl(url),
-                               Title = title,
-                               Content = content,
-                               PostDate = time,
-                               ImageUrl = imageUrl,
-                           };
+                       {
+                           Title = title,
+                           Content = content,
+                           PostDate = time,
+                           ImageUrl = imageUrl,
+                       };
             return news;
-        }
-
-        internal string ExtractIdFromUrl(string url)
-        {
-            var uri = new Uri(url);
-            var id = !string.IsNullOrWhiteSpace(uri.Segments[uri.Segments.Length - 1])
-                         ? uri.Segments[uri.Segments.Length - 2] + uri.Segments[uri.Segments.Length - 1].Trim('/')
-                         : uri.Segments[uri.Segments.Length - 3] + uri.Segments[uri.Segments.Length - 2].Trim('/');
-            return id;
         }
     }
 }

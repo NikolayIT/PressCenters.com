@@ -24,7 +24,7 @@
         {
             const string NewsUrl = "http://www.government.bg/bg/prestsentar/novini/premierat-boyko-borisov-provede-dvustranna-sreshta-sas-zamestnik-predsedatelya-na-evropeyskata-komisiya-frans-timermans-v-bryuksel";
             var provider = new GovernmentBgSource();
-            var news = provider.ParseRemoteNews(NewsUrl);
+            var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Премиерът Бойко Борисов проведе двустранна среща със заместник-председателя на Европейската комисия Франс Тимерманс в Брюксел", news.Title);
             Assert.Equal("premierat-boyko-borisov-provede-dvustranna-sreshta-sas-zamestnik-predsedatelya-na-evropeyskata-komisiya-frans-timermans-v-bryuksel", news.RemoteId);

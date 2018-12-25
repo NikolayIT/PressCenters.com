@@ -24,7 +24,7 @@
         {
             const string NewsUrl = "http://www.fsc.bg/bg/novini/resheniya-ot-zasedanie-na-kfn-na-21-01-2016-g--7988.html";
             var provider = new FscBgSource();
-            var news = provider.ParseRemoteNews(NewsUrl);
+            var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Решения от заседание на КФН на 21.01.2016 г.", news.Title);
             Assert.Equal("7988", news.RemoteId);
