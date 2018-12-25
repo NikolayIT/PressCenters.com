@@ -34,7 +34,6 @@
             var updated = 0;
             foreach (var source in this.mainNewsSourcesRepository.All().ToList())
             {
-                this.logger.LogInformation($"Getting main new from {source.Name}");
                 var lastNews =
                     this.mainNewsRepository.All().Where(x => x.SourceId == source.Id)
                         .OrderByDescending(x => x.Id)
@@ -44,6 +43,7 @@
                 if (lastNews?.Title == news.Title)
                 {
                     // The last news has the same title
+                    this.logger.LogInformation($"Getting main news from {source.Name}. Nothing new.");
                     continue;
                 }
 
@@ -56,6 +56,7 @@
                         ImageUrl = news.ImageUrl,
                         SourceId = source.Id,
                     });
+                this.logger.LogInformation($"Getting main news from {source.Name}. New item added.");
             }
 
             await this.mainNewsRepository.SaveChangesAsync();

@@ -33,7 +33,19 @@
                     return;
                 }
 
-                Console.WriteLine($"{logLevel}: {this.categoryName}[{eventId.Id}]: {formatter(state, exception)}");
+                if (logLevel > LogLevel.Information)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.BackgroundColor = ConsoleColor.White;
+                }
+
+                var logLevelString = logLevel == LogLevel.Information ? "Info" : logLevel.ToString();
+                Console.WriteLine($"{logLevelString}: {this.categoryName}[{eventId.Id}]: {formatter(state, exception)}");
+
+                if (logLevel > LogLevel.Information)
+                {
+                    Console.ResetColor();
+                }
             }
 
             public bool IsEnabled(LogLevel logLevel)
