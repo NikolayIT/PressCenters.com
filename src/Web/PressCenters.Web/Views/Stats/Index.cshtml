@@ -1,0 +1,46 @@
+﻿@using System.Globalization
+@model PressCenters.Web.ViewModels.Stats.IndexViewModel
+
+@{
+    this.ViewData["Title"] = this.ViewData["SubTitle"] = "Статистика";
+}
+
+<div class="card rounded-0">
+    <h3 class="card-header h5 rounded-0">
+        Прессъобщения
+    </h3>
+    <div class="card-block">
+        <ul class="list-group">
+            
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Общо прессъобщения в сайта
+                <span class="badge badge-secondary badge-pill g-font-size-15">@this.Model.NewsCount</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Прессъобщения днес
+                <span class="badge badge-secondary badge-pill g-font-size-15">@this.Model.NewsToday</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Прессъобщения вчера
+                <span class="badge badge-secondary badge-pill g-font-size-15">@this.Model.NewsYesterday</span>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="card rounded-0">
+    <h3 class="card-header h5 rounded-0">
+        Брой прессъобщения по ден от седмицата
+    </h3>
+    <div class="card-block">
+        <ul class="list-group">
+            @foreach (var byDayOfWeek in this.Model.NewsByDayOfWeek.OrderBy(x => ((int)x.DayOfWeek + 6) % 7))
+            {
+                
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    @(new CultureInfo("bg-BG").DateTimeFormat.GetDayName(byDayOfWeek.DayOfWeek))
+                    <span class="badge badge-secondary badge-pill g-font-size-14">@byDayOfWeek.Count</span>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
