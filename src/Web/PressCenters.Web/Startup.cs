@@ -29,10 +29,12 @@
     public class Startup
     {
         private readonly IConfiguration configuration;
+        private readonly IHostingEnvironment hostingEnvironment;
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
             this.configuration = configuration;
+            this.hostingEnvironment = hostingEnvironment;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -60,6 +62,15 @@
                     options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
                     options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
                 });
+
+            if (this.hostingEnvironment.IsProduction())
+            {
+                services.AddHttpsRedirection(options =>
+                {
+                    options.RedirectStatusCode = StatusCodes.Status308PermanentRedirect;
+                    options.HttpsPort = 443;
+                });
+            }
 
             services
                 .ConfigureApplicationCookie(options =>
@@ -110,12 +121,7 @@
             using (var serviceScope = app.ApplicationServices.CreateScope())
             {
                 var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-                if (env.IsDevelopment())
-                {
-                    dbContext.Database.Migrate();
-                }
-
+                dbContext.Database.Migrate();
                 ApplicationDbContextSeeder.Seed(dbContext, serviceScope.ServiceProvider);
             }
 
