@@ -23,7 +23,7 @@
             return news;
         }
 
-        internal override string ExtractIdFromUrl(string originalUrl)
+        public override string ExtractIdFromUrl(string originalUrl)
         {
             return originalUrl?.GetStringBetween("/news", "/");
         }

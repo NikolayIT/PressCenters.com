@@ -22,7 +22,7 @@
             return news;
         }
 
-        internal override string ExtractIdFromUrl(string url)
+        public override string ExtractIdFromUrl(string url)
         {
             var id = url.GetStringBetween("news/view/", "-");
             return id;

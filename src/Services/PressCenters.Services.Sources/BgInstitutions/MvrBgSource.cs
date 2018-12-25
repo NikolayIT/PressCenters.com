@@ -52,7 +52,7 @@
             return allNews;
         }
 
-        internal override string ExtractIdFromUrl(string url)
+        public override string ExtractIdFromUrl(string url)
         {
             var uri = new Uri(url);
             var id = !string.IsNullOrWhiteSpace(uri.Segments[uri.Segments.Length - 1])

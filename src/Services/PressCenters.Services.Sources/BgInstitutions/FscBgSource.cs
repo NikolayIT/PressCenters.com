@@ -22,7 +22,7 @@
             return news;
         }
 
-        internal override string ExtractIdFromUrl(string url)
+        public override string ExtractIdFromUrl(string url)
         {
             const string EndString = ".html";
             if (string.IsNullOrWhiteSpace(url))

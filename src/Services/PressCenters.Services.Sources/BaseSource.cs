@@ -1,6 +1,4 @@
-﻿[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("PressCenters.Services.Sources.Tests")]
-
-namespace PressCenters.Services.Sources
+﻿namespace PressCenters.Services.Sources
 {
     using System;
     using System.Collections.Generic;
@@ -50,7 +48,7 @@ namespace PressCenters.Services.Sources
             return publication;
         }
 
-        internal abstract string ExtractIdFromUrl(string url);
+        public abstract string ExtractIdFromUrl(string url);
 
         protected abstract RemoteNews ParseRemoteNews(string url);
 

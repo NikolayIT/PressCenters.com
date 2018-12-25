@@ -20,7 +20,7 @@
             return news;
         }
 
-        internal override string ExtractIdFromUrl(string url)
+        public override string ExtractIdFromUrl(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
             {

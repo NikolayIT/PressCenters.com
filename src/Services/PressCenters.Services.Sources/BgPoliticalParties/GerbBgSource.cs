@@ -23,7 +23,7 @@
             return news;
         }
 
-        internal override string ExtractIdFromUrl(string url)
+        public override string ExtractIdFromUrl(string url)
         {
             var lastDash = url.LastIndexOf("-", StringComparison.InvariantCulture);
             var id = url.GetStringBetween("-", ".html", lastDash);
