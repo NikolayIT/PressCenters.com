@@ -37,17 +37,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PressCenters.Services.Data.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PressCenters.Web.Tests", "Tests\PressCenters.Web.Tests\PressCenters.Web.Tests.csproj", "{3EE06C6E-C8F3-418A-A309-8AC81976A074}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PressCenters.Services.Sources", "Services\PressCenters.Services.Sources\PressCenters.Services.Sources.csproj", "{7DA53F25-1FA3-4CCC-94A2-021B55233A3E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PressCenters.Services.Sources", "Services\PressCenters.Services.Sources\PressCenters.Services.Sources.csproj", "{7DA53F25-1FA3-4CCC-94A2-021B55233A3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PressCenters.Services.Sources.Tests", "Tests\PressCenters.Services.Sources.Tests\PressCenters.Services.Sources.Tests.csproj", "{E88B30CD-DD2D-446B-BF39-FE667001C4C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PressCenters.Services.Sources.Tests", "Tests\PressCenters.Services.Sources.Tests\PressCenters.Services.Sources.Tests.csproj", "{E88B30CD-DD2D-446B-BF39-FE667001C4C7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Worker", "Worker", "{F1E14308-019E-43F9-AE91-86A7A42E7090}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PressCenters.Worker.Common", "Worker\PressCenters.Worker.Common\PressCenters.Worker.Common.csproj", "{032782CF-CD24-4C18-A437-7214838085B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PressCenters.Worker.Common", "Worker\PressCenters.Worker.Common\PressCenters.Worker.Common.csproj", "{032782CF-CD24-4C18-A437-7214838085B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PressCenters.Worker.Tasks", "Worker\PressCenters.Worker.Tasks\PressCenters.Worker.Tasks.csproj", "{7F3042A2-739B-48DA-9363-5ADEFC3B6550}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PressCenters.Worker.Tasks", "Worker\PressCenters.Worker.Tasks\PressCenters.Worker.Tasks.csproj", "{7F3042A2-739B-48DA-9363-5ADEFC3B6550}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PressCenters.Worker.Runner", "Worker\PressCenters.Worker.Runner\PressCenters.Worker.Runner.csproj", "{443A3AA8-3BA8-477B-B744-592CFB151076}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PressCenters.Worker.Runner", "Worker\PressCenters.Worker.Runner\PressCenters.Worker.Runner.csproj", "{443A3AA8-3BA8-477B-B744-592CFB151076}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PressCenters.Services.Tests", "Services\PressCenters.Services.Tests\PressCenters.Services.Tests.csproj", "{1B784018-7D0F-4D27-82C7-4BE815363E5B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -127,6 +129,10 @@ Global
 		{443A3AA8-3BA8-477B-B744-592CFB151076}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{443A3AA8-3BA8-477B-B744-592CFB151076}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{443A3AA8-3BA8-477B-B744-592CFB151076}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B784018-7D0F-4D27-82C7-4BE815363E5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B784018-7D0F-4D27-82C7-4BE815363E5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B784018-7D0F-4D27-82C7-4BE815363E5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B784018-7D0F-4D27-82C7-4BE815363E5B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -149,6 +155,7 @@ Global
 		{032782CF-CD24-4C18-A437-7214838085B9} = {F1E14308-019E-43F9-AE91-86A7A42E7090}
 		{7F3042A2-739B-48DA-9363-5ADEFC3B6550} = {F1E14308-019E-43F9-AE91-86A7A42E7090}
 		{443A3AA8-3BA8-477B-B744-592CFB151076} = {F1E14308-019E-43F9-AE91-86A7A42E7090}
+		{1B784018-7D0F-4D27-82C7-4BE815363E5B} = {7A731632-6714-44E2-A9E4-069EBA9E666C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {384484BE-4680-4529-9CC2-AD37BA4D12D1}
