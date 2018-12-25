@@ -34,14 +34,11 @@
             var titleElement = document.QuerySelector(".post-content h2");
             var title = titleElement.TextContent.Trim();
 
-            var bulgarianMonthNames = new List<string>
-                                          {
-                                              "януари", "февруари", "март", "април", "май", "юни", "юли", "август",
-                                              "септември", "октомври", "ноември", "декември",
-                                          };
+            // Time in format: "Янр 31, 2010"
+            var monthNames = new List<string> { "Янр", "Фев", "Мар", "Апр", "Май", "Юни", "Юли", "Авг", "Сеп", "Окт", "Nov", "Дек", };
             var dateAsString = document.QuerySelector(".meta_date").InnerHtml.Trim();
-            var monthName = dateAsString.Substring(0, 3).ToLower();
-            var monthIndex = bulgarianMonthNames.FindIndex(x => x.StartsWith(monthName)) + 1;
+            var monthName = dateAsString.Substring(0, 3);
+            var monthIndex = monthNames.FindIndex(x => x.ToLower() == monthName.ToLower()) + 1;
             if (monthIndex == 0)
             {
                 monthIndex = DateTime.UtcNow.Month;
@@ -50,10 +47,6 @@
             var dayOfMonth = dateAsString.Substring(4, 2).ToInteger();
             var year = dateAsString.Substring(dateAsString.Length - 4, 4).ToInteger();
             var time = new DateTime(year, monthIndex, dayOfMonth);
-            if (time.Date == DateTime.UtcNow.Date)
-            {
-                time = DateTime.Now;
-            }
 
             var contentElement = document.QuerySelector(".post-content");
             this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);

@@ -34,6 +34,12 @@
                 publication.PostDate = DateTime.Now;
             }
 
+            if (publication.PostDate.Date == DateTime.UtcNow.Date && publication.PostDate.Hour == 0
+                                                                  && publication.PostDate.Minute == 0)
+            {
+                publication.PostDate = DateTime.Now;
+            }
+
             // Original URL
             publication.OriginalUrl = url;
 
