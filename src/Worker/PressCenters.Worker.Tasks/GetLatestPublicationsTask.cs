@@ -10,6 +10,7 @@
     using PressCenters.Common;
     using PressCenters.Data.Common.Repositories;
     using PressCenters.Data.Models;
+    using PressCenters.Services.Data;
     using PressCenters.Services.Sources;
     using PressCenters.Worker.Common;
 
@@ -17,7 +18,7 @@
     {
         private readonly IDeletableEntityRepository<Source> sourcesRepository;
 
-        private readonly IDeletableEntityRepository<News> newsRepository;
+        private readonly INewsService newsService;
 
         private readonly ILogger logger;
 
@@ -25,7 +26,7 @@
             : base(serviceProvider)
         {
             this.sourcesRepository = serviceProvider.GetService<IDeletableEntityRepository<Source>>();
-            this.newsRepository = serviceProvider.GetService<IDeletableEntityRepository<News>>();
+            this.newsService = serviceProvider.GetService<INewsService>();
             this.logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<MainNewsGetterTask>();
         }
 
@@ -42,28 +43,11 @@
             var added = 0;
             foreach (var remoteNews in publications)
             {
-                if (this.newsRepository.AllWithDeleted().Any(x => x.SourceId == source.Id && x.RemoteId == remoteNews.RemoteId))
-                {
-                    // Already exists
-                    continue;
-                }
-
-                var news = new News
-                           {
-                               Title = remoteNews.Title,
-                               OriginalUrl = remoteNews.OriginalUrl,
-                               ImageUrl = remoteNews.ImageUrl,
-                               Content = remoteNews.Content,
-                               CreatedOn = remoteNews.PostDate,
-                               Source = source,
-                               RemoteId = remoteNews.RemoteId,
-                           };
-                await this.newsRepository.AddAsync(news);
-                this.logger.LogInformation($"New news: {source.ShortName}: \"{news.Title}\"");
+                await this.newsService.AddAsync(remoteNews, source.Id);
+                this.logger.LogInformation($"New news: {source.ShortName}: \"{remoteNews.Title}\"");
                 added++;
             }
 
-            await this.newsRepository.SaveChangesAsync();
             return new Output { Added = added };
         }
 

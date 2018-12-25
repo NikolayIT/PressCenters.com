@@ -1,6 +1,7 @@
 ﻿namespace Sandbox
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
@@ -14,6 +15,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
 
+    using PressCenters.Common;
     using PressCenters.Data;
     using PressCenters.Data.Common;
     using PressCenters.Data.Common.Repositories;
@@ -22,7 +24,7 @@
     using PressCenters.Data.Seeding;
     using PressCenters.Services.Data;
     using PressCenters.Services.Messaging;
-    using PressCenters.Services.Sources.BgInstitutions;
+    using PressCenters.Services.Sources;
 
     public static class Program
     {
@@ -46,7 +48,7 @@
                 serviceProvider = serviceScope.ServiceProvider;
 
                 return Parser.Default.ParseArguments<SandboxOptions>(args).MapResult(
-                    (SandboxOptions opts) => SandboxCode(opts, serviceProvider),
+                    (opts) => SandboxCode(opts, serviceProvider),
                     _ => 255);
             }
         }
@@ -55,35 +57,26 @@
         {
             var sw = Stopwatch.StartNew();
 
-            var newsRepository = serviceProvider.GetService<IDeletableEntityRepository<News>>();
+            var newsService = serviceProvider.GetService<INewsService>();
             var sourcesRepository = serviceProvider.GetService<IDeletableEntityRepository<Source>>();
-            var source = sourcesRepository.AllWithDeleted().FirstOrDefault(x => x.TypeName == "PressCenters.Services.Sources.BgInstitutions.MvrBgSource");
-            var sourceProvider = new MvrBgSource();
-            Console.WriteLine("Starting GetAllPublications...");
-            var news = sourceProvider.GetAllPublications();
-            Console.WriteLine("GetAllPublications done.");
-            foreach (var remoteNews in news)
+            foreach (var source in sourcesRepository.All().ToList())
             {
-                if (newsRepository.AllWithDeleted().Any(x => x.SourceId == source.Id && x.RemoteId == remoteNews.RemoteId))
+                // Skip sources for testing purposes
+                if (new[] { 1, 7 }.Contains(source.Id))
                 {
-                    // Already exists
                     continue;
                 }
 
-                var dbNews = new News
-                           {
-                               Title = remoteNews.Title,
-                               OriginalUrl = remoteNews.OriginalUrl,
-                               ImageUrl = remoteNews.ImageUrl,
-                               Content = remoteNews.Content,
-                               CreatedOn = remoteNews.PostDate,
-                               Source = source,
-                               RemoteId = remoteNews.RemoteId,
-                           };
-                newsRepository.AddAsync(dbNews).GetAwaiter().GetResult();
-            }
+                var sourceProvider = ReflectionHelpers.GetInstance<BaseSource>(source.TypeName);
+                Console.WriteLine($"Starting {source.TypeName}.GetAllPublications...");
+                var news = sourceProvider.GetAllPublications();
+                foreach (var remoteNews in news)
+                {
+                    newsService.AddAsync(remoteNews, source.Id).GetAwaiter().GetResult();
+                }
 
-            newsRepository.SaveChangesAsync().GetAwaiter().GetResult();
+                Console.WriteLine($"{source.TypeName}.GetAllPublications done.");
+            }
 
             Console.WriteLine(sw.Elapsed);
             return 0;
@@ -116,7 +109,8 @@
             services.AddTransient<IEmailSender, NullMessageSender>();
             services.AddTransient<ISmsSender, NullMessageSender>();
             services.AddTransient<ISettingsService, SettingsService>();
-            services.AddScoped<IWorkerTasksDataService, WorkerTasksDataService>();
+            services.AddTransient<INewsService, NewsService>();
+            services.AddTransient<IWorkerTasksDataService, WorkerTasksDataService>();
         }
     }
 }

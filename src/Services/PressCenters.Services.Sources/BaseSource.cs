@@ -20,6 +20,11 @@
 
         public abstract IEnumerable<RemoteNews> GetLatestPublications();
 
+        public virtual IEnumerable<RemoteNews> GetAllPublications()
+        {
+            return new List<RemoteNews>();
+        }
+
         public RemoteNews GetPublication(string url)
         {
             var document = this.BrowsingContext.OpenAsync(url).Result;

@@ -10,8 +10,10 @@
     public class MhGovernmentBgNewsSourceTests
     {
         [Theory]
-        [InlineData("http://www.mh.government.bg/bg/novini/epidemichna-obstanovka/spravka-za-epidemichnata-obstanovka-v-strana16-03", "epidemichna-obstanovka/spravka-za-epidemichnata-obstanovka-v-strana16-03")]
-        [InlineData("http://www.mh.government.bg/bg/novini/aktualno/komisiyata-po-izgotvyane-na-nacionalna-zdravna-kar/", "aktualno/komisiyata-po-izgotvyane-na-nacionalna-zdravna-kar")]
+        [InlineData("https://www.mh.government.bg/bg/novini/epidemichna-obstanovka/spravka-za-epidemichnata-obstanovka-v-strana16-03", "epidemichna-obstanovka/spravka-za-epidemichnata-obstanovka-v-strana16-03")]
+        [InlineData("https://www.mh.government.bg/bg/novini/aktualno/komisiyata-po-izgotvyane-na-nacionalna-zdravna-kar/", "aktualno/komisiyata-po-izgotvyane-na-nacionalna-zdravna-kar")]
+        [InlineData("https://www.mh.government.bg/bg/novini/parlamentaren-kontrol/otgovor-na-ministra-na-zdraveopazvaneto-d-r-boz-31/", "parlamentaren-kontrol/otgovor-na-ministra-na-zdraveopazvaneto-d-r-boz-31")]
+        [InlineData("https://www.mh.government.bg/bg/novini/ministerski-savet/odobreni-sa-promeni-po-byudzhetite-na-sedem-minist", "ministerski-savet/odobreni-sa-promeni-po-byudzhetite-na-sedem-minist")]
         public void ExtractIdFromPressUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new MhGovernmentBgNewsSource();
@@ -22,7 +24,7 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "http://www.mh.government.bg/bg/novini/aktualno/stanovishe-na-pacientski-organizacii-zaedno-s-teb-/";
+            const string NewsUrl = "https://www.mh.government.bg/bg/novini/aktualno/stanovishe-na-pacientski-organizacii-zaedno-s-teb-/";
             var provider = new MhGovernmentBgNewsSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
@@ -37,15 +39,15 @@
         [Fact]
         public void ParseRemoteNewsWithImageShouldWorkCorrectly()
         {
-            const string NewsUrl = "http://www.mh.government.bg/bg/novini/aktualno/kiril-ananiev-prvite-dve-linejki-zakupeni-po-proek/";
+            const string NewsUrl = "https://www.mh.government.bg/bg/novini/aktualno/kiril-ananiev-prvite-dve-linejki-zakupeni-po-proek/";
             var provider = new MhGovernmentBgNewsSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Кирил Ананиев: Първите две линейки, закупени по проекта за модернизация на спешната помощ, са предназначени за ЦСМП София", news.Title);
             Assert.Contains("„Първите две линейки, закупени", news.Content);
             Assert.Contains("този документ отразява официалното становище на Европейския съюз и Управляващия орган на ОПРР 2014-2020 г", news.Content);
-            Assert.DoesNotContain("http://www.mh.government.bg/media/filer_public_thumbnails/filer_public/2018/12/20/priemane-lineiki-20-12-2018-1.jpg__623x416_q85_crop_subsampling-2_upscale.jpg“", news.Content);
-            Assert.Equal("http://www.mh.government.bg/media/filer_public_thumbnails/filer_public/2018/12/20/priemane-lineiki-20-12-2018-1.jpg__623x416_q85_crop_subsampling-2_upscale.jpg", news.ImageUrl);
+            Assert.DoesNotContain("https://www.mh.government.bg/media/filer_public_thumbnails/filer_public/2018/12/20/priemane-lineiki-20-12-2018-1.jpg__623x416_q85_crop_subsampling-2_upscale.jpg“", news.Content);
+            Assert.Equal("https://www.mh.government.bg/media/filer_public_thumbnails/filer_public/2018/12/20/priemane-lineiki-20-12-2018-1.jpg__623x416_q85_crop_subsampling-2_upscale.jpg", news.ImageUrl);
             Assert.Equal(new DateTime(2018, 12, 20, 13, 55, 51), news.PostDate);
             Assert.Equal("aktualno/kiril-ananiev-prvite-dve-linejki-zakupeni-po-proek", news.RemoteId);
         }
@@ -53,7 +55,7 @@
         [Fact]
         public void ParseRemoteEpidemicNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "http://www.mh.government.bg/bg/novini/epidemichna-obstanovka/spravka-za-epidemichnata-obstanovka-v-st-2016-01/";
+            const string NewsUrl = "https://www.mh.government.bg/bg/novini/epidemichna-obstanovka/spravka-za-epidemichnata-obstanovka-v-st-2016-01/";
             var provider = new MhGovernmentBgEpidemicSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);

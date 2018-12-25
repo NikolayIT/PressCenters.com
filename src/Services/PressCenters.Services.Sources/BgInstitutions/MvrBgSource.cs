@@ -25,12 +25,11 @@
             return news;
         }
 
-        public IEnumerable<RemoteNews> GetAllPublications()
+        public override IEnumerable<RemoteNews> GetAllPublications()
         {
             var address = $"{this.BaseUrl}press/актуална-информация/актуална-информация/актуално";
             var parser = new HtmlParser();
             var httpClient = new HttpClient();
-            var allNews = new List<RemoteNews>();
             for (var i = 1; i < 100; i++)
             {
                 Console.WriteLine(i);
@@ -47,10 +46,11 @@
                 var links = document.QuerySelectorAll(".article__list .article .article__description a.link--clear")
                     .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl)).Distinct().ToList();
                 var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
-                allNews = allNews.Concat(news).ToList();
+                foreach (var remoteNews in news)
+                {
+                    yield return remoteNews;
+                }
             }
-
-            return allNews;
         }
 
         public override string ExtractIdFromUrl(string url)
