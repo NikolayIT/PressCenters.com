@@ -1,0 +1,26 @@
+﻿@model IEnumerable<PressCenters.Web.ViewModels.Sources.SourceViewModel>
+
+@{
+    this.ViewData["Title"] = this.ViewData["SubTitle"] = "Източници";
+}
+
+<div id="sources-list" class="u-accordion" role="tablist" aria-multiselectable="true">
+    @foreach (var source in this.Model)
+    {
+        <div class="card rounded-0 g-mb-5">
+            <div id="source-heading-@source.Id" class="u-accordion__header" role="tab">
+                <h5 class="mb-0">
+                    <a class="collapsed d-flex u-link-v5 g-color-main g-color-primary--hover g-font-size-16" href="#source-body-@source.Id" data-toggle="collapse" data-parent="#sources-list" aria-expanded="false" aria-controls="#source-body-@source.Id">
+                        @source.Name (@source.ShortName)
+                    </a>
+                </h5>
+            </div>
+            <div id="source-body-@source.Id" class="collapse" role="tabpanel" aria-labelledby="accordion-06-heading-01" data-parent="#sources-list">
+                <div class="u-accordion__body g-color-gray-dark-v5 g-pa-0-20-20">
+                    @source.Description
+                    <a class="float-right" href="@source.Url" target="_blank">Към сайта...</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
