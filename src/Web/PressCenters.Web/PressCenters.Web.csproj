@@ -13,6 +13,8 @@
 
   <PropertyGroup>
     <CodeAnalysisRuleSet>..\..\Rules.ruleset</CodeAnalysisRuleSet>
+    <ApplicationInsightsResourceId>/subscriptions/9c5540eb-59c5-47d8-9812-00f7249e9502/resourcegroups/PressCenters/providers/microsoft.insights/components/PressCenters.ApplicationInsights</ApplicationInsightsResourceId>
+    <ApplicationInsightsAnnotationResourceId>/subscriptions/9c5540eb-59c5-47d8-9812-00f7249e9502/resourcegroups/PressCenters/providers/microsoft.insights/components/PressCenters.ApplicationInsights</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
   <ItemGroup>
     <AdditionalFiles Include="..\..\stylecop.json" />
@@ -20,6 +22,7 @@
 
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="2.8.391" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.5.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.0" />
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="1.0.172" />
@@ -41,5 +44,9 @@
   <ItemGroup>
     <Folder Include="Areas\Administration\" />
     <Folder Include="wwwroot\images\sources\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services" />
   </ItemGroup>
 </Project>
