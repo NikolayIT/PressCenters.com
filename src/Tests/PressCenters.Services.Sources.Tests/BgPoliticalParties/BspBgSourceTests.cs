@@ -44,7 +44,7 @@
         {
             var provider = new BspBgSource();
             var result = provider.GetLatestPublications();
-            Assert.True(result.Count() >= 9);
+            Assert.Equal(9, result.Count());
         }
     }
 }

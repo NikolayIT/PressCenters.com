@@ -41,7 +41,7 @@
         {
             var provider = new ToploBgSource();
             var result = provider.GetLatestPublications();
-            Assert.True(result.Any());
+            Assert.Equal(10, result.Count());
         }
     }
 }

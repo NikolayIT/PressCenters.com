@@ -43,7 +43,7 @@
             var provider = new PrbBgSource();
             var result = provider.GetLatestPublications();
 
-            Assert.True(result.Count() >= 10);
+            Assert.Equal(10, result.Count());
         }
     }
 }

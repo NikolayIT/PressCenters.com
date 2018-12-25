@@ -42,7 +42,7 @@
         {
             var provider = new PresidentBgSource();
             var result = provider.GetLatestPublications();
-            Assert.True(result.Count() >= 10);
+            Assert.Equal(17, result.Count());
         }
     }
 }

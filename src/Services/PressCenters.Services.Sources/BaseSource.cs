@@ -29,6 +29,10 @@
         {
             var document = this.BrowsingContext.OpenAsync(url).Result;
             var publication = this.ParseDocument(document);
+            if (publication == null)
+            {
+                return null;
+            }
 
             // Title
             publication.Title = publication.Title?.Trim();
