@@ -19,7 +19,7 @@
                 </li>
                 <li class="list-inline-item">/</li>
                 <li class="list-inline-item">
-                    @news.CreatedOn.ToString("dd/MM/yyyy HH:mm")
+                    <time datetime="@news.CreatedOn.ToString("O")">@news.CreatedOn.ToString("dd/MM/yyyy HH:mm")</time>
                 </li>
             </ul>
         </div>

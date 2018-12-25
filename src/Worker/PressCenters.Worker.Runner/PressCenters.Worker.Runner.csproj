@@ -39,4 +39,10 @@
     <ProjectReference Include="..\PressCenters.Worker.Tasks\PressCenters.Worker.Tasks.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="CreateService.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
