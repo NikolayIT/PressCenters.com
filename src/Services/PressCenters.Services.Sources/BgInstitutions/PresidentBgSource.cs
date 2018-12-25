@@ -6,6 +6,7 @@
     using System.Linq;
 
     using AngleSharp;
+    using AngleSharp.Dom;
 
     using PressCenters.Common;
 
@@ -28,9 +29,8 @@
             return originalUrl?.GetStringBetween("/news", "/");
         }
 
-        protected override RemoteNews ParseRemoteNews(string url)
+        protected override RemoteNews ParseDocument(IDocument document)
         {
-            var document = this.BrowsingContext.OpenAsync(url).Result;
             var titleElement = document.QuerySelector(".print-content h2");
             var title = titleElement.TextContent.Trim();
 

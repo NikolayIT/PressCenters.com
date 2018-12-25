@@ -35,9 +35,8 @@
             return id;
         }
 
-        protected override RemoteNews ParseRemoteNews(string url)
+        protected override RemoteNews ParseDocument(IDocument document)
         {
-            var document = this.BrowsingContext.OpenAsync(url).Result;
             var title = document.QuerySelector("h1.page__title").TextContent.Trim();
             var imageAndContent = document.QuerySelectorAll("article .field-items .field-item");
             var imageUrl = this.GetImageUrl(imageAndContent);

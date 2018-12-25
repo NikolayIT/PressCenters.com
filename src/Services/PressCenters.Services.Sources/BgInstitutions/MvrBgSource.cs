@@ -8,6 +8,7 @@
     using System.Net.Http;
 
     using AngleSharp;
+    using AngleSharp.Dom;
     using AngleSharp.Parser.Html;
 
     public class MvrBgSource : BaseSource
@@ -61,9 +62,8 @@
             return WebUtility.UrlDecode(id);
         }
 
-        protected override RemoteNews ParseRemoteNews(string url)
+        protected override RemoteNews ParseDocument(IDocument document)
         {
-            var document = this.BrowsingContext.OpenAsync(url).Result;
             var titleElement = document.QuerySelector(".article__description h1");
             if (titleElement == null)
             {

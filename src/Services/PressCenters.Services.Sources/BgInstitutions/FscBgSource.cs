@@ -6,6 +6,7 @@
     using System.Linq;
 
     using AngleSharp;
+    using AngleSharp.Dom;
     using AngleSharp.Extensions;
 
     public class FscBgSource : BaseSource
@@ -45,9 +46,8 @@
             return url.Substring(startIndex + 1, url.Length - EndString.Length - startIndex - 1);
         }
 
-        protected override RemoteNews ParseRemoteNews(string url)
+        protected override RemoteNews ParseDocument(IDocument document)
         {
-            var document = this.BrowsingContext.OpenAsync(url).Result;
             var titleElement = document.QuerySelector("#content-left-inner h2");
             var title = titleElement.TextContent.Trim();
 

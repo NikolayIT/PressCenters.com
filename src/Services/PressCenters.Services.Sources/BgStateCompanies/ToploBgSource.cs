@@ -6,6 +6,7 @@
     using System.Linq;
 
     using AngleSharp;
+    using AngleSharp.Dom;
 
     public class ToploBgSource : BaseSource
     {
@@ -30,9 +31,8 @@
                    uri.Segments[uri.Segments.Length - 1];
         }
 
-        protected override RemoteNews ParseRemoteNews(string url)
+        protected override RemoteNews ParseDocument(IDocument document)
         {
-            var document = this.BrowsingContext.OpenAsync(url).Result;
             var titleElement = document.QuerySelector(".l9 .card-title strong");
             var title = titleElement.TextContent.Trim();
 

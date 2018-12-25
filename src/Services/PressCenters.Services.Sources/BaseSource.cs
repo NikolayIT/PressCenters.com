@@ -22,7 +22,8 @@
 
         public RemoteNews GetPublication(string url)
         {
-            var publication = this.ParseRemoteNews(url);
+            var document = this.BrowsingContext.OpenAsync(url).Result;
+            var publication = this.ParseDocument(document);
 
             // Title
             publication.Title = publication.Title?.Trim();
@@ -50,7 +51,7 @@
 
         public abstract string ExtractIdFromUrl(string url);
 
-        protected abstract RemoteNews ParseRemoteNews(string url);
+        protected abstract RemoteNews ParseDocument(IDocument document);
 
         protected string NormalizeUrl(string url, string baseUrl)
         {

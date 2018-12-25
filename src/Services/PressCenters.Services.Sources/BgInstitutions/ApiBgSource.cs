@@ -6,6 +6,7 @@
     using System.Linq;
 
     using AngleSharp;
+    using AngleSharp.Dom;
 
     public class ApiBgSource : BaseSource
     {
@@ -35,9 +36,8 @@
             return id;
         }
 
-        protected override RemoteNews ParseRemoteNews(string url)
+        protected override RemoteNews ParseDocument(IDocument document)
         {
-            var document = this.BrowsingContext.OpenAsync(url).Result;
             var title = document.QuerySelector(".box h1").TextContent?.Trim();
 
             var contentElement = document.QuerySelector(".news-article");

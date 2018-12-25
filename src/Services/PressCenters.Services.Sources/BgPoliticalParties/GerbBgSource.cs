@@ -6,6 +6,7 @@
     using System.Linq;
 
     using AngleSharp;
+    using AngleSharp.Dom;
 
     using PressCenters.Common;
 
@@ -30,9 +31,8 @@
             return id;
         }
 
-        protected override RemoteNews ParseRemoteNews(string url)
+        protected override RemoteNews ParseDocument(IDocument document)
         {
-            var document = this.BrowsingContext.OpenAsync(url).Result;
             var titleElement = document.QuerySelector(".news-info h1");
             var title = titleElement.TextContent.Trim();
 

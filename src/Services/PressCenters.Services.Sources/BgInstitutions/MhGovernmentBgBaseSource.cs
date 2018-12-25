@@ -5,6 +5,7 @@
     using System.Linq;
 
     using AngleSharp;
+    using AngleSharp.Dom;
 
     public abstract class MhGovernmentBgBaseSource : BaseSource
     {
@@ -29,9 +30,8 @@
             return id;
         }
 
-        protected override RemoteNews ParseRemoteNews(string url)
+        protected override RemoteNews ParseDocument(IDocument document)
         {
-            var document = this.BrowsingContext.OpenAsync(url).Result;
             var title = document.QuerySelector("h1").TextContent.Trim();
             var imageUrl = $"{this.BaseUrl}static/images/Ministry_of_Health-heraldic.95741c3e92f7.svg";
 

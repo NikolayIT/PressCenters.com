@@ -5,6 +5,7 @@
     using System.Linq;
 
     using AngleSharp;
+    using AngleSharp.Dom;
 
     public class PrbBgSource : BaseSource
     {
@@ -30,9 +31,8 @@
             return id;
         }
 
-        protected override RemoteNews ParseRemoteNews(string url)
+        protected override RemoteNews ParseDocument(IDocument document)
         {
-            var document = this.BrowsingContext.OpenAsync(url).Result;
             var timeElement = document.QuerySelector(".article-title time");
             var titleElement = document.QuerySelector(".article-title");
             this.RemoveRecursively(titleElement, timeElement);
