@@ -14,6 +14,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
 
+    using PressCenters.Common;
     using PressCenters.Data;
     using PressCenters.Data.Common;
     using PressCenters.Data.Common.Repositories;
@@ -89,7 +90,12 @@
             services.AddScoped<IDbQueryRunner, DbQueryRunner>();
 
             // Application services
-            services.AddTransient<IEmailSender, NullMessageSender>();
+            services.AddTransient<IEmailSender>(
+                serviceProvider => new SendGridEmailSender(
+                    serviceProvider.GetRequiredService<ILoggerFactory>(),
+                    this.configuration["SendGrid:ApiKey"],
+                    this.configuration["SendGrid:SenderEmail"],
+                    GlobalConstants.SystemName));
             services.AddTransient<ISmsSender, NullMessageSender>();
             services.AddTransient<ISettingsService, SettingsService>();
         }

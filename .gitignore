@@ -336,3 +336,6 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
+
+# Custom ignores
+/src/Web/PressCenters.Web/appsettings.Production.json
