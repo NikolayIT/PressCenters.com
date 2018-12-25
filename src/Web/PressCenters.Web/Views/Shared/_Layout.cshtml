@@ -26,7 +26,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <partial name="_LoginPartial" />
+                    @*<partial name="_LoginPartial" />*@
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark" href="/">Начало</a>
@@ -49,7 +49,7 @@
     <div class="container clearfix">
         <div class="float-left">
             <h1>PressCenters.com</h1>
-            <p class="lead">@(this.ViewData["SubTitle"] ?? "Всички прессъобщения на едно място")</p>
+            <h2 class="lead">@(this.ViewData["SubTitle"] ?? "Всички прессъобщения на едно място")</h2>
         </div>
         <div class="float-right text-center">
             <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -95,8 +95,8 @@
     <footer>
         <div class="container">
             <div class="card-body bg-light p-3">
-                <div class="align-content-center"><a href="/">PressCenters.com</a> v2.0 &copy; 2016-@(DateTime.UtcNow.Year) - <a href="https://github.com/NikolayIT/PressCenters.com" target="_blank">Open source system</a></div>
                 Информацията, публикувана в този сайт, в общия случай е публично достъпна и споделена от оригиналния автор с цел препубликуване. Към всяка новина в сайта е сложена препратка към оригиналния автор на публикацията. PressCenters.com не носи отговорност за съдържанието на препубликуваните новини. При използване на информация от сайта, моля цитирайте оригиналния автор.
+                <div class="float-right"><a href="/">PressCenters.com</a> v2.0 &copy; 2016-@(DateTime.UtcNow.Year) - <a href="https://github.com/NikolayIT/PressCenters.com" target="_blank">Open source system</a></div>
             </div>
         </div>
     </footer>
