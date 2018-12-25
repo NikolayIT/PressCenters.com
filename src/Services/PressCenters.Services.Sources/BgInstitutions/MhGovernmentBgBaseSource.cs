@@ -33,7 +33,8 @@
         protected override RemoteNews ParseDocument(IDocument document)
         {
             var title = document.QuerySelector("h1").TextContent.Trim();
-            var imageUrl = $"{this.BaseUrl}static/images/Ministry_of_Health-heraldic.95741c3e92f7.svg";
+            var imageElement = document.QuerySelector(".carousel-inner .active img");
+            var imageUrl = imageElement?.GetAttribute("src") ?? $"/images/sources/mh.government.bg.jpg";
 
             var contentElement = document.QuerySelector(".single_news");
             this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
