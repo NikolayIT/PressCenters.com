@@ -14,7 +14,7 @@
     {
         private readonly IDbQueryRunner queryRunner;
 
-        private ILogger<DbCleanupTask> logger;
+        private readonly ILogger<DbCleanupTask> logger;
 
         public DbCleanupTask(IServiceProvider serviceProvider)
             : base(serviceProvider)
@@ -36,11 +36,8 @@
             return new Output();
         }
 
-        protected override WorkerTask Recreate(WorkerTask currentTask, Input parameters)
-        {
-            var runAfter = (currentTask.RunAfter ?? DateTime.UtcNow).AddDays(7).Date.AddHours(19); // 19:00 after 7 days
-            return new WorkerTask(currentTask, runAfter);
-        }
+        protected override WorkerTask Recreate(WorkerTask currentTask, Input parameters) =>
+            new WorkerTask(currentTask, DateTime.UtcNow.AddDays(7).Date.AddHours(4));
 
         public class Input : BaseTaskInput
         {

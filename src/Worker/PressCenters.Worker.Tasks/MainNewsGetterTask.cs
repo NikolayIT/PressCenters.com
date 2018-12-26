@@ -63,10 +63,8 @@
             return new Output { Updated = updated };
         }
 
-        protected override WorkerTask Recreate(WorkerTask currentTask, Input parameters)
-        {
-            return new WorkerTask(currentTask, DateTime.UtcNow.AddMinutes(2));
-        }
+        protected override WorkerTask Recreate(WorkerTask currentTask, Input parameters) =>
+            new WorkerTask(currentTask, DateTime.UtcNow.AddSeconds(90));
 
         public class Input : BaseTaskInput
         {
