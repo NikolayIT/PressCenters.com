@@ -1,4 +1,4 @@
-﻿namespace PressCenters.Services.Sources.BgInstitutions
+﻿namespace PressCenters.Services.Sources.Ministries
 {
     public class MhGovernmentBgEpidemicSource : MhGovernmentBgBaseSource
     {

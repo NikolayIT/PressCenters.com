@@ -1,9 +1,9 @@
-﻿namespace PressCenters.Services.Sources.Tests.BgInstitutions
+﻿namespace PressCenters.Services.Sources.Tests.Ministries
 {
     using System;
     using System.Linq;
 
-    using PressCenters.Services.Sources.BgInstitutions;
+    using PressCenters.Services.Sources.Ministries;
 
     using Xunit;
 
