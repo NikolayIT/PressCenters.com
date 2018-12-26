@@ -24,10 +24,7 @@
             return news;
         }
 
-        public override string ExtractIdFromUrl(string originalUrl)
-        {
-            return originalUrl?.GetStringBetween("/news", "/");
-        }
+        public override string ExtractIdFromUrl(string originalUrl) => originalUrl?.GetStringBetween("/news", "/");
 
         protected override RemoteNews ParseDocument(IDocument document)
         {

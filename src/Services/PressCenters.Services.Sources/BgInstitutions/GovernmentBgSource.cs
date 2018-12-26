@@ -22,15 +22,6 @@
             return news;
         }
 
-        public override string ExtractIdFromUrl(string url)
-        {
-            var uri = new Uri(url);
-            var id = !string.IsNullOrWhiteSpace(uri.Segments[uri.Segments.Length - 1])
-                         ? uri.Segments[uri.Segments.Length - 1].Trim('/')
-                         : uri.Segments[uri.Segments.Length - 2].Trim('/');
-            return id;
-        }
-
         protected override RemoteNews ParseDocument(IDocument document)
         {
             var titleElement = document.QuerySelector(".view h1");

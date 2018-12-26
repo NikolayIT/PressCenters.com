@@ -24,12 +24,8 @@
             return news;
         }
 
-        public override string ExtractIdFromUrl(string url)
-        {
-            var lastDash = url.LastIndexOf("-", StringComparison.InvariantCulture);
-            var id = url.GetStringBetween("-", ".html", lastDash);
-            return id;
-        }
+        public override string ExtractIdFromUrl(string url) =>
+            url.GetStringBetween("-", ".html", url.LastIndexOf("-", StringComparison.InvariantCulture));
 
         protected override RemoteNews ParseDocument(IDocument document)
         {

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Net;
 
     using AngleSharp;
     using AngleSharp.Dom;
@@ -37,6 +38,9 @@
             // Title
             publication.Title = publication.Title?.Trim();
 
+            // Content
+            publication.Content = publication.Content?.Trim();
+
             // Post date
             if (publication.PostDate > DateTime.Now)
             {
@@ -50,7 +54,7 @@
             }
 
             // Original URL
-            publication.OriginalUrl = url;
+            publication.OriginalUrl = url?.Trim();
 
             // Image URL
             if (publication.ImageUrl?.StartsWith("/images/sources/") == false)
@@ -59,12 +63,17 @@
             }
 
             // Remote ID
-            publication.RemoteId = this.ExtractIdFromUrl(url);
+            publication.RemoteId = this.ExtractIdFromUrl(url)?.Trim();
 
             return publication;
         }
 
-        public abstract string ExtractIdFromUrl(string url);
+        public virtual string ExtractIdFromUrl(string url)
+        {
+            var uri = new Uri(url.Trim().Trim('/'));
+            var lastSegment = uri.Segments[uri.Segments.Length - 1];
+            return WebUtility.UrlDecode(lastSegment);
+        }
 
         protected abstract RemoteNews ParseDocument(IDocument document);
 
