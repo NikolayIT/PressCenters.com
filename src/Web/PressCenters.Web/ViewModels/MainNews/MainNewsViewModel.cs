@@ -13,6 +13,8 @@
 
         public string ImageUrl { get; set; }
 
+        public string ImageUrlOrDefault => this.ImageUrl ?? "/images/mainnews/default.png";
+
         public string OriginalUrl { get; set; }
 
         public string SourceName { get; set; }
