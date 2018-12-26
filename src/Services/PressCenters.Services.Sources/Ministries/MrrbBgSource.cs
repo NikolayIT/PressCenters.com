@@ -4,11 +4,9 @@
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
-    using System.Net.Http;
 
     using AngleSharp;
     using AngleSharp.Dom;
-    using AngleSharp.Parser.Html;
 
     /// <summary>
     /// Министерство на регионалното развитие и благоустройството.
