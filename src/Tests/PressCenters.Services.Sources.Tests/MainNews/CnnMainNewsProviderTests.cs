@@ -4,18 +4,19 @@
 
     using Xunit;
 
-    public class BtvNoviniteMainNewsProviderTests
+    public class CnnMainNewsProviderTests
     {
         [Fact]
         public void GetMainNewsShouldWorkCorrectly()
         {
-            var provider = new BtvNoviniteMainNewsProvider();
+            var provider = new CnnMainNewsProvider();
             var news = provider.GetMainNews();
             Assert.NotNull(news.Title);
             Assert.True(news.Title.Length >= 10);
-            Assert.Contains("btvnovinite.bg", news.OriginalUrl);
+            Assert.Contains("cnn.com", news.OriginalUrl);
             Assert.StartsWith("https", news.OriginalUrl);
             Assert.StartsWith("https", news.ImageUrl);
+            Assert.DoesNotContain("data:image", news.ImageUrl);
         }
     }
 }

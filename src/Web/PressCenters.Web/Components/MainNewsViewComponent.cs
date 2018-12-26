@@ -22,8 +22,9 @@
         public IViewComponentResult Invoke()
         {
             var news = this.mainNewsRepository.All().GroupBy(
-                x => x.SourceId,
-                (key, g) => g.OrderByDescending(e => e.Id).FirstOrDefault()).To<MainNewsViewModel>().ToList();
+                    x => x.SourceId,
+                    (key, g) => g.OrderByDescending(e => e.Id).FirstOrDefault()).OrderByDescending(x => x.CreatedOn)
+                .To<MainNewsViewModel>().ToList();
             var viewModel = new MainNewsComponentViewModel { MainNews = news };
             return this.View(viewModel);
         }
