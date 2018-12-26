@@ -64,7 +64,7 @@
             foreach (var source in sourcesRepository.All().ToList())
             {
                 // Skip sources for testing purposes
-                if (!new[] { 0 }.Contains(source.Id))
+                if (!new[] { 21 }.Contains(source.Id))
                 {
                     continue;
                 }
