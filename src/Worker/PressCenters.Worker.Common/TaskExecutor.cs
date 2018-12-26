@@ -3,7 +3,6 @@
     using System;
     using System.Diagnostics;
     using System.Reflection;
-    using System.Runtime.InteropServices;
     using System.Threading.Tasks;
 
     using Microsoft.Extensions.DependencyInjection;
@@ -99,7 +98,7 @@
             try
             {
                 workerTask.Processing = true;
-                this.workerTasksData.Update(workerTask);
+                await this.workerTasksData.UpdateAsync(workerTask);
             }
             catch (Exception ex)
             {
@@ -145,7 +144,7 @@
                         this.logger.LogInformation(
                             $"Task #{workerTask.Id} completed in {stopwatch.Elapsed} ({DateTime.UtcNow}) with result: {workerTask.Result}");
 
-                        this.workerTasksData.Update(workerTask);
+                        await this.workerTasksData.UpdateAsync(workerTask);
                     }
                     catch (Exception ex)
                     {
@@ -160,10 +159,10 @@
                         var nextTask = task.Recreate(workerTask);
                         if (nextTask != null)
                         {
-                            await this.workerTasksData.Add(nextTask);
+                            await this.workerTasksData.AddAsync(nextTask);
                         }
 
-                        this.workerTasksData.Update(workerTask);
+                        await this.workerTasksData.UpdateAsync(workerTask);
                     }
                     catch (Exception ex)
                     {
@@ -179,7 +178,7 @@
             {
                 workerTask.Processed = true;
                 workerTask.Processing = false;
-                this.workerTasksData.Update(workerTask);
+                await this.workerTasksData.UpdateAsync(workerTask);
 
                 // For re-runs
                 this.tasksSet.Remove(workerTask.Id);

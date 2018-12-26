@@ -52,10 +52,9 @@
 
                 // Give the thread some time to start properly before starting another threads.
                 // (Prevents "System.ArgumentException: An item with the same key has already been added" related to the DI framework)
-                Thread.Sleep(300);
+                Thread.Sleep(500);
             }
 
-            // TODO: Write in own log - this.log.WriteEntry($"JobSchedulerService started with {ThreadsCount} threads.");
             this.logger.LogInformation($"JobSchedulerService started with {this.threads.Count} threads.");
             return Task.CompletedTask;
         }
@@ -67,7 +66,6 @@
                 taskExecutor.Stop();
             }
 
-            // TODO: Write in own log - this.log.WriteEntry("JobSchedulerService stopped.");
             this.logger.LogInformation("JobSchedulerService stopped.");
             return Task.CompletedTask;
         }

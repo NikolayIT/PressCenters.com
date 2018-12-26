@@ -24,7 +24,7 @@
                 .ThenBy(x => x.Id)
                 .FirstOrDefault();
 
-        public void Update(WorkerTask workerTask)
+        public async Task UpdateAsync(WorkerTask workerTask)
         {
             if (workerTask == null)
             {
@@ -32,10 +32,10 @@
             }
 
             this.workerTasks.Update(workerTask);
-            this.workerTasks.SaveChangesAsync().GetAwaiter().GetResult();
+            await this.workerTasks.SaveChangesAsync();
         }
 
-        public async Task Add(WorkerTask workerTask)
+        public async Task AddAsync(WorkerTask workerTask)
         {
             if (workerTask == null)
             {

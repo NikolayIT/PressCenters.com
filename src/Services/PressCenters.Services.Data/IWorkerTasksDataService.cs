@@ -8,8 +8,8 @@
     {
         WorkerTask GetForProcessing();
 
-        void Update(WorkerTask workerTask);
+        Task UpdateAsync(WorkerTask workerTask);
 
-        Task Add(WorkerTask workerTask);
+        Task AddAsync(WorkerTask workerTask);
     }
 }
