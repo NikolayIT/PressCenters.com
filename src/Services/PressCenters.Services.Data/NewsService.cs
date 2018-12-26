@@ -5,7 +5,6 @@
 
     using PressCenters.Data.Common.Repositories;
     using PressCenters.Data.Models;
-    using PressCenters.Services.Sources;
 
     public class NewsService : INewsService
     {

@@ -32,13 +32,7 @@
             var imageElement = document.QuerySelector("#intl_homepage1-zone-1 .cd--article .cd__wrapper .media noscript img");
             var imageUrl = "https:" + imageElement?.Attributes["src"]?.Value?.Trim();
 
-            var news = new RemoteMainNews
-            {
-                Title = title,
-                OriginalUrl = url,
-                ImageUrl = imageUrl,
-            };
-            return news;
+            return new RemoteMainNews(title, url, imageUrl);
         }
 
         public class JsonDataObject

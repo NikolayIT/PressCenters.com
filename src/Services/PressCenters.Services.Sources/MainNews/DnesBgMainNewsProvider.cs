@@ -18,13 +18,7 @@
             var imageElement = document.QuerySelector(".top-news-wrapper .left .top-news .first a img");
             var imageUrl = imageElement?.Attributes["src"]?.Value?.Trim();
 
-            var news = new RemoteMainNews
-            {
-                Title = title,
-                OriginalUrl = url,
-                ImageUrl = imageUrl,
-            };
-            return news;
+            return new RemoteMainNews(title, url, imageUrl);
         }
     }
 }

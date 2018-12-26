@@ -16,13 +16,7 @@
             var imageElement = document.QuerySelector(".main-accent-wrapper .img-cont img");
             var imageUrl = imageElement?.Attributes["src"]?.Value?.Trim();
 
-            var news = new RemoteMainNews
-            {
-                Title = title,
-                OriginalUrl = url,
-                ImageUrl = imageUrl,
-            };
-            return news;
+            return new RemoteMainNews(title, url, imageUrl);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace PressCenters.Services.Sources
+﻿namespace PressCenters.Services
 {
     using System;
 
