@@ -17,7 +17,7 @@
         <link href="~/css/site.min.css" rel="stylesheet" asp-append-version="true" />
         <link href="~/css/unify.min.css" rel="stylesheet" asp-append-version="true" />
     </environment>
-    @Html.Raw(JavaScriptSnippet.FullScript)
+    @this.Html.Raw(this.JavaScriptSnippet.FullScript)
 </head>
 <body>
     <header>
@@ -49,7 +49,7 @@
         </nav>
     </header>
 
-    @RenderBody()
+    @this.RenderBody()
 
     <footer>
         <div class="container">
@@ -76,6 +76,6 @@
         <script src="~/lib/moment/min/moment-with-locales.min.js" asp-append-version="true"></script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
-    @this.RenderSection("Scripts", required: false)
+    @this.RenderSection("Scripts", false)
 </body>
 </html>

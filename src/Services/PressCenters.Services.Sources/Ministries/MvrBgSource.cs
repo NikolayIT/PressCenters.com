@@ -64,7 +64,7 @@
 
             var timeElement = document.QuerySelector(".article__description h5");
             var timeAsString = timeElement?.TextContent?.Trim();
-            if (!DateTime.TryParseExact(timeAsString, "dd MMM yyyy", CultureInfo.GetCultureInfo("bg-BG"), DateTimeStyles.None, out DateTime time))
+            if (!DateTime.TryParseExact(timeAsString, "dd MMM yyyy", CultureInfo.GetCultureInfo("bg-BG"), DateTimeStyles.None, out var time))
             {
                 timeElement = document.QuerySelector(".article__description .timestamp");
                 timeAsString = timeElement?.TextContent?.Trim();

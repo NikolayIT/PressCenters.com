@@ -34,7 +34,7 @@
             if (this.ModelState.IsValid)
             {
                 var user = await this.userManager.FindByEmailAsync(this.Input.Email);
-                if (user == null || !(await this.userManager.IsEmailConfirmedAsync(user)))
+                if (user == null || !await this.userManager.IsEmailConfirmedAsync(user))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return this.RedirectToPage("./ForgotPasswordConfirmation");

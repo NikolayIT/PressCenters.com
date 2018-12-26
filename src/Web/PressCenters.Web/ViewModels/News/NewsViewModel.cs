@@ -37,12 +37,14 @@
             get
             {
                 // TODO: Extract as a service
+                const int MaxLength = 235;
                 var strippedContent = WebUtility.HtmlDecode(this.Content?.StripHtml() ?? string.Empty);
                 strippedContent = strippedContent.Replace("\n", " ");
                 strippedContent = strippedContent.Replace("\t", " ");
                 strippedContent = Regex.Replace(strippedContent, @"\s+", " ").Trim();
-                var shortContent = strippedContent.Substring(0, Math.Min(235, strippedContent.Length)) + "...";
-                return shortContent;
+                return strippedContent.Length <= MaxLength
+                           ? strippedContent
+                           : strippedContent.Substring(0, MaxLength) + "...";
             }
         }
 

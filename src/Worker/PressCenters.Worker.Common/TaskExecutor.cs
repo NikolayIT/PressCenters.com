@@ -76,14 +76,14 @@
             {
                 this.logger.LogCritical($"Unable to get task for processing. Error: {ex}");
 
-                await Task.Delay(TaskExecutor.WaitTimeOnErrorInSeconds * 1000);
+                await Task.Delay(WaitTimeOnErrorInSeconds * 1000);
                 return;
             }
 
             if (workerTask == null)
             {
                 // No task available. Wait few seconds and try again.
-                await Task.Delay(TaskExecutor.IdleTimeInSeconds * 1000);
+                await Task.Delay(IdleTimeInSeconds * 1000);
                 return;
             }
 
@@ -107,7 +107,7 @@
 
                 this.tasksSet.Remove(workerTask.Id);
 
-                await Task.Delay(TaskExecutor.WaitTimeOnErrorInSeconds * 1000);
+                await Task.Delay(WaitTimeOnErrorInSeconds * 1000);
                 return;
             }
 
