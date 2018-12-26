@@ -24,7 +24,8 @@
             var document = parser.Parse(dataObject.Html);
 
             var titleElement = document.QuerySelector("#intl_homepage1-zone-1 .cd--article h2");
-            var title = titleElement.TextContent.Trim();
+            var subTitleElement = document.QuerySelector("#intl_homepage1-zone-1 .cd--article .cd__headline-text strong");
+            var title = $"{titleElement?.TextContent?.Trim()} ({subTitleElement?.TextContent?.Trim()})";
 
             var urlElement = document.QuerySelector("#intl_homepage1-zone-1 .cd--article a");
             var url = BaseUrl + urlElement.Attributes["href"].Value.Trim();
