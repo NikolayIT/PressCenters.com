@@ -36,7 +36,7 @@
                 var links = document.QuerySelectorAll(".category-articles .list-article a")
                     .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl)).Distinct().ToList();
                 var news = links.Select(this.GetPublication).ToList();
-                Console.WriteLine($"Page {i} => {news.Count()} news");
+                Console.WriteLine($"Page {i} => {news.Count} news");
                 foreach (var remoteNews in news)
                 {
                     yield return remoteNews;

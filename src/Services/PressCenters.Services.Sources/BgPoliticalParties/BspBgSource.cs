@@ -11,7 +11,7 @@
 
     public class BspBgSource : BaseSource
     {
-        public override string BaseUrl { get; } = "http://bsp.bg/";
+        public override string BaseUrl { get; } = "https://bsp.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications()
         {

@@ -63,8 +63,8 @@
             var sourcesRepository = serviceProvider.GetService<IDeletableEntityRepository<Source>>();
             foreach (var source in sourcesRepository.All().ToList())
             {
-                // Skip sources for testing purposes
-                if (!new[] { 21 }.Contains(source.Id))
+                // Run only for selected sources
+                if (!new[] { "MrrbBgSource" }.Any(x => source.TypeName.Contains(x)))
                 {
                     continue;
                 }
