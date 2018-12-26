@@ -50,7 +50,7 @@
             var content = contentElement.InnerHtml.Trim();
 
             var imageElement = document.QuerySelector("#slider img");
-            var imageUrl = imageElement?.GetAttribute("src");
+            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/gerb.bg.jpg";
 
             return new RemoteNews(title, content, time, imageUrl);
         }

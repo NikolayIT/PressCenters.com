@@ -64,9 +64,9 @@
             foreach (var source in sourcesRepository.All().ToList())
             {
                 // Skip sources for testing purposes
-                if (new[] { 1, 7 }.Contains(source.Id))
+                if (!new[] { 0 }.Contains(source.Id))
                 {
-                    // continue;
+                    continue;
                 }
 
                 var sourceProvider = ReflectionHelpers.GetInstance<BaseSource>(source.TypeName);
