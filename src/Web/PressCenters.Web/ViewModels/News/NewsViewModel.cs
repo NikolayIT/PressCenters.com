@@ -5,6 +5,8 @@
     using System.Net;
     using System.Text.RegularExpressions;
 
+    using Ganss.XSS;
+
     using PressCenters.Common;
     using PressCenters.Data.Models;
     using PressCenters.Services;
@@ -14,9 +16,12 @@
     {
         private readonly ISlugGenerator slugGenerator;
 
+        private readonly IHtmlSanitizer htmlSanitizer;
+
         public NewsViewModel()
         {
             this.slugGenerator = new SlugGenerator();
+            this.htmlSanitizer = new HtmlSanitizer();
         }
 
         public int Id { get; set; }
@@ -24,6 +29,8 @@
         public string Title { get; set; }
 
         public string Content { get; set; }
+
+        public string SanitizedContent => this.htmlSanitizer.Sanitize(this.Content);
 
         public string ShortContent
         {

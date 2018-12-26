@@ -20,5 +20,5 @@
 <hr />
 
 <div>
-    @Html.Raw(this.Model.Content) @* TODO: Sanitize! *@
+    @this.Html.Raw(this.Model.SanitizedContent)
 </div>
