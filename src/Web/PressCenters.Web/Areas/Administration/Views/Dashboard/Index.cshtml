@@ -1,0 +1,36 @@
+﻿@model PressCenters.Web.Areas.Administration.ViewModels.Dashboard.IndexViewModel
+@{
+    this.ViewData["Title"] = this.ViewData["SubTitle"] = "Admin dashboard";
+}
+
+<h4>Null ImageUrl: @this.Model.CountNullNewsImageUrls</h4>
+
+<h4>Null OriginalUrl: @this.Model.CountNullNewsOriginalUrl</h4>
+
+<h4>Not processed tasks: @this.Model.NotProcessedTaskCount</h4>
+
+<h4>Processing tasks: @this.Model.ProcessingWorkerTasks.Count()</h4>
+@foreach (var processingTask in this.Model.ProcessingWorkerTasks)
+{
+    <div class="card">
+        <div class="card-body">
+            <p class="font-weight-bold">@processingTask.TypeName</p>
+            <p>@processingTask.Parameters</p>
+            <p>@processingTask.Result</p>
+            <p><time datetime="@processingTask.RunAfter?.ToString("O")">@processingTask.RunAfter?.ToString("dd/MM/yyyy HH:mm")</time></p>
+        </div>
+    </div>
+}
+
+<h4>Last worker task errors</h4>
+@foreach (var processingTask in this.Model.LastWorkerTaskErrors)
+{
+    <div class="card">
+        <div class="card-body">
+            <p class="font-weight-bold">@processingTask.TypeName</p>
+            <p>@processingTask.Parameters</p>
+            <p>@processingTask.Result</p>
+            <p><time datetime="@processingTask.RunAfter?.ToString("O")">@processingTask.RunAfter?.ToString("dd/MM/yyyy HH:mm")</time></p>
+        </div>
+    </div>
+}
