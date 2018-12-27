@@ -64,7 +64,7 @@
             foreach (var source in sourcesRepository.All().ToList())
             {
                 // Run only for selected sources
-                if (!new[] { "MrrbBgSource" }.Any(x => source.TypeName.Contains(x)))
+                if (!new[] { "MonBgSource" }.Any(x => source.TypeName.Contains(x)))
                 {
                     continue;
                 }
@@ -94,7 +94,7 @@
             services.AddSingleton<IConfiguration>(configuration);
             services.AddDbContext<ApplicationDbContext>(
                 options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
-                    .UseLoggerFactory(new LoggerFactory()));
+                    .EnableSensitiveDataLogging().UseLoggerFactory(new LoggerFactory()));
 
             services
                 .AddIdentity<ApplicationUser, ApplicationRole>(IdentityOptionsProvider.GetIdentityOptions)
