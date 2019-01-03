@@ -1,6 +1,7 @@
 ﻿namespace PressCenters.Web.Areas.Administration.Controllers
 {
     using System.Linq;
+    using System.Threading.Tasks;
 
     using Microsoft.AspNetCore.Mvc;
 
@@ -26,8 +27,9 @@
         {
             var viewModel = new IndexViewModel
                             {
-                                CountNullNewsImageUrls = this.newsRepository.All().Count(x => x.ImageUrl == null),
-                                CountNullNewsOriginalUrl = this.newsRepository.All().Count(x => x.OriginalUrl == null),
+                                CountNullNewsImageUrls = this.newsRepository.All().Count(x => string.IsNullOrWhiteSpace(x.ImageUrl)),
+                                CountNullNewsOriginalUrl = this.newsRepository.All().Count(x => string.IsNullOrWhiteSpace(x.OriginalUrl)),
+                                CountNullNewsRemoteId = this.newsRepository.All().Count(x => string.IsNullOrWhiteSpace(x.RemoteId)),
                                 NotProcessedTaskCount = this.workerTasksRepository.All().Count(x => !x.Processed),
                                 LastWorkerTaskErrors = this.workerTasksRepository.All()
                                     .Where(x => x.Result.Contains("\"Ok\":false")).OrderByDescending(x => x.Id).Take(10)
@@ -36,6 +38,19 @@
                                     this.workerTasksRepository.All().Where(x => x.Processing).ToList(),
                             };
             return this.View(viewModel);
+        }
+
+        public async Task<IActionResult> RemoveProcessing()
+        {
+            var processing = this.workerTasksRepository.All().Where(x => x.Processing).ToList();
+            foreach (var workerTask in processing)
+            {
+                workerTask.Processing = false;
+            }
+
+            await this.workerTasksRepository.SaveChangesAsync();
+
+            return this.RedirectToAction("Index");
         }
     }
 }

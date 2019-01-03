@@ -10,6 +10,8 @@
 
         public int CountNullNewsOriginalUrl { get; set; }
 
+        public int CountNullNewsRemoteId { get; set; }
+
         public int NotProcessedTaskCount { get; set; }
 
         public IEnumerable<WorkerTask> LastWorkerTaskErrors { get; set; }

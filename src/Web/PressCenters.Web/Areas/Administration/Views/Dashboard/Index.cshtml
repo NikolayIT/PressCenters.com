@@ -3,13 +3,15 @@
     this.ViewData["Title"] = "Admin dashboard";
 }
 
-<h4>Null ImageUrl: @this.Model.CountNullNewsImageUrls</h4>
-
-<h4>Null OriginalUrl: @this.Model.CountNullNewsOriginalUrl</h4>
+<h4>
+    Empty ImageUrl: @this.Model.CountNullNewsImageUrls --
+    Empty OriginalUrl: @this.Model.CountNullNewsOriginalUrl --
+    Empty RemoteId: @this.Model.CountNullNewsRemoteId
+</h4>
 
 <h4>Not processed tasks: @this.Model.NotProcessedTaskCount</h4>
 
-<h4>Processing tasks: @this.Model.ProcessingWorkerTasks.Count()</h4>
+<h4>Processing tasks: @this.Model.ProcessingWorkerTasks.Count() [<a asp-action="RemoveProcessing">Clear</a>]</h4>
 @foreach (var processingTask in this.Model.ProcessingWorkerTasks)
 {
     <div class="card">
