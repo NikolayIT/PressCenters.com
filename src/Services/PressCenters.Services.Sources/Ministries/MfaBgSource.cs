@@ -9,17 +9,17 @@
     using AngleSharp.Dom;
 
     /// <summary>
-    /// Министерство на образованието и науката.
+    /// Министерство на външните работи.
     /// </summary>
-    public class MonBgSource : BaseSource
+    public class MfaBgSource : BaseSource
     {
-        public override string BaseUrl { get; } = "https://www.mon.bg/";
+        public override string BaseUrl { get; } = "https://www.mfa.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications()
         {
             var address = $"{this.BaseUrl}bg/news";
             var document = this.BrowsingContext.OpenAsync(address).Result;
-            var links = document.QuerySelectorAll(".col-md-9 .news-description a")
+            var links = document.QuerySelectorAll(".main-news .news-item h2 a")
                 .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl))
                 .Where(x => x.Contains("bg/news")).Distinct().ToList();
             var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
@@ -32,7 +32,7 @@
             {
                 var address = $"{this.BaseUrl}bg/news?p={i}";
                 var document = this.BrowsingContext.OpenAsync(address).Result;
-                var links = document.QuerySelectorAll(".col-md-9 .news-description a")
+                var links = document.QuerySelectorAll(".main-news .news-item h2 a")
                     .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl))
                     .Where(x => x.Contains("bg/news")).Distinct().ToList();
                 var news = links.Select(this.GetPublication).ToList();
@@ -46,28 +46,22 @@
 
         protected override RemoteNews ParseDocument(IDocument document)
         {
-            var titleElement = document.QuerySelector(".col-md-9.content-center h3");
+            var titleElement = document.QuerySelector("h1.news-title");
             if (titleElement == null)
             {
                 return null;
             }
 
-            var title = new CultureInfo("bg-BG", false).TextInfo.ToTitleCase(
-                titleElement?.TextContent?.ToLower() ?? string.Empty);
+            var title = titleElement.TextContent;
 
-            var timeElement = document.QuerySelector(".col-md-9.content-center p");
+            var timeElement = document.QuerySelector(".news-item .date");
             var timeAsString = timeElement?.TextContent?.Trim();
-            var time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
+            var time = DateTime.ParseExact(timeAsString, "dd MMMM yyyy", new CultureInfo("bg-BG"));
 
-            var imageElement = document.QuerySelector(".col-md-9.content-center img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/mon.bg.png";
+            var imageElement = document.QuerySelector(".news-item img.main-pic");
+            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/mfa.bg.png";
 
-            var socialMediaShareElement = document.QuerySelector(".col-md-9.content-center div");
-            var contentElement = document.QuerySelector(".col-md-9.content-center");
-            this.RemoveRecursively(contentElement, titleElement);
-            this.RemoveRecursively(contentElement, timeElement);
-            this.RemoveRecursively(contentElement, imageElement);
-            this.RemoveRecursively(contentElement, socialMediaShareElement);
+            var contentElement = document.QuerySelector(".news-item .content");
             this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
             var content = contentElement?.InnerHtml;
 

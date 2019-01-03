@@ -31,7 +31,7 @@
             Assert.Contains("държавните зрелостни изпити – 21 и 23 май 2019 г.", news.Content);
             Assert.DoesNotContain("soc-facebook", news.Content);
             Assert.DoesNotContain("facebook.com", news.Content);
-            Assert.DoesNotContain("https://www.mon.bg/upload/18378/3008_ub2fc.jpg", news.Content);
+            Assert.DoesNotContain("upload/18378/3008_ub2fc.jpg", news.Content);
             Assert.DoesNotContain("21.12.2018", news.Content);
             Assert.Equal("https://www.mon.bg/upload/18378/3008_ub2fc.jpg", news.ImageUrl);
             Assert.Equal(new DateTime(2018, 12, 21), news.PostDate);
