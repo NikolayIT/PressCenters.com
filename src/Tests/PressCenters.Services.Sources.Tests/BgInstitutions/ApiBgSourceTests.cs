@@ -35,7 +35,7 @@
             Assert.Equal("На 31 януари изтича валидността на годишните винетки за 2015 г.", news.Title);
             Assert.Contains("На дирекциите „Социално подпомогане“ досега са предоставени безплатни", news.Content);
             Assert.Contains("Пълният списък на дистрибуторската мрежа е публикуван на интернет страницата на АПИ", news.Content);
-            Assert.True(!news.Content.Contains("16e9043a49410f09048c7f65c06248bd_f4527.jpg"));
+            Assert.DoesNotContain("16e9043a49410f09048c7f65c06248bd_f4527.jpg", news.Content);
             Assert.Equal("http://www.api.bg/files/cache/16e9043a49410f09048c7f65c06248bd_f4527.jpg", news.ImageUrl);
             Assert.Equal(new DateTime(2016, 1, 24, 09, 59, 0), news.PostDate);
             Assert.Equal("na-31-yanuari-izticha-validnostta-na-godishnite-vinetki-za-2015-g", news.RemoteId);
@@ -51,7 +51,7 @@
             Assert.Equal("8 фирми подадоха оферти за строителството на Лот 2 от АМ „Тракия“", news.Title);
             Assert.Contains("„Днешното събитие е плод на един огромен и сериозен труд на всички служители в агенцията”", news.Content);
             Assert.Contains("националния бюджет чрез Оперативна програма „Транспорт“ 2007-2013 г.", news.Content);
-            Assert.True(!news.Content.Contains("Logo-OPT.png"));
+            Assert.DoesNotContain("Logo-OPT.png", news.Content);
             Assert.Equal("http://www.api.bg/files/3113/6830/4295/Logo-OPT.png", news.ImageUrl);
             Assert.Equal(new DateTime(2010, 1, 12, 14, 31, 0), news.PostDate);
             Assert.Equal("8-firmi-podadoha-oferti-za-stroitelstvoto-na-lot-2-ot-am-trakiya", news.RemoteId);

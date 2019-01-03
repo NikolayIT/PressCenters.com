@@ -64,7 +64,7 @@
             foreach (var source in sourcesRepository.All().ToList())
             {
                 // Run only for selected sources
-                if (!new[] { "MfaBgSource" }.Any(x => source.TypeName.Contains(x)))
+                if (!new[] { "ApiBgSource" }.Any(x => source.TypeName.Contains(x)))
                 {
                     continue;
                 }

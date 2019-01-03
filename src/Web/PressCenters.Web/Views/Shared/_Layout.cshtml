@@ -6,7 +6,14 @@
 <div class="container clearfix mb-3">
     <div class="float-left">
         <h1>@GlobalConstants.SystemName</h1>
-        <h2 class="lead">@(this.ViewData["Title"] ?? GlobalConstants.SystemSlogan)</h2>
+        @{
+            var subTitle = (this.ViewData["Title"] ?? GlobalConstants.SystemSlogan).ToString();
+            if (subTitle.Length > 30)
+            {
+                subTitle = GlobalConstants.SystemSlogan;
+            }
+        }
+        <h2 class="lead">@subTitle</h2>
     </div>
     <div class="float-right text-center">
         <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>

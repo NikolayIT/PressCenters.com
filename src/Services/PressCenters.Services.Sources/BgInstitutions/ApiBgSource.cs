@@ -14,11 +14,31 @@
 
         public override IEnumerable<RemoteNews> GetLatestPublications()
         {
-            var address = $"{this.BaseUrl}index.php/tools/blocks/news_list/rss?bID=606&cID=186&arHandle=Main";
+            var address = $"{this.BaseUrl}index.php/bg/prescentar/novini";
             var document = this.BrowsingContext.OpenAsync(address).Result;
-            var links = document.QuerySelectorAll("item > link").Select(x => x.InnerHtml).ToList();
-            var news = links.Select(this.GetPublication).ToList();
+            var links = document.QuerySelectorAll(".ccm-page-list .news-item a.news_more_link")
+                .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl))
+                .Where(x => x.Contains("bg/prescentar/novini")).Distinct().ToList();
+            var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
             return news;
+        }
+
+        public override IEnumerable<RemoteNews> GetAllPublications()
+        {
+            for (var i = 1; i <= 650; i++)
+            {
+                var address = $"{this.BaseUrl}index.php/bg/prescentar/novini?ccm_paging_p_b606={i}";
+                var document = this.BrowsingContext.OpenAsync(address).Result;
+                var links = document.QuerySelectorAll(".ccm-page-list .news-item a.news_more_link")
+                    .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl))
+                    .Where(x => x.Contains("bg/prescentar/novini")).Distinct().ToList();
+                var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
+                Console.WriteLine($"Page {i} => {news.Count} news");
+                foreach (var remoteNews in news)
+                {
+                    yield return remoteNews;
+                }
+            }
         }
 
         protected override RemoteNews ParseDocument(IDocument document)
@@ -35,6 +55,7 @@
 
             contentElement.RemoveChild(timeNode);
             this.RemoveRecursively(contentElement, imageElement);
+            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
             var content = contentElement.InnerHtml;
 
             return new RemoteNews(title, content, time, imageUrl);
