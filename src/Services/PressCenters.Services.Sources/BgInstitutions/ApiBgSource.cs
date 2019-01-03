@@ -25,7 +25,7 @@
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            for (var i = 1; i <= 650; i++)
+            for (var i = 173; i <= 650; i++)
             {
                 var address = $"{this.BaseUrl}index.php/bg/prescentar/novini?ccm_paging_p_b606={i}";
                 var document = this.BrowsingContext.OpenAsync(address).Result;
@@ -51,7 +51,7 @@
             var time = DateTime.ParseExact(timeNode.TextContent, "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture); // 24.01.2016 09:59
 
             var imageElement = document.QuerySelector(".news-article img");
-            var imageUrl = imageElement?.GetAttribute("src");
+            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/api.bg.jpg";
 
             contentElement.RemoveChild(timeNode);
             this.RemoveRecursively(contentElement, imageElement);
