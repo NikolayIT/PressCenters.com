@@ -16,6 +16,7 @@
 
         public virtual Source Source { get; set; }
 
+        // TODO: Required
         public string RemoteId { get; set; }
     }
 }
