@@ -2,9 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
-    using AngleSharp;
     using AngleSharp.Dom;
 
     public class PrbBgSource : BaseSource

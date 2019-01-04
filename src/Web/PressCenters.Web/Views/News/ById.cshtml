@@ -8,6 +8,7 @@
 @if (this.User.IsInRole(GlobalConstants.AdministratorRoleName))
 {
     <a asp-area="Administration" asp-controller="News" asp-action="UpdateRemoteNews" asp-route-id="@this.Model.Id" class="btn btn-secondary">Update</a>
+    <span>(@this.Model.RemoteId)</span>
     <hr/>
 }
 

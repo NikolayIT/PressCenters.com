@@ -52,6 +52,8 @@
 
         public string OriginalUrl { get; set; }
 
+        public string RemoteId { get; set; }
+
         public string SourceName { get; set; }
 
         public string SourceShortName { get; set; }
