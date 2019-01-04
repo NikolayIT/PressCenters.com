@@ -16,7 +16,8 @@
             var address = $"{this.BaseUrl}bg/news/aktualno";
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll(".list-field .list-content a")
-                .Select(x => x.Attributes?["href"]?.Value).Select(x => this.NormalizeUrl(x, this.BaseUrl)).ToList();
+                .Select(x => x.Attributes?["href"]?.Value).Select(x => this.NormalizeUrl(x, this.BaseUrl))
+                .Where(x => x.Contains("bg/news/aktualno")).Distinct().ToList();
             var news = links.Select(this.GetPublication).ToList();
             return news;
         }
@@ -28,7 +29,8 @@
                 var address = $"{this.BaseUrl}bg/news/aktualno?page={i}";
                 var document = this.BrowsingContext.OpenAsync(address).Result;
                 var links = document.QuerySelectorAll(".list-field .list-content a")
-                    .Select(x => x.Attributes?["href"]?.Value).Select(x => this.NormalizeUrl(x, this.BaseUrl)).ToList();
+                    .Select(x => x.Attributes?["href"]?.Value).Select(x => this.NormalizeUrl(x, this.BaseUrl))
+                    .Where(x => x.Contains("bg/news/aktualno")).Distinct().ToList();
                 var news = links.Select(this.GetPublication).ToList();
                 Console.WriteLine($"Page {i} => {news.Count} news");
                 foreach (var remoteNews in news)
