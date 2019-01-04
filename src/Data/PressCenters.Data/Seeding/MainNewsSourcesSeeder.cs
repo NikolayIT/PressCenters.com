@@ -26,6 +26,8 @@
                                           "PressCenters.Services.Sources.MainNews.VestiBgMainNewsProvider"),
                                       ("CNN.com", "https://edition.cnn.com",
                                           "PressCenters.Services.Sources.MainNews.CnnMainNewsProvider"),
+                                      ("Dnevnik.bg", "https://www.dnevnik.bg/",
+                                          "PressCenters.Services.Sources.MainNews.DnevnikBgMainNewsProvider"),
                                   };
 
             foreach (var mainNewsSource in mainNewsSources)
