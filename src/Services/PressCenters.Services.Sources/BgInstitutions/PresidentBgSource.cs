@@ -18,10 +18,27 @@
         {
             var address = $"{this.BaseUrl}news/";
             var document = this.BrowsingContext.OpenAsync(address).Result;
-            var links = document.QuerySelectorAll(".inside-article-box > a").Select(
+            var links = document.QuerySelectorAll(".inside-article-box a.dblock").Select(
                 x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl)).ToList();
             var news = links.Select(this.GetPublication).ToList();
             return news;
+        }
+
+        public override IEnumerable<RemoteNews> GetAllPublications()
+        {
+            for (var i = 1; i <= 22; i++)
+            {
+                var address = $"{this.BaseUrl}news/all/{i}";
+                var document = this.BrowsingContext.OpenAsync(address).Result;
+                var links = document.QuerySelectorAll(".inside-article-box a.dblock").Select(
+                    x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl)).ToList();
+                var news = links.Select(this.GetPublication).ToList();
+                Console.WriteLine($"Page {i} => {news.Count} news");
+                foreach (var remoteNews in news)
+                {
+                    yield return remoteNews;
+                }
+            }
         }
 
         public override string ExtractIdFromUrl(string originalUrl) => originalUrl?.GetStringBetween("/news", "/");
@@ -40,7 +57,7 @@
             var content = contentElement.InnerHtml.Trim();
 
             var imageElement = document.QuerySelector(".print-content img");
-            var imageUrl = imageElement?.GetAttribute("src");
+            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/president.bg.jpg";
 
             return new RemoteNews(title, content, time, imageUrl);
         }

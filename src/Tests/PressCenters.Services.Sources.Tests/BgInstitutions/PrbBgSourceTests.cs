@@ -38,6 +38,24 @@
         }
 
         [Fact]
+        public void ParseRemoteNewsWithoutImageShouldWorkCorrectly()
+        {
+            const string NewsUrl = "https://www.prb.bg/bg/news/aktualno/vrkhovnata-administrativna-prokuratura-vap-ob-1355";
+            var provider = new PrbBgSource();
+            var news = provider.GetPublication(NewsUrl);
+            Assert.Equal(NewsUrl, news.OriginalUrl);
+            Assert.Equal("Върховната административна прокуратура (ВАП) обобщи резултатите ...", news.Title);
+            Assert.Equal("aktualno/vrkhovnata-administrativna-prokuratura-vap-ob-1355", news.RemoteId);
+            Assert.Equal(new DateTime(2008, 12, 2), news.PostDate.Date);
+            Assert.Contains("Върховната административна прокуратура (ВАП) обобщи", news.Content);
+            Assert.Contains("По указание на ВАП окръжните прокуратури в страната", news.Content);
+            Assert.Contains("Видно от обобщените от ВАП резултати", news.Content);
+            Assert.Contains("по упражняване на стопанска дейност от търговските субекти.", news.Content);
+            Assert.DoesNotContain("12.08", news.Content);
+            Assert.Equal("/images/sources/prb.bg.jpg", news.ImageUrl);
+        }
+
+        [Fact]
         public void GetLatestPublicationsShouldReturnResults()
         {
             var provider = new PrbBgSource();

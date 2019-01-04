@@ -38,6 +38,24 @@
         }
 
         [Fact]
+        public void ParseRemoteNewsWithoutImageShouldWorkCorrectly()
+        {
+            const string NewsUrl = "https://www.president.bg/news4597/darzhavniyat-glava-rumen-radev-ministar-predsedatelyat-i-resorniyat-ministar-tryabva-da-organizirat-saglasuvaneto-na-predlozhenieto-za-osvobozhdavane-na-glavniya-sekretar-na-mvr.html";
+            var provider = new PresidentBgSource();
+            var news = provider.GetPublication(NewsUrl);
+            Assert.Equal(NewsUrl, news.OriginalUrl);
+            Assert.Equal("Държавният глава Румен Радев:  Министър-председателят и ресорният министър трябва да организират съгласуването на предложението за освобождаване на главния секретар на МВР", news.Title);
+            Assert.Equal("4597", news.RemoteId);
+            Assert.Equal(new DateTime(2018, 9, 17, 18, 0, 0), news.PostDate);
+            Assert.Contains("„Поканен съм на среща", news.Content);
+            Assert.Contains("„Кабинетът си има министър-председател", news.Content);
+            Assert.Contains("допълни държавният глава.", news.Content);
+            Assert.DoesNotContain("Държавният глава Румен Радев: Министър-председателят и ресорният министър трябва", news.Content);
+            Assert.DoesNotContain("17 Септември 2018 | 18:00", news.Content);
+            Assert.Equal("/images/sources/president.bg.jpg", news.ImageUrl);
+        }
+
+        [Fact]
         public void GetLatestPublicationsShouldReturnResults()
         {
             var provider = new PresidentBgSource();

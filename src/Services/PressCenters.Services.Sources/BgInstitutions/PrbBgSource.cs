@@ -16,19 +16,32 @@
             var address = $"{this.BaseUrl}bg/news/aktualno";
             var document = this.BrowsingContext.OpenAsync(address).Result;
             var links = document.QuerySelectorAll(".list-field .list-content a")
-                .Select(x => x.Attributes?["href"]?.Value).Select(x => this.NormalizeUrl(x, this.BaseUrl))
-                .ToList();
+                .Select(x => x.Attributes?["href"]?.Value).Select(x => this.NormalizeUrl(x, this.BaseUrl)).ToList();
             var news = links.Select(this.GetPublication).ToList();
             return news;
         }
 
+        public override IEnumerable<RemoteNews> GetAllPublications()
+        {
+            for (var i = 1; i <= 1100; i++)
+            {
+                var address = $"{this.BaseUrl}bg/news/aktualno?page={i}";
+                var document = this.BrowsingContext.OpenAsync(address).Result;
+                var links = document.QuerySelectorAll(".list-field .list-content a")
+                    .Select(x => x.Attributes?["href"]?.Value).Select(x => this.NormalizeUrl(x, this.BaseUrl)).ToList();
+                var news = links.Select(this.GetPublication).ToList();
+                Console.WriteLine($"Page {i} => {news.Count} news");
+                foreach (var remoteNews in news)
+                {
+                    yield return remoteNews;
+                }
+            }
+        }
+
         public override string ExtractIdFromUrl(string url)
         {
-            var uri = new Uri(url);
-            var id = !string.IsNullOrWhiteSpace(uri.Segments[uri.Segments.Length - 1])
-                         ? uri.Segments[uri.Segments.Length - 2] + uri.Segments[uri.Segments.Length - 1].Trim('/')
-                         : uri.Segments[uri.Segments.Length - 3] + uri.Segments[uri.Segments.Length - 2].Trim('/');
-            return id;
+            var uri = new Uri(url.Trim());
+            return uri.Segments[uri.Segments.Length - 2] + uri.Segments[uri.Segments.Length - 1].Trim('/');
         }
 
         protected override RemoteNews ParseDocument(IDocument document)
@@ -49,7 +62,7 @@
             var content = contentElement.InnerHtml.Trim();
 
             var imageElement = document.QuerySelector(".slide img");
-            var imageUrl = imageElement?.GetAttribute("src");
+            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/prb.bg.jpg";
 
             return new RemoteNews(title, content, time, imageUrl);
         }

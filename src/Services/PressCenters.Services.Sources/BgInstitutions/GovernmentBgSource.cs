@@ -22,6 +22,23 @@
             return news;
         }
 
+        public override IEnumerable<RemoteNews> GetAllPublications()
+        {
+            for (var i = 1; i <= 60; i++)
+            {
+                var address = $"{this.BaseUrl}bg/prestsentar/novini?page={i}";
+                var document = this.BrowsingContext.OpenAsync(address).Result;
+                var links = document.QuerySelectorAll(".articles .item a")
+                    .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl)).Distinct().ToList();
+                var news = links.Select(this.GetPublication).ToList();
+                Console.WriteLine($"Page {i} => {news.Count} news");
+                foreach (var remoteNews in news)
+                {
+                    yield return remoteNews;
+                }
+            }
+        }
+
         protected override RemoteNews ParseDocument(IDocument document)
         {
             var titleElement = document.QuerySelector(".view h1");
