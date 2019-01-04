@@ -3,9 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.Linq;
 
-    using AngleSharp;
     using AngleSharp.Dom;
     using AngleSharp.Extensions;
 
@@ -13,14 +11,20 @@
     {
         public override string BaseUrl { get; } = "http://www.fsc.bg/";
 
-        public override IEnumerable<RemoteNews> GetLatestPublications()
+        public override IEnumerable<RemoteNews> GetLatestPublications() =>
+            this.GetLatestPublications("bg/novini/", ".news-box-listing a");
+
+        public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            var address = $"{this.BaseUrl}bg/novini/";
-            var document = this.BrowsingContext.OpenAsync(address).Result;
-            var links = document.QuerySelectorAll(".news-box-listing a")
-                .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl)).ToList();
-            var news = links.Select(this.GetPublication).ToList();
-            return news;
+            for (var i = 1; i <= 400; i++)
+            {
+                var news = this.GetLatestPublications($"bg/novini/?p={i}", ".news-box-listing a");
+                Console.WriteLine($"Page {i} => {news.Count} news");
+                foreach (var remoteNews in news)
+                {
+                    yield return remoteNews;
+                }
+            }
         }
 
         public override string ExtractIdFromUrl(string url)
@@ -55,7 +59,8 @@
             var time = DateTime.ParseExact(timeElement.TextContent, "dd/MM/yyyy", CultureInfo.InvariantCulture);
             time = time.Date == DateTime.UtcNow.Date ? DateTime.Now : time;
 
-            var imageUrl = document.QuerySelector("#content-right img")?.Attributes?["src"]?.Value;
+            var imageUrl = document.QuerySelector("#content-right img")?.Attributes?["src"]?.Value
+                           ?? "http://www.fsc.bg/_assets/img/banner.jpg";
 
             var contentElement = document.QuerySelector("#content-left-inner");
             contentElement.RemoveElement(titleElement);
