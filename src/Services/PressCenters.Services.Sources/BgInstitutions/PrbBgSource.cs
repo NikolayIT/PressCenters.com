@@ -11,27 +11,17 @@
     {
         public override string BaseUrl { get; } = "https://www.prb.bg/";
 
-        public override IEnumerable<RemoteNews> GetLatestPublications()
-        {
-            var address = $"{this.BaseUrl}bg/news/aktualno";
-            var document = this.BrowsingContext.OpenAsync(address).Result;
-            var links = document.QuerySelectorAll(".list-field .list-content a")
-                .Select(x => x.Attributes?["href"]?.Value).Select(x => this.NormalizeUrl(x, this.BaseUrl))
-                .Where(x => x.Contains("bg/news/aktualno")).Distinct().ToList();
-            var news = links.Select(this.GetPublication).ToList();
-            return news;
-        }
+        public override IEnumerable<RemoteNews> GetLatestPublications() =>
+            this.GetLatestPublications("bg/news/aktualno", ".list-field .list-content a", "bg/news/aktualno");
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
             for (var i = 1; i <= 1100; i++)
             {
-                var address = $"{this.BaseUrl}bg/news/aktualno?page={i}";
-                var document = this.BrowsingContext.OpenAsync(address).Result;
-                var links = document.QuerySelectorAll(".list-field .list-content a")
-                    .Select(x => x.Attributes?["href"]?.Value).Select(x => this.NormalizeUrl(x, this.BaseUrl))
-                    .Where(x => x.Contains("bg/news/aktualno")).Distinct().ToList();
-                var news = links.Select(this.GetPublication).ToList();
+                var news = this.GetLatestPublications(
+                    $"bg/news/aktualno?page={i}",
+                    ".list-field .list-content a",
+                    "bg/news/aktualno");
                 Console.WriteLine($"Page {i} => {news.Count} news");
                 foreach (var remoteNews in news)
                 {
@@ -50,6 +40,11 @@
         {
             var timeElement = document.QuerySelector(".article-title time");
             var titleElement = document.QuerySelector(".article-title");
+            if (titleElement == null)
+            {
+                return null;
+            }
+
             this.RemoveRecursively(titleElement, timeElement);
             var title = titleElement.TextContent.Trim();
 
@@ -57,6 +52,11 @@
             var time = DateTime.Parse(timeAsString);
 
             var contentElement = document.QuerySelector(".narrow-content .text");
+            if (contentElement == null)
+            {
+                return null;
+            }
+
             this.RemoveRecursively(contentElement, titleElement);
             this.RemoveRecursively(contentElement, timeElement);
             this.RemoveRecursively(contentElement, document.QuerySelector(".tab-container"));

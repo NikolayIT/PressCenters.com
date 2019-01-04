@@ -3,34 +3,21 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.Linq;
 
-    using AngleSharp;
     using AngleSharp.Dom;
 
     public class GovernmentBgSource : BaseSource
     {
         public override string BaseUrl { get; } = "http://www.government.bg/";
 
-        public override IEnumerable<RemoteNews> GetLatestPublications()
-        {
-            var address = $"{this.BaseUrl}bg/prestsentar/novini";
-            var document = this.BrowsingContext.OpenAsync(address).Result;
-            var links = document.QuerySelectorAll(".articles .item a").Select(
-                x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl)).Distinct().ToList();
-            var news = links.Select(this.GetPublication).ToList();
-            return news;
-        }
+        public override IEnumerable<RemoteNews> GetLatestPublications() =>
+            this.GetLatestPublications("bg/prestsentar/novini", ".articles .item a");
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
             for (var i = 1; i <= 60; i++)
             {
-                var address = $"{this.BaseUrl}bg/prestsentar/novini?page={i}";
-                var document = this.BrowsingContext.OpenAsync(address).Result;
-                var links = document.QuerySelectorAll(".articles .item a")
-                    .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl)).Distinct().ToList();
-                var news = links.Select(this.GetPublication).ToList();
+                var news = this.GetLatestPublications($"bg/prestsentar/novini?page={i}", ".articles .item a");
                 Console.WriteLine($"Page {i} => {news.Count} news");
                 foreach (var remoteNews in news)
                 {

@@ -3,9 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.Linq;
 
-    using AngleSharp;
     using AngleSharp.Dom;
 
     using PressCenters.Common;
@@ -14,25 +12,14 @@
     {
         public override string BaseUrl { get; } = "https://www.president.bg/";
 
-        public override IEnumerable<RemoteNews> GetLatestPublications()
-        {
-            var address = $"{this.BaseUrl}news/";
-            var document = this.BrowsingContext.OpenAsync(address).Result;
-            var links = document.QuerySelectorAll(".inside-article-box a.dblock").Select(
-                x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl)).ToList();
-            var news = links.Select(this.GetPublication).ToList();
-            return news;
-        }
+        public override IEnumerable<RemoteNews> GetLatestPublications() =>
+            this.GetLatestPublications("news/", ".inside-article-box a.dblock");
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
             for (var i = 1; i <= 22; i++)
             {
-                var address = $"{this.BaseUrl}news/all/{i}";
-                var document = this.BrowsingContext.OpenAsync(address).Result;
-                var links = document.QuerySelectorAll(".inside-article-box a.dblock").Select(
-                    x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl)).ToList();
-                var news = links.Select(this.GetPublication).ToList();
+                var news = this.GetLatestPublications($"news/all/{i}", ".inside-article-box a.dblock");
                 Console.WriteLine($"Page {i} => {news.Count} news");
                 foreach (var remoteNews in news)
                 {

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
 
     using AngleSharp;
@@ -76,6 +77,17 @@
         }
 
         protected abstract RemoteNews ParseDocument(IDocument document);
+
+        protected IList<RemoteNews> GetLatestPublications(string address, string anchorSelector, string urlShouldContain = "")
+        {
+            address = $"{this.BaseUrl}{address}";
+            var document = this.BrowsingContext.OpenAsync(address).GetAwaiter().GetResult();
+            var links = document.QuerySelectorAll(anchorSelector)
+                .Select(x => this.NormalizeUrl(x?.Attributes["href"]?.Value, this.BaseUrl))
+                .Where(x => x?.Contains(urlShouldContain) == true).Distinct().ToList();
+            var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
+            return news;
+        }
 
         protected string NormalizeUrl(string url, string baseUrl)
         {

@@ -3,36 +3,27 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.Linq;
 
-    using AngleSharp;
     using AngleSharp.Dom;
 
     public class ApiBgSource : BaseSource
     {
         public override string BaseUrl { get; } = "http://www.api.bg/";
 
-        public override IEnumerable<RemoteNews> GetLatestPublications()
-        {
-            var address = $"{this.BaseUrl}index.php/bg/prescentar/novini";
-            var document = this.BrowsingContext.OpenAsync(address).Result;
-            var links = document.QuerySelectorAll(".ccm-page-list .news-item a.news_more_link")
-                .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl))
-                .Where(x => x.Contains("bg/prescentar/novini")).Distinct().ToList();
-            var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
-            return news;
-        }
+        public override IEnumerable<RemoteNews> GetLatestPublications() =>
+            this.GetLatestPublications(
+                "index.php/bg/prescentar/novini",
+                ".ccm-page-list .news-item a.news_more_link",
+                "bg/prescentar/novini");
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
             for (var i = 1; i <= 650; i++)
             {
-                var address = $"{this.BaseUrl}index.php/bg/prescentar/novini?ccm_paging_p_b606={i}";
-                var document = this.BrowsingContext.OpenAsync(address).Result;
-                var links = document.QuerySelectorAll(".ccm-page-list .news-item a.news_more_link")
-                    .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl))
-                    .Where(x => x.Contains("bg/prescentar/novini")).Distinct().ToList();
-                var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
+                var news = this.GetLatestPublications(
+                    $"index.php/bg/prescentar/novini?ccm_paging_p_b606={i}",
+                    ".ccm-page-list .news-item a.news_more_link",
+                    "bg/prescentar/novini");
                 Console.WriteLine($"Page {i} => {news.Count} news");
                 foreach (var remoteNews in news)
                 {
