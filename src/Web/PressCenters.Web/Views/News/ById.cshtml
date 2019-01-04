@@ -1,9 +1,15 @@
-﻿@model PressCenters.Web.ViewModels.News.NewsViewModel
+﻿@using PressCenters.Common
+@model PressCenters.Web.ViewModels.News.NewsViewModel
 @{
     this.ViewData["Title"] = this.Model.Title;
 }
 
 <h3 class="g-mb-15">@this.Model.Title</h3>
+@if (this.User.IsInRole(GlobalConstants.AdministratorRoleName))
+{
+    <a asp-area="Administration" asp-controller="News" asp-action="UpdateRemoteNews" asp-route-id="@this.Model.Id" class="btn btn-secondary">Update</a>
+    <hr/>
+}
 
 <div class="media g-font-size-12 g-color-gray-dark-v4 g-mb-20">
     <div class="media-body align-self-center">

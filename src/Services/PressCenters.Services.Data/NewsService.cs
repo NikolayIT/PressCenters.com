@@ -38,5 +38,23 @@
             await this.newsRepository.SaveChangesAsync();
             return true;
         }
+
+        public async Task UpdateAsync(int id, RemoteNews remoteNews)
+        {
+            var news = this.newsRepository.AllWithDeleted().FirstOrDefault(x => x.Id == id);
+            if (news == null)
+            {
+                return;
+            }
+
+            news.Title = remoteNews.Title;
+            news.OriginalUrl = remoteNews.OriginalUrl;
+            news.ImageUrl = remoteNews.ImageUrl;
+            news.Content = remoteNews.Content;
+            news.RemoteId = remoteNews.RemoteId;
+            //// We should not update the PostDate here
+
+            await this.newsRepository.SaveChangesAsync();
+        }
     }
 }
