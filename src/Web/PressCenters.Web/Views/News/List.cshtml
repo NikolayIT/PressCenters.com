@@ -1,8 +1,13 @@
-﻿@model PressCenters.Web.ViewModels.News.NewsListViewModel
+﻿@using PressCenters.Common
+@model PressCenters.Web.ViewModels.News.NewsListViewModel
 @{
     if (this.Model.CurrentPage != 1)
     {
         this.ViewData["Title"] = "Всички прессъобщения, страница " + this.Model.CurrentPage;
+    }
+    else
+    {
+        this.ViewData["Title"] = $"{GlobalConstants.SystemSlogan} ({this.Model.NewsCount})";
     }
 }
 
