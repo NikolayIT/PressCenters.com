@@ -1,32 +1,17 @@
 ﻿namespace PressCenters.Services.Sources.BgInstitutions
 {
-    using System;
+    using System.Collections.Generic;
 
     using AngleSharp.Dom;
 
     public class NsiBgPressSource : NsiBgBaseSource
     {
-        protected override string GetNewsListUrl()
-        {
-            return $"{this.BaseUrl}bg/pressreleases_list";
-        }
+        public override IEnumerable<RemoteNews> GetLatestPublications() =>
+            this.GetLatestPublications("bg/pressreleases_list", ".view-content .views-field-title a");
 
         protected override string GetContent(IHtmlCollection<IElement> imageAndContent)
         {
             return imageAndContent[0].InnerHtml;
-        }
-
-        protected override string GetImageUrl(IHtmlCollection<IElement> imageAndContent)
-        {
-            return $"{this.BaseUrl}sites/default/files/styles/medium/public/files/events/images/___NSILogo_117.jpg";
-        }
-
-        protected override string ChooseUrlSegmentForId(Uri uri)
-        {
-            var id = !string.IsNullOrWhiteSpace(uri.Segments[uri.Segments.Length - 1])
-                         ? uri.Segments[uri.Segments.Length - 3]
-                         : uri.Segments[uri.Segments.Length - 4];
-            return id;
         }
     }
 }
