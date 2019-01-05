@@ -3,9 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.Linq;
 
-    using AngleSharp;
     using AngleSharp.Dom;
 
     using PressCenters.Common;
@@ -14,15 +12,8 @@
     {
         public override string BaseUrl { get; } = "http://gerb.bg/";
 
-        public override IEnumerable<RemoteNews> GetLatestPublications()
-        {
-            var address = $"{this.BaseUrl}bg/news/spisyk-novini-1.html";
-            var document = this.BrowsingContext.OpenAsync(address).Result;
-            var links = document.QuerySelectorAll("#container-main-ajax article p a")
-                .Select(x => x.Attributes["href"].Value).Select(x => this.NormalizeUrl(x, this.BaseUrl)).ToList();
-            var news = links.Select(this.GetPublication).ToList();
-            return news;
-        }
+        public override IEnumerable<RemoteNews> GetLatestPublications() =>
+            this.GetPublications("bg/news/spisyk-novini-1.html", "#container-main-ajax article p a");
 
         public override string ExtractIdFromUrl(string url) =>
             url.GetStringBetween("-", ".html", url.LastIndexOf("-", StringComparison.InvariantCulture));

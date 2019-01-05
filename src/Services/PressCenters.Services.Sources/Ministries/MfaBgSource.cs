@@ -3,9 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.Linq;
 
-    using AngleSharp;
     using AngleSharp.Dom;
 
     /// <summary>
@@ -15,27 +13,14 @@
     {
         public override string BaseUrl { get; } = "https://www.mfa.bg/";
 
-        public override IEnumerable<RemoteNews> GetLatestPublications()
-        {
-            var address = $"{this.BaseUrl}bg/news";
-            var document = this.BrowsingContext.OpenAsync(address).Result;
-            var links = document.QuerySelectorAll(".main-news .news-item h2 a")
-                .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl))
-                .Where(x => x.Contains("bg/news")).Distinct().ToList();
-            var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
-            return news;
-        }
+        public override IEnumerable<RemoteNews> GetLatestPublications() =>
+            this.GetPublications("bg/news", ".main-news .news-item h2 a", "bg/news");
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
             for (var i = 1; i <= 300; i++)
             {
-                var address = $"{this.BaseUrl}bg/news?p={i}";
-                var document = this.BrowsingContext.OpenAsync(address).Result;
-                var links = document.QuerySelectorAll(".main-news .news-item h2 a")
-                    .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl))
-                    .Where(x => x.Contains("bg/news")).Distinct().ToList();
-                var news = links.Select(this.GetPublication).ToList();
+                var news = this.GetPublications($"bg/news?p={i}", ".main-news .news-item h2 a", "bg/news");
                 Console.WriteLine($"Page {i} => {news.Count} news");
                 foreach (var remoteNews in news)
                 {

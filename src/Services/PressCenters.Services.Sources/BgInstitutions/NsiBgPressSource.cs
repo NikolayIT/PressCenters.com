@@ -7,7 +7,7 @@
     public class NsiBgPressSource : NsiBgBaseSource
     {
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetLatestPublications("bg/pressreleases_list", ".view-content .views-field-title a");
+            this.GetPublications("bg/pressreleases_list", ".view-content .views-field-title a");
 
         protected override string GetContent(IHtmlCollection<IElement> imageAndContent)
         {

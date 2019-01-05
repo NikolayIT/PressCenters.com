@@ -78,7 +78,7 @@
 
         protected abstract RemoteNews ParseDocument(IDocument document);
 
-        protected IList<RemoteNews> GetLatestPublications(string address, string anchorSelector, string urlShouldContain = "")
+        protected IList<RemoteNews> GetPublications(string address, string anchorSelector, string urlShouldContain = "")
         {
             address = $"{this.BaseUrl}{address}";
             var document = this.BrowsingContext.OpenAsync(address).GetAwaiter().GetResult();

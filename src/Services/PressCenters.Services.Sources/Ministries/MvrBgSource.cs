@@ -6,7 +6,6 @@
     using System.Linq;
     using System.Net.Http;
 
-    using AngleSharp;
     using AngleSharp.Dom;
     using AngleSharp.Parser.Html;
 
@@ -14,15 +13,10 @@
     {
         public override string BaseUrl { get; } = "https://www.mvr.bg/";
 
-        public override IEnumerable<RemoteNews> GetLatestPublications()
-        {
-            var address = $"{this.BaseUrl}press/актуална-информация/актуална-информация/актуално";
-            var document = this.BrowsingContext.OpenAsync(address).Result;
-            var links = document.QuerySelectorAll(".article__list .article .article__description a.link--clear")
-                .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl)).Distinct().ToList();
-            var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
-            return news;
-        }
+        public override IEnumerable<RemoteNews> GetLatestPublications() =>
+            this.GetPublications(
+                "press/актуална-информация/актуална-информация/актуално",
+                ".article__list .article .article__description a.link--clear");
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
@@ -31,7 +25,6 @@
             var httpClient = new HttpClient();
             for (var i = 1; i < 100; i++)
             {
-                Console.WriteLine(i);
                 var response = httpClient.PostAsync(
                     address,
                     new FormUrlEncodedContent(
@@ -45,6 +38,7 @@
                 var links = document.QuerySelectorAll(".article__list .article .article__description a.link--clear")
                     .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl)).Distinct().ToList();
                 var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
+                Console.WriteLine($"Page {i} => {news.Count} news");
                 foreach (var remoteNews in news)
                 {
                     yield return remoteNews;

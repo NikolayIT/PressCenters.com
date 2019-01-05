@@ -2,9 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
-    using AngleSharp;
     using AngleSharp.Dom;
 
     public abstract class MhGovernmentBgBaseSource : BaseSource
@@ -15,26 +13,15 @@
 
         protected abstract int NewsListPagesCount { get; }
 
-        public override IEnumerable<RemoteNews> GetLatestPublications()
-        {
-            var document = this.BrowsingContext.OpenAsync(this.NewsListUrl).Result;
-            var links = document.QuerySelectorAll(".news h2 a").Select(x => x.Attributes["href"].Value)
-                .Select(x => this.NormalizeUrl(x, this.BaseUrl)).ToList();
-            var news = links.Select(this.GetPublication).ToList();
-            return news;
-        }
+        public override IEnumerable<RemoteNews> GetLatestPublications() =>
+            this.GetPublications(this.NewsListUrl, ".news h2 a");
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
             for (var i = 1; i <= this.NewsListPagesCount; i++)
             {
-                Console.WriteLine(i);
-                var address = $"{this.NewsListUrl}?page={i}";
-                var document = this.BrowsingContext.OpenAsync(address).Result;
-
-                var links = document.QuerySelectorAll(".news h2 a").Select(x => x.Attributes["href"].Value)
-                    .Select(x => this.NormalizeUrl(x, this.BaseUrl)).ToList();
-                var news = links.Select(this.GetPublication).ToList();
+                var news = this.GetPublications($"{this.NewsListUrl}?page={i}", ".news h2 a");
+                Console.WriteLine($"Page {i} => {news.Count} news");
                 foreach (var remoteNews in news)
                 {
                     yield return remoteNews;

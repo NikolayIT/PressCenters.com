@@ -12,13 +12,13 @@
         public override string BaseUrl { get; } = "http://www.fsc.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetLatestPublications("bg/novini/", ".news-box-listing a");
+            this.GetPublications("bg/novini/", ".news-box-listing a");
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
             for (var i = 1; i <= 400; i++)
             {
-                var news = this.GetLatestPublications($"bg/novini/?p={i}", ".news-box-listing a");
+                var news = this.GetPublications($"bg/novini/?p={i}", ".news-box-listing a");
                 Console.WriteLine($"Page {i} => {news.Count} news");
                 foreach (var remoteNews in news)
                 {

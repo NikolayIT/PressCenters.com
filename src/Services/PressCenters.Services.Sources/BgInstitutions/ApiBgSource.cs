@@ -11,7 +11,7 @@
         public override string BaseUrl { get; } = "http://www.api.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetLatestPublications(
+            this.GetPublications(
                 "index.php/bg/prescentar/novini",
                 ".ccm-page-list .news-item a.news_more_link",
                 "bg/prescentar/novini");
@@ -20,7 +20,7 @@
         {
             for (var i = 1; i <= 650; i++)
             {
-                var news = this.GetLatestPublications(
+                var news = this.GetPublications(
                     $"index.php/bg/prescentar/novini?ccm_paging_p_b606={i}",
                     ".ccm-page-list .news-item a.news_more_link",
                     "bg/prescentar/novini");

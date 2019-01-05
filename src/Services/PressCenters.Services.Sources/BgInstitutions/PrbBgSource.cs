@@ -10,13 +10,13 @@
         public override string BaseUrl { get; } = "https://www.prb.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetLatestPublications("bg/news/aktualno", ".list-field .list-content a", "bg/news/aktualno");
+            this.GetPublications("bg/news/aktualno", ".list-field .list-content a", "bg/news/aktualno");
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
             for (var i = 1; i <= 1100; i++)
             {
-                var news = this.GetLatestPublications(
+                var news = this.GetPublications(
                     $"bg/news/aktualno?page={i}",
                     ".list-field .list-content a",
                     "bg/news/aktualno");

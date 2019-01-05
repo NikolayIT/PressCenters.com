@@ -3,24 +3,15 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.Linq;
 
-    using AngleSharp;
     using AngleSharp.Dom;
 
     public class ToploBgSource : BaseSource
     {
         public override string BaseUrl { get; } = "https://toplo.bg/";
 
-        public override IEnumerable<RemoteNews> GetLatestPublications()
-        {
-            var address = $"{this.BaseUrl}news";
-            var document = this.BrowsingContext.OpenAsync(address).Result;
-            var links = document.QuerySelectorAll(".post a")
-                .Select(x => this.NormalizeUrl(x.Attributes["href"]?.Value, this.BaseUrl)).ToList();
-            var news = links.Select(this.GetPublication).ToList();
-            return news;
-        }
+        public override IEnumerable<RemoteNews> GetLatestPublications() =>
+            this.GetPublications("news", ".post a");
 
         public override string ExtractIdFromUrl(string url)
         {
