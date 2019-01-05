@@ -40,7 +40,7 @@
             var title = document.QuerySelector("h1").TextContent.Trim();
 
             var imageElement = document.QuerySelector(".carousel-inner .active img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? $"/images/sources/mh.government.bg.jpg";
+            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/mh.government.bg.jpg";
 
             var contentElement = document.QuerySelector(".single_news");
             this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);

@@ -104,11 +104,11 @@
             return result.ToString();
         }
 
-        protected void RemoveRecursively(INode element, INode itemToRemove)
+        protected void RemoveRecursively(INode element, INode elementToRemove)
         {
             try
             {
-                element.RemoveChild(itemToRemove);
+                element.RemoveChild(elementToRemove);
             }
             catch (Exception)
             {
@@ -116,7 +116,7 @@
 
             foreach (var node in element.ChildNodes)
             {
-                this.RemoveRecursively(node, itemToRemove);
+                this.RemoveRecursively(node, elementToRemove);
             }
         }
 
