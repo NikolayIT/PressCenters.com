@@ -16,14 +16,14 @@
     <article class="g-mb-20 clearfix">
         <div class="g-pos-rel px-2">
             <h3 class="h5">
-                <a class="u-link-v5 g-color-black g-color-primary--hover" href="@news.Url">@news.SourceShortName: @news.Title</a>
+                <a class="u-link-v5 g-color-black g-color-primary--hover" href="@news.Url"><span title="@news.SourceName">@news.SourceShortName</span>: @news.Title</a>
             </h3>
 
             <div class="media">
                 <a class="d-flex mr-2">
                     <img class="rounded g-width-100 g-height-60" src="@news.ImageUrl" alt="@news.Title" title="@news.Title" />
                 </a>
-                <p class="g-color-gray-dark-v4">
+                <p class="g-color-gray-dark-v4 text-justify">
                     @news.ShortContent
                 </p>
             </div>
