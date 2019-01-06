@@ -4,9 +4,11 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
+    using System.Text;
 
     using AngleSharp;
     using AngleSharp.Dom;
+    using AngleSharp.Parser.Html;
 
     public abstract class BaseSource
     {
@@ -17,6 +19,8 @@
         }
 
         public abstract string BaseUrl { get; }
+
+        public virtual Encoding Encoding => null;
 
         protected IBrowsingContext BrowsingContext { get; }
 
@@ -29,7 +33,19 @@
 
         public RemoteNews GetPublication(string url)
         {
-            var document = this.BrowsingContext.OpenAsync(url).Result;
+            IDocument document;
+            if (this.Encoding == null)
+            {
+                document = this.BrowsingContext.OpenAsync(url).Result;
+            }
+            else
+            {
+                var parser = new HtmlParser();
+                var webClient = new WebClient { Encoding = this.Encoding };
+                var html = webClient.DownloadString(url);
+                document = parser.Parse(html);
+            }
+
             var publication = this.ParseDocument(document);
             if (publication == null)
             {
