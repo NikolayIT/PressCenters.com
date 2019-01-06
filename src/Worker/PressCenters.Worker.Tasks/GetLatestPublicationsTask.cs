@@ -39,7 +39,12 @@
             }
 
             var instance = ReflectionHelpers.GetInstance<BaseSource>(input.TypeName);
-            var publications = instance.GetLatestPublications();
+            var publications = instance.GetLatestPublications().ToList();
+            if (!publications.Any())
+            {
+                return new Output { Ok = false, Error = "GetLatestPublications() returned 0 results." };
+            }
+
             var added = 0;
             foreach (var remoteNews in publications)
             {

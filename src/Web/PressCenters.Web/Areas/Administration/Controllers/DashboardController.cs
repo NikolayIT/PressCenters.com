@@ -32,8 +32,7 @@
                                 CountNullNewsRemoteId = this.newsRepository.All().Count(x => string.IsNullOrWhiteSpace(x.RemoteId)),
                                 NotProcessedTaskCount = this.workerTasksRepository.All().Count(x => !x.Processed),
                                 LastWorkerTaskErrors = this.workerTasksRepository.All()
-                                    .Where(x => x.Result.Contains("\"Ok\":false")).OrderByDescending(x => x.Id).Take(10)
-                                    .ToList(),
+                                    .Where(x => x.Result.Contains("\"Ok\":false")).OrderByDescending(x => x.Id).Take(20).ToList(),
                                 ProcessingWorkerTasks =
                                     this.workerTasksRepository.All().Where(x => x.Processing).ToList(),
                             };
