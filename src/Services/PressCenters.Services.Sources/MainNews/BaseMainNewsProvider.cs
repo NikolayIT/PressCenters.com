@@ -5,7 +5,7 @@
 
     using AngleSharp;
     using AngleSharp.Dom;
-    using AngleSharp.Parser.Html;
+    using AngleSharp.Html.Parser;
 
     public abstract class BaseMainNewsProvider
     {
@@ -25,7 +25,7 @@
             var parser = new HtmlParser();
             var webClient = new WebClient { Encoding = encoding };
             var html = webClient.DownloadString(url);
-            var document = parser.Parse(html);
+            var document = parser.ParseDocument(html);
             return document;
         }
     }

@@ -5,7 +5,6 @@
     using System.Globalization;
 
     using AngleSharp.Dom;
-    using AngleSharp.Extensions;
 
     using PressCenters.Common;
 

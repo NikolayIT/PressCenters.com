@@ -2,7 +2,7 @@
 {
     using System.Net.Http;
 
-    using AngleSharp.Parser.Html;
+    using AngleSharp.Html.Parser;
 
     using Newtonsoft.Json;
 
@@ -21,7 +21,7 @@
             var dataObject = JsonConvert.DeserializeObject<JsonDataObject>(content);
 
             var parser = new HtmlParser();
-            var document = parser.Parse(dataObject.Html);
+            var document = parser.ParseDocument(dataObject.Html);
 
             var titleElement = document.QuerySelector("#intl_homepage1-zone-1 .cd--article h2");
             var subTitleElement = document.QuerySelector("#intl_homepage1-zone-1 .cd--article .cd__headline-text strong");
