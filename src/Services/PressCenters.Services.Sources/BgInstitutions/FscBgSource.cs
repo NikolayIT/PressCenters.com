@@ -7,6 +7,8 @@
     using AngleSharp.Dom;
     using AngleSharp.Extensions;
 
+    using PressCenters.Common;
+
     public class FscBgSource : BaseSource
     {
         public override string BaseUrl { get; } = "http://www.fsc.bg/";
@@ -27,28 +29,7 @@
             }
         }
 
-        public override string ExtractIdFromUrl(string url)
-        {
-            const string EndString = ".html";
-            if (string.IsNullOrWhiteSpace(url))
-            {
-                return "0";
-            }
-
-            var startIndex = url.LastIndexOf("-", StringComparison.Ordinal);
-            if (startIndex == -1)
-            {
-                return string.Empty;
-            }
-
-            var endIndex = url.LastIndexOf(EndString, StringComparison.Ordinal);
-            if (endIndex == -1)
-            {
-                return string.Empty;
-            }
-
-            return url.Substring(startIndex + 1, url.Length - EndString.Length - startIndex - 1);
-        }
+        public override string ExtractIdFromUrl(string url) => url.GetLastStringBetween("-", ".html", url);
 
         protected override RemoteNews ParseDocument(IDocument document)
         {

@@ -28,6 +28,23 @@
             return input.Substring(startPosition, endPosition - startPosition);
         }
 
+        public static string GetLastStringBetween(this string input, string startString, string endString, string defaultValue = "")
+        {
+            var endIndex = input.LastIndexOf(endString, StringComparison.Ordinal);
+            if (endIndex == -1)
+            {
+                return defaultValue;
+            }
+
+            var startIndex = input.LastIndexOf(startString, endIndex, StringComparison.Ordinal);
+            if (startIndex == -1)
+            {
+                return defaultValue;
+            }
+
+            return input.Substring(startIndex + 1, endIndex - startIndex - 1);
+        }
+
         public static int ToInteger(this string input)
         {
             int.TryParse(input, out var integerValue);

@@ -106,6 +106,11 @@
 
         protected void RemoveRecursively(INode element, INode elementToRemove)
         {
+            if (elementToRemove == null)
+            {
+                return;
+            }
+
             try
             {
                 element.RemoveChild(elementToRemove);
