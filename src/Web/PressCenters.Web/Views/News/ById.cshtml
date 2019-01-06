@@ -8,8 +8,37 @@
 @if (this.User.IsInRole(GlobalConstants.AdministratorRoleName))
 {
     <a asp-area="Administration" asp-controller="News" asp-action="UpdateRemoteNews" asp-route-id="@this.Model.Id" class="btn btn-secondary">Update</a>
+
+    <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#softDeleteModal">Soft delete</a>
+    <div class="modal fade" id="softDeleteModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title">Soft delete</h5></div>
+                <div class="modal-body">Are you sure you want to soft delete this news?</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <a asp-area="Administration" asp-controller="News" asp-action="SoftDelete" asp-route-id="@this.Model.Id" class="btn btn-danger">Soft delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a asp-area="Administration" asp-controller="News" asp-action="HardDelete" asp-route-id="@this.Model.Id" class="btn btn-danger" data-toggle="modal" data-target="#hardDeleteModal">Hard delete</a>
+    <div class="modal fade" id="hardDeleteModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title">Hard delete</h5></div>
+                <div class="modal-body">Are you sure you want to hard delete this news?</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <a asp-area="Administration" asp-controller="News" asp-action="HardDelete" asp-route-id="@this.Model.Id" class="btn btn-danger">Hard delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <span>(@this.Model.RemoteId)</span>
-    <hr/>
+    <hr />
 }
 
 <div class="media g-font-size-12 g-color-gray-dark-v4 g-mb-20">
