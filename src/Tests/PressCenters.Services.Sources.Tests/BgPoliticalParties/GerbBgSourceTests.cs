@@ -9,7 +9,7 @@
 
     public class GerbBgSourceTests
     {
-        [Theory]
+        [Theory(Skip = "Source excluded")]
         [InlineData("http://gerb.bg/bg/news/detail-d_r_andrei_kovachev_nito_edno_ot_tvardeniyata_na_korneliya_ninova_po_temata_za_seta_ne_otgovarya_na_ist-43049.html", "43049")]
         [InlineData("http://gerb.bg/bg/news/detail-emil_radev_podari_bileti_za_3d_kino_na_decata_ot_dom_knyaginya_nadejda_vav_varna-43042.html", "43042")]
         public void ExtractIdFromUrlShouldWorkCorrectly(string url, string id)
@@ -19,7 +19,7 @@
             Assert.Equal(id, result);
         }
 
-        [Fact]
+        [Fact(Skip = "Source excluded")]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
             const string NewsUrl = "http://gerb.bg/bg/news/detail-ministri_ot_pravitelstvoto_na_boiko_borisov_predstaviha_upravlenskata_programa_na_gerb_pred_400_jite-43048.html";
@@ -39,7 +39,7 @@
             Assert.Equal("http://gerb.bg/files/thumbnails/news-43048-81652_detail_big.JPG", news.ImageUrl);
         }
 
-        [Fact]
+        [Fact(Skip = "Source excluded")]
         public void GetLatestPublicationsShouldReturnResults()
         {
             var provider = new GerbBgSource();

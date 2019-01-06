@@ -9,7 +9,7 @@
 
     public class BspBgSourceTests
     {
-        [Theory]
+        [Theory(Skip = "Source excluded")]
         [InlineData("https://bsp.bg/news/view/11653-korneliya_ninova_za_seta__vredno_e__govorim_ot_imeto_na_hilyadi_bylgari.html", "11653")]
         [InlineData("https://bsp.bg/news/view/11649-korneliya_ninova__6_partii_vnesohme_6000_podpisa_za_otlichen_6_na_izborite.html", "11649")]
         public void ExtractIdFromUrlShouldWorkCorrectly(string url, string id)
@@ -19,7 +19,7 @@
             Assert.Equal(id, result);
         }
 
-        [Fact]
+        [Fact(Skip = "Source excluded")]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
             const string NewsUrl = "https://bsp.bg/news/view/11649-korneliya_ninova__6_partii_vnesohme_6000_podpisa_za_otlichen_6_na_izborite.html";
@@ -39,7 +39,7 @@
             Assert.Equal("https://bsp.bg/files/news/small/19d23c6b4a492a0f6d511624a45f6286.jpg", news.ImageUrl);
         }
 
-        [Fact]
+        [Fact(Skip = "Source excluded")]
         public void GetLatestPublicationsShouldReturnResults()
         {
             var provider = new BspBgSource();
