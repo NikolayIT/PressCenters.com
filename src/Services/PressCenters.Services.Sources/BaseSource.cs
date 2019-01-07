@@ -143,6 +143,11 @@
 
         protected void NormalizeUrlsRecursively(IElement element, string baseUrl)
         {
+            if (element == null)
+            {
+                return;
+            }
+
             if (element.Attributes["href"] != null)
             {
                 element.SetAttribute("href", this.NormalizeUrl(element.Attributes["href"].Value, baseUrl));
