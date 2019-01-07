@@ -34,7 +34,7 @@
             Assert.DoesNotContain("15 декември 2018", news.Content);
             Assert.DoesNotContain("facebook.com", news.Content);
             Assert.DoesNotContain("print", news.Content);
-            Assert.Equal("http://www.tourism.government.bg/sites/tourism.government.bg/files/styles/fixed_320x220/public/15-12-18-darik_radio.jpeg?itok=1ZhjpMG-", news.ImageUrl);
+            Assert.Equal("http://www.tourism.government.bg/sites/tourism.government.bg/files/15-12-18-darik_radio.jpeg", news.ImageUrl);
             Assert.Equal(new DateTime(2018, 12, 15, 13, 51, 0), news.PostDate);
             Assert.Equal("novini/ministur-angelkova-osnoven-akcent-v-rabotata-ni-prez-2019-g-shte-e-nasurchavane-na", news.RemoteId);
         }

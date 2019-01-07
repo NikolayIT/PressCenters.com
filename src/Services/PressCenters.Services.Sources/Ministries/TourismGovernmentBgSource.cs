@@ -51,8 +51,8 @@
             var timeElement = document.QuerySelector("#main .content span.date-display-single");
             var time = DateTime.Parse(timeElement?.Attributes["content"]?.Value, CultureInfo.InvariantCulture);
 
-            var imageElement = document.QuerySelector("#main .content .field-name-field-image img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/tourism.government.bg.jpg";
+            var imageElement = document.QuerySelector("#main .content .field-name-field-image a");
+            var imageUrl = imageElement?.GetAttribute("href") ?? "/images/sources/tourism.government.bg.jpg";
 
             var contentElement = document.QuerySelector("#main .content .field-name-body .field-item");
             this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
