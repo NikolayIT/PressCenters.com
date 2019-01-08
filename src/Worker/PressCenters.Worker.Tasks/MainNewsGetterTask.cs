@@ -40,7 +40,7 @@
                         .FirstOrDefault();
                 var instance = ReflectionHelpers.GetInstance<BaseMainNewsProvider>(source.TypeName);
                 var news = instance.GetMainNews();
-                if (lastNews?.Title == news.Title)
+                if (lastNews?.Title == news.Title && lastNews?.ImageUrl == news.ImageUrl)
                 {
                     // The last news has the same title
                     this.logger.LogInformation($"Getting main news from {source.Name}. Nothing new.");
