@@ -39,10 +39,15 @@
             var contentElement = document.QuerySelector(".news-article");
 
             var timeNode = contentElement.ChildNodes[0];
-            var time = DateTime.ParseExact(timeNode?.TextContent?.Trim(), "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture); // 24.01.2016 09:59
+            var time = DateTime.ParseExact(timeNode?.TextContent?.Trim(), "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
 
-            var imageElement = document.QuerySelector(".news-article img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/api.bg.jpg";
+            var imageElement = document.QuerySelector(".news-article .zoomimage");
+            var imageUrl = imageElement?.GetAttribute("href");
+            if (string.IsNullOrWhiteSpace(imageUrl))
+            {
+                imageElement = document.QuerySelector(".news-article img");
+                imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/api.bg.jpg";
+            }
 
             contentElement.RemoveChild(timeNode);
             this.RemoveRecursively(contentElement, imageElement);

@@ -42,6 +42,24 @@
         }
 
         [Fact]
+        public void ParseRemoteNewsWithBigImageShouldWorkCorrectly()
+        {
+            const string NewsUrl = "http://www.api.bg/index.php/bg/prescentar/novini/zapochna-prodazhbata-na-e-vinetki-na-kasite-v-benzinostanciite-omv/";
+            var provider = new ApiBgSource();
+            var news = provider.GetPublication(NewsUrl);
+            Assert.Equal(NewsUrl, news.OriginalUrl);
+            Assert.Equal("Започна продажбата на е-винетки на касите в бензиностанциите ОМВ", news.Title);
+            Assert.Contains("Започна продажбата на електронни винетки на касите и в бензиностанциите ОМВ.", news.Content);
+            Assert.Contains("До 8 часа тази сутрин са продадени 114 705 електронни винетки за 7 817 916 лв.", news.Content);
+            Assert.DoesNotContain(news.Title, news.Content);
+            Assert.DoesNotContain("09.01.2019 16:40", news.Content);
+            Assert.DoesNotContain("Photo__vinetki_-_09.01.2019", news.Content);
+            Assert.Equal("http://www.api.bg/files/3715/4704/5587/Photo__vinetki_-_09.01.2019.jpg", news.ImageUrl);
+            Assert.Equal(new DateTime(2019, 1, 9, 16, 40, 0), news.PostDate);
+            Assert.Equal("zapochna-prodazhbata-na-e-vinetki-na-kasite-v-benzinostanciite-omv", news.RemoteId);
+        }
+
+        [Fact]
         public void ParseRemoteNewsShouldWorkCorrectlyWithOneOfTheFirstNews()
         {
             const string NewsUrl = "http://www.api.bg/index.php/bg/prescentar/novini/8-firmi-podadoha-oferti-za-stroitelstvoto-na-lot-2-ot-am-trakiya/";

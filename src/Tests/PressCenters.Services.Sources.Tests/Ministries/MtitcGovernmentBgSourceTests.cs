@@ -34,7 +34,7 @@
             Assert.DoesNotContain("04.01.2019", news.Content);
             Assert.DoesNotContain("facebook.com", news.Content);
             Assert.DoesNotContain("gallery", news.Content);
-            Assert.Equal("https://www.mtitc.government.bg/sites/default/files/1-1_125.jpg", news.ImageUrl);
+            Assert.Equal("https://www.mtitc.government.bg/sites/default/files/1-1_130.jpg", news.ImageUrl);
             Assert.Equal(new DateTime(2019, 1, 4, 17, 44, 0), news.PostDate);
             Assert.Equal("1/rosen-zhelyazkov-shte-zashtitim-nacionalnite-interesi-s-vsichki-vuzmozhni-pohvati-pri-glasuvaneto-na-paketa-za-mobilnost-i", news.RemoteId);
         }
