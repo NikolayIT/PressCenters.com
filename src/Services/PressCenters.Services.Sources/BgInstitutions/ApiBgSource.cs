@@ -34,7 +34,11 @@
 
         protected override RemoteNews ParseDocument(IDocument document)
         {
-            var title = document.QuerySelector(".box h1").TextContent?.Trim();
+            var title = document.QuerySelector(".box h1")?.TextContent?.Trim();
+            if (title == null)
+            {
+                return null;
+            }
 
             var contentElement = document.QuerySelector(".news-article");
 

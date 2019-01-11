@@ -63,27 +63,6 @@
             var newsService = serviceProvider.GetService<INewsService>();
             var newsRepository = serviceProvider.GetService<IDeletableEntityRepository<News>>();
             var sourcesRepository = serviceProvider.GetService<IDeletableEntityRepository<Source>>();
-            var newsForUpdate = newsRepository.AllWithDeleted().Where(x => x.Source.TypeName.Contains("ApiBgSource"))
-                .OrderBy(x => x.Id).ToList();
-            var newsSource = new ApiBgSource();
-            var i = 0;
-            Console.WriteLine(newsForUpdate.Count);
-            foreach (var news in newsForUpdate)
-            {
-                i++;
-                var remoteNews = newsSource.GetPublication(news.OriginalUrl);
-                if (news.ImageUrl != remoteNews.ImageUrl)
-                {
-                    Console.WriteLine($"{i}/{newsForUpdate.Count} => {news.Id} => {news.ImageUrl} => {remoteNews.ImageUrl}");
-                    news.ImageUrl = remoteNews.ImageUrl;
-                    news.Content = remoteNews.Content;
-                    newsRepository.SaveChangesAsync().GetAwaiter().GetResult();
-                }
-            }
-
-            Console.WriteLine(newsForUpdate.Count);
-
-            return 0;
             foreach (var source in sourcesRepository.All().ToList())
             {
                 // Run only for selected sources

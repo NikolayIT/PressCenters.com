@@ -74,9 +74,10 @@
             publication.OriginalUrl = url?.Trim();
 
             // Image URL
+            publication.ImageUrl = publication.ImageUrl?.Trim();
             if (publication.ImageUrl?.StartsWith("/images/sources/") == false)
             {
-                publication.ImageUrl = this.NormalizeUrl(publication.ImageUrl?.Trim(), this.BaseUrl)?.Trim();
+                publication.ImageUrl = this.NormalizeUrl(publication.ImageUrl, this.BaseUrl)?.Trim();
             }
 
             // Remote ID

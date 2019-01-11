@@ -47,6 +47,11 @@
                 return;
             }
 
+            if (remoteNews == null)
+            {
+                return;
+            }
+
             news.Title = remoteNews.Title;
             news.OriginalUrl = remoteNews.OriginalUrl;
             news.ImageUrl = remoteNews.ImageUrl;
