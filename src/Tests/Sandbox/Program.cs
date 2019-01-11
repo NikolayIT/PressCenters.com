@@ -26,7 +26,6 @@
     using PressCenters.Services.Data;
     using PressCenters.Services.Messaging;
     using PressCenters.Services.Sources;
-    using PressCenters.Services.Sources.BgInstitutions;
 
     public static class Program
     {
@@ -66,7 +65,7 @@
             foreach (var source in sourcesRepository.All().ToList())
             {
                 // Run only for selected sources
-                if (!new[] { "ImeBgSource" }.Any(x => source.TypeName.Contains(x)))
+                if (!new[] { "MeGovernmentBgNewsSource" }.Any(x => source.TypeName.Contains(x)))
                 {
                     continue;
                 }
