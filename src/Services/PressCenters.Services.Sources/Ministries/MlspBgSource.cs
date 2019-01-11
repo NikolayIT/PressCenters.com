@@ -54,7 +54,7 @@
             var imageUrl = imageElement?.GetAttribute("src") ?? "https://www.mlsp.government.bg/server/php/files/mtsp_rsz%20(1).jpg";
 
             var contentElement = document.QuerySelector("#statiata");
-            this.RemoveRecursively(contentElement, imageElement);
+            contentElement.RemoveRecursively(imageElement);
             this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
             var content = contentElement?.InnerHtml;
 

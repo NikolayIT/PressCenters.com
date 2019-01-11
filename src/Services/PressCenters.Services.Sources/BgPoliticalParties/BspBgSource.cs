@@ -37,9 +37,9 @@
 
             var contentElement = document.QuerySelector(".post-content");
             this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
-            this.RemoveRecursively(contentElement, document.QuerySelector(".post-content h2"));
-            this.RemoveRecursively(contentElement, document.QuerySelector(".post-content .social-buttons"));
-            this.RemoveRecursively(contentElement, document.QuerySelector(".post-content .item_meta"));
+            contentElement.RemoveRecursively(document.QuerySelector(".post-content h2"));
+            contentElement.RemoveRecursively(document.QuerySelector(".post-content .social-buttons"));
+            contentElement.RemoveRecursively(document.QuerySelector(".post-content .item_meta"));
             var content = contentElement.InnerHtml.Trim();
 
             var imageElement = document.QuerySelector(".post-poster img");

@@ -29,11 +29,11 @@
 
             var contentElement = document.QuerySelector(".news-info");
             this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
-            this.RemoveRecursively(contentElement, document.QuerySelector(".news-info .social"));
-            this.RemoveRecursively(contentElement, document.QuerySelector(".news-info .date"));
-            this.RemoveRecursively(contentElement, document.QuerySelector(".news-info h1"));
-            this.RemoveRecursively(contentElement, document.QuerySelector(".news-info .more"));
-            this.RemoveRecursively(contentElement, document.QuerySelector(".news-info .social-r"));
+            contentElement.RemoveRecursively(document.QuerySelector(".news-info .social"));
+            contentElement.RemoveRecursively(document.QuerySelector(".news-info .date"));
+            contentElement.RemoveRecursively(document.QuerySelector(".news-info h1"));
+            contentElement.RemoveRecursively(document.QuerySelector(".news-info .more"));
+            contentElement.RemoveRecursively(document.QuerySelector(".news-info .social-r"));
             var content = contentElement.InnerHtml.Trim();
 
             var imageElement = document.QuerySelector("#slider img");

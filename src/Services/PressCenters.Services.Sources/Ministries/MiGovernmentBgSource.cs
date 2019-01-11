@@ -53,15 +53,15 @@
             var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/mi.government.bg.png";
 
             var contentElement = document.QuerySelector(".col2");
-            this.RemoveRecursively(contentElement, titleElement);
-            this.RemoveRecursively(contentElement, document.QuerySelector(".col2 .separator-1"));
-            this.RemoveRecursively(contentElement, timeElement);
-            this.RemoveRecursively(contentElement, document.QuerySelector(".col2 div.left")); // images
-            this.RemoveRecursively(contentElement, document.QuerySelector(".col2 .link-print"));
-            this.RemoveRecursively(contentElement, document.QuerySelector(".col2 .butt-1"));
-            this.RemoveRecursively(contentElement, document.QuerySelector(".col2 .clear2"));
-            this.RemoveRecursively(contentElement, document.QuerySelector(".col2 .clear3"));
-            this.RemoveRecursively(contentElement, document.QuerySelector(".col2 #comments"));
+            contentElement.RemoveRecursively(titleElement);
+            contentElement.RemoveRecursively(document.QuerySelector(".col2 .separator-1"));
+            contentElement.RemoveRecursively(timeElement);
+            contentElement.RemoveRecursively(document.QuerySelector(".col2 div.left")); // images
+            contentElement.RemoveRecursively(document.QuerySelector(".col2 .link-print"));
+            contentElement.RemoveRecursively(document.QuerySelector(".col2 .butt-1"));
+            contentElement.RemoveRecursively(document.QuerySelector(".col2 .clear2"));
+            contentElement.RemoveRecursively(document.QuerySelector(".col2 .clear3"));
+            contentElement.RemoveRecursively(document.QuerySelector(".col2 #comments"));
             this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
             var content = contentElement?.InnerHtml;
 

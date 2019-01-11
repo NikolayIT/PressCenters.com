@@ -69,11 +69,11 @@
             var imageUrl = imageElement?.GetAttribute("src") ?? $"/images/sources/mvr.bg.jpg";
 
             var contentElement = document.QuerySelector(".article__container");
-            this.RemoveRecursively(contentElement, timeElement);
-            this.RemoveRecursively(contentElement, document.QuerySelector(".article__container div.row"));
-            this.RemoveRecursively(contentElement, document.QuerySelector(".article__container script"));
-            this.RemoveRecursively(contentElement, document.QuerySelector(".article__container h1")); // title
-            this.RemoveRecursively(contentElement, document.QuerySelector(".article__container .pull-right"));
+            contentElement.RemoveRecursively(timeElement);
+            contentElement.RemoveRecursively(document.QuerySelector(".article__container div.row"));
+            contentElement.RemoveRecursively(document.QuerySelector(".article__container script"));
+            contentElement.RemoveRecursively(document.QuerySelector(".article__container h1")); // title
+            contentElement.RemoveRecursively(document.QuerySelector(".article__container .pull-right"));
             this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
             var content = contentElement.InnerHtml.Trim();
 

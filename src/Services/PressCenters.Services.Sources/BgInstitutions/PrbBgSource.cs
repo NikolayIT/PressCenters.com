@@ -43,7 +43,7 @@
                 return null;
             }
 
-            this.RemoveRecursively(titleElement, timeElement);
+            titleElement.RemoveRecursively(timeElement);
             var title = titleElement.TextContent.Trim();
 
             var timeAsString = timeElement.Attributes["datetime"].Value;
@@ -55,9 +55,9 @@
                 return null;
             }
 
-            this.RemoveRecursively(contentElement, titleElement);
-            this.RemoveRecursively(contentElement, timeElement);
-            this.RemoveRecursively(contentElement, document.QuerySelector(".tab-container"));
+            contentElement.RemoveRecursively(titleElement);
+            contentElement.RemoveRecursively(timeElement);
+            contentElement.RemoveRecursively(document.QuerySelector(".tab-container"));
             this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
             var content = contentElement.InnerHtml.Trim();
 

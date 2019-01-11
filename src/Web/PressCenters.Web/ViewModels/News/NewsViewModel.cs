@@ -5,32 +5,57 @@
     using System.Net;
     using System.Text.RegularExpressions;
 
+    using AngleSharp.Extensions;
+    using AngleSharp.Parser.Html;
+
     using Ganss.XSS;
 
     using PressCenters.Common;
     using PressCenters.Data.Models;
     using PressCenters.Services;
     using PressCenters.Services.Mapping;
+    using PressCenters.Services.Sources;
 
     public class NewsViewModel : IMapFrom<News>
     {
-        private readonly ISlugGenerator slugGenerator;
-
-        private readonly IHtmlSanitizer htmlSanitizer;
-
-        public NewsViewModel()
-        {
-            this.slugGenerator = new SlugGenerator();
-            this.htmlSanitizer = new HtmlSanitizer();
-        }
-
         public int Id { get; set; }
 
         public string Title { get; set; }
 
         public string Content { get; set; }
 
-        public string SanitizedContent => this.htmlSanitizer.Sanitize(this.Content);
+        public string SanitizedContent
+        {
+            get
+            {
+                // Sanitize
+                var htmlSanitizer = new HtmlSanitizer();
+                var html = htmlSanitizer.Sanitize(this.Content);
+
+                // Parse document
+                var parser = new HtmlParser();
+                var document = parser.Parse(html);
+
+                // Remove empty paragraphs
+                var paragraphs = document.QuerySelectorAll("p");
+                foreach (var paragraph in paragraphs)
+                {
+                    if (string.IsNullOrWhiteSpace(paragraph.TextContent))
+                    {
+                        document.RemoveRecursively(paragraph);
+                    }
+                }
+
+                // Add .table class for tables
+                var tables = document.QuerySelectorAll("table");
+                foreach (var table in tables)
+                {
+                    table.ClassName += " table table-striped table-bordered table-hover table-sm";
+                }
+
+                return document.ToHtml();
+            }
+        }
 
         public string ShortContent
         {
@@ -80,6 +105,6 @@
                 ? this.CreatedOn.ToString("ddd, dd MMM yyyy", new CultureInfo("bg-BG"))
                 : this.CreatedOn.ToString("ddd, dd MMM yyyy HH:mm", new CultureInfo("bg-BG"));
 
-        public string Url => $"/News/{this.Id}/{this.slugGenerator.GenerateSlug(this.Title)}";
+        public string Url => $"/News/{this.Id}/{new SlugGenerator().GenerateSlug(this.Title)}";
     }
 }

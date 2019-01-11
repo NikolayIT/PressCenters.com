@@ -70,8 +70,8 @@
             var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/mc.government.bg.jpg";
 
             var contentElement = document.QuerySelector(".conNews");
-            this.RemoveRecursively(contentElement, timeElement);
-            this.RemoveRecursively(contentElement, imageElement);
+            contentElement.RemoveRecursively(timeElement);
+            contentElement.RemoveRecursively(imageElement);
             this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
             var content = contentElement?.InnerHtml;
 

@@ -49,10 +49,10 @@
 
             var socialMediaShareElement = document.QuerySelector(".col-md-9.content-center div");
             var contentElement = document.QuerySelector(".col-md-9.content-center");
-            this.RemoveRecursively(contentElement, titleElement);
-            this.RemoveRecursively(contentElement, timeElement);
-            this.RemoveRecursively(contentElement, imageElement);
-            this.RemoveRecursively(contentElement, socialMediaShareElement);
+            contentElement.RemoveRecursively(titleElement);
+            contentElement.RemoveRecursively(timeElement);
+            contentElement.RemoveRecursively(imageElement);
+            contentElement.RemoveRecursively(socialMediaShareElement);
             this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
             var content = contentElement?.InnerHtml;
 

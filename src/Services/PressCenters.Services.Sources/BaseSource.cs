@@ -36,7 +36,7 @@
             IDocument document;
             if (this.Encoding == null)
             {
-                document = this.BrowsingContext.OpenAsync(url).Result;
+                document = this.BrowsingContext.OpenAsync(url).GetAwaiter().GetResult();
             }
             else
             {
@@ -119,27 +119,6 @@
             }
 
             return result.ToString();
-        }
-
-        protected void RemoveRecursively(INode element, INode elementToRemove)
-        {
-            if (elementToRemove == null)
-            {
-                return;
-            }
-
-            try
-            {
-                element.RemoveChild(elementToRemove);
-            }
-            catch (Exception)
-            {
-            }
-
-            foreach (var node in element.ChildNodes)
-            {
-                this.RemoveRecursively(node, elementToRemove);
-            }
         }
 
         protected void NormalizeUrlsRecursively(IElement element, string baseUrl)

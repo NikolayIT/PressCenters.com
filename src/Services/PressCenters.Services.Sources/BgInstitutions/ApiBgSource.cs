@@ -54,7 +54,7 @@
             }
 
             contentElement.RemoveChild(timeNode);
-            this.RemoveRecursively(contentElement, imageElement);
+            contentElement.RemoveRecursively(imageElement);
             this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
             var content = contentElement.InnerHtml;
 

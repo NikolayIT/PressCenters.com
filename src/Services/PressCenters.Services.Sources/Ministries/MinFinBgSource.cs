@@ -50,13 +50,13 @@
             var time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy г.", CultureInfo.InvariantCulture);
 
             var contentElement = document.QuerySelector("#news");
-            this.RemoveRecursively(contentElement, document.QuerySelector("#social"));
+            contentElement.RemoveRecursively(document.QuerySelector("#social"));
 
             var imageElement = contentElement?.QuerySelector("#news img");
             var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/minfin.bg.jpg";
 
-            this.RemoveRecursively(contentElement, timeElement);
-            this.RemoveRecursively(contentElement, document.QuerySelector("#news .news_images")); // All images
+            contentElement.RemoveRecursively(timeElement);
+            contentElement.RemoveRecursively(document.QuerySelector("#news .news_images")); // All images
             this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
             var content = contentElement?.InnerHtml;
             if (string.IsNullOrWhiteSpace(content) || content == "<p></p>")

@@ -39,9 +39,9 @@
             var imageUrl = imageElement?.GetAttribute("src");
 
             var contentElement = document.QuerySelector(".view");
-            this.RemoveRecursively(contentElement, titleElement);
-            this.RemoveRecursively(contentElement, timeElement);
-            this.RemoveRecursively(contentElement, document.QuerySelector(".view .gallery"));
+            contentElement.RemoveRecursively(titleElement);
+            contentElement.RemoveRecursively(timeElement);
+            contentElement.RemoveRecursively(document.QuerySelector(".view .gallery"));
             this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
             var content = contentElement.InnerHtml.Trim();
 
