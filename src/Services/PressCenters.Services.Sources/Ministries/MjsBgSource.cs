@@ -113,7 +113,7 @@
             return remoteNews;
         }
 
-        public class NewsAsJson
+        private class NewsAsJson
         {
             public string Img { get; set; }
 
