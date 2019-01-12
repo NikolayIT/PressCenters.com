@@ -60,12 +60,11 @@
             var sw = Stopwatch.StartNew();
 
             var newsService = serviceProvider.GetService<INewsService>();
-            var newsRepository = serviceProvider.GetService<IDeletableEntityRepository<News>>();
             var sourcesRepository = serviceProvider.GetService<IDeletableEntityRepository<Source>>();
             foreach (var source in sourcesRepository.All().ToList())
             {
                 // Run only for selected sources
-                if (!new[] { "MeGovernmentBgNewsSource" }.Any(x => source.TypeName.Contains(x)))
+                if (!new[] { "MeGovernmentBgNewsSource", "MeGovernmentBgHotNewsSource" }.Any(x => source.TypeName.Contains(x)))
                 {
                     continue;
                 }

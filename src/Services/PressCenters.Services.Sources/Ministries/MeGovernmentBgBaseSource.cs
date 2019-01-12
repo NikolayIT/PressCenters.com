@@ -17,25 +17,24 @@
 
         protected abstract string NewsListUrl { get; }
 
+        protected abstract int NewsListPagesCount { get; }
+
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications(this.NewsListUrl, ".listing-article h2 a");
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            for (var i = 400; i <= 2700; i++)
+            for (var i = 1; i <= this.NewsListPagesCount; i++)
             {
-                Console.WriteLine(i);
-                var remoteNews = this.GetPublication($"{this.BaseUrl}bg/news/news-{i}.html");
-                if (remoteNews == null)
+                var page = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{{\"page\":{i}}}"));
+                var news = this.GetPublications($"{this.NewsListUrl}?p={page}", ".listing-article h2 a");
+                Console.WriteLine($"Page {i} => {news.Count} news");
+                foreach (var remoteNews in news)
                 {
-                    continue;
+                    yield return remoteNews;
                 }
-
-                Console.WriteLine($"News {i} => {remoteNews.Title}");
-                yield return remoteNews;
             }
         }
-
 
         public override string ExtractIdFromUrl(string url) => url.GetLastStringBetween("-", ".html", url);
 

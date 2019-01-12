@@ -3,5 +3,7 @@
     public class MeGovernmentBgHotNewsSource : MeGovernmentBgBaseSource
     {
         protected override string NewsListUrl => "bg/hot-news.html";
+
+        protected override int NewsListPagesCount => 18;
     }
 }
