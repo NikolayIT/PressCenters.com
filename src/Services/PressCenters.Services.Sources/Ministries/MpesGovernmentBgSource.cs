@@ -23,10 +23,16 @@
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            for (var i = 1; i <= 4105; i++)
+            for (var i = 1; i <= 4089; i++)
             {
+                if (i == 4088)
+                {
+                    // same as 4089
+                    continue;
+                }
+
                 var remoteNews = this.GetPublication($"{this.BaseUrl}Pages/Press/News/Default.aspx?evntid={i}");
-                if (remoteNews == null)
+                if (remoteNews == null || remoteNews.ImageUrl.StartsWith("/images/sources/"))
                 {
                     continue;
                 }
@@ -47,6 +53,10 @@
             }
 
             var title = titleElement.TextContent;
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                return null;
+            }
 
             var imageElement = document.QuerySelector(".PanelFullText .event_text table img");
             var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/mpes.government.bg.jpg";
@@ -55,7 +65,7 @@
             contentElement.RemoveRecursively(document.QuerySelector(".PanelFullText .event_text table:has(img)"));
             this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement?.InnerHtml;
-            if (string.IsNullOrWhiteSpace(content?.Replace("<br>", string.Empty).Trim()))
+            if (string.IsNullOrWhiteSpace(contentElement?.TextContent?.Trim()))
             {
                 return null;
             }
