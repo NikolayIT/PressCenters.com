@@ -6,7 +6,7 @@
 
     using Xunit;
 
-    public class MlspBgSourceTests
+    public class MlspGovernmentBgSourceTests
     {
         [Theory]
         [InlineData("https://www.mlsp.government.bg/index.php?section=PRESS2&prid=1576&lang=", "1576")]

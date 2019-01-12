@@ -41,8 +41,7 @@
             else
             {
                 var parser = new HtmlParser();
-                var webClient = new WebClient { Encoding = this.Encoding };
-                var html = webClient.DownloadString(url);
+                var html = this.ReadStringFromUrl(url);
                 document = parser.Parse(html);
             }
 
@@ -104,6 +103,13 @@
                 .Where(x => x?.Contains(urlShouldContain) == true).Distinct().ToList();
             var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
             return news;
+        }
+
+        protected string ReadStringFromUrl(string url)
+        {
+            var webClient = new WebClient { Encoding = this.Encoding };
+            var html = webClient.DownloadString(url);
+            return html;
         }
 
         protected string NormalizeUrl(string url)
