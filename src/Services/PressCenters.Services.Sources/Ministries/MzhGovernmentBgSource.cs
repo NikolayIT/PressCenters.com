@@ -50,7 +50,7 @@
             var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/mzh.government.bg.png";
 
             var contentElement = document.QuerySelector(".single_news");
-            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
+            this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement?.InnerHtml;
 
             return new RemoteNews(title, content, time, imageUrl);

@@ -49,7 +49,7 @@
             var time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
 
             var contentElement = document.QuerySelector(".text-page article");
-            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
+            this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement?.InnerHtml;
             if (string.IsNullOrWhiteSpace(content))
             {

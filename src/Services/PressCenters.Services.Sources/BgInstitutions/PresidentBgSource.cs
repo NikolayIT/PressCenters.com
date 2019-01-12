@@ -40,7 +40,7 @@
             var time = DateTime.ParseExact(timeAsString, "d MMMM yyyy | HH:mm", CultureInfo.GetCultureInfo("bg-BG"));
 
             var contentElement = document.QuerySelector(".print-content .index-news-bdy");
-            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
+            this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement.InnerHtml.Trim();
 
             var imageElement = document.QuerySelector(".print-content img");

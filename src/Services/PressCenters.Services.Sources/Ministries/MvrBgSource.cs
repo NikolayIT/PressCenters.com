@@ -36,7 +36,7 @@
                 var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                 var document = parser.Parse(content);
                 var links = document.QuerySelectorAll(".article__list .article .article__description a.link--clear")
-                    .Select(x => this.NormalizeUrl(x.Attributes["href"].Value, this.BaseUrl)).Distinct().ToList();
+                    .Select(x => this.NormalizeUrl(x.Attributes["href"].Value)).Distinct().ToList();
                 var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
                 Console.WriteLine($"Page {i} => {news.Count} news");
                 foreach (var remoteNews in news)
@@ -74,7 +74,7 @@
             contentElement.RemoveRecursively(document.QuerySelector(".article__container script"));
             contentElement.RemoveRecursively(document.QuerySelector(".article__container h1")); // title
             contentElement.RemoveRecursively(document.QuerySelector(".article__container .pull-right"));
-            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
+            this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement.InnerHtml.Trim();
 
             return new RemoteNews(title, content, time, imageUrl);

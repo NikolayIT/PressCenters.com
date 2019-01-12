@@ -43,7 +43,7 @@
             var imageUrl = imageElement?.GetAttribute("src");
 
             var contentElement = document.QuerySelector(".description_holder_div");
-            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
+            this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement?.InnerHtml;
 
             return new RemoteNews(title, content, time, imageUrl);

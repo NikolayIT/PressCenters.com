@@ -57,7 +57,7 @@
 
             contentElement.RemoveRecursively(timeElement);
             contentElement.RemoveRecursively(document.QuerySelector("#news .news_images")); // All images
-            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
+            this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement?.InnerHtml;
             if (string.IsNullOrWhiteSpace(content) || content == "<p></p>")
             {

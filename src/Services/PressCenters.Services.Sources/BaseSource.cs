@@ -77,7 +77,7 @@
             publication.ImageUrl = publication.ImageUrl?.Trim();
             if (publication.ImageUrl?.StartsWith("/images/sources/") == false)
             {
-                publication.ImageUrl = this.NormalizeUrl(publication.ImageUrl, this.BaseUrl)?.Trim();
+                publication.ImageUrl = this.NormalizeUrl(publication.ImageUrl)?.Trim();
             }
 
             // Remote ID
@@ -100,20 +100,20 @@
             address = $"{this.BaseUrl}{address}";
             var document = this.BrowsingContext.OpenAsync(address).GetAwaiter().GetResult();
             var links = document.QuerySelectorAll(anchorSelector)
-                .Select(x => this.NormalizeUrl(x?.Attributes["href"]?.Value, this.BaseUrl))
+                .Select(x => this.NormalizeUrl(x?.Attributes["href"]?.Value))
                 .Where(x => x?.Contains(urlShouldContain) == true).Distinct().ToList();
             var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
             return news;
         }
 
-        protected string NormalizeUrl(string url, string baseUrl)
+        protected string NormalizeUrl(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
             {
                 return null;
             }
 
-            if (!Uri.TryCreate(new Uri(baseUrl), url, out var result))
+            if (!Uri.TryCreate(new Uri(this.BaseUrl), url, out var result))
             {
                 return url;
             }
@@ -121,7 +121,7 @@
             return result.ToString();
         }
 
-        protected void NormalizeUrlsRecursively(IElement element, string baseUrl)
+        protected void NormalizeUrlsRecursively(IElement element)
         {
             if (element == null)
             {
@@ -130,17 +130,17 @@
 
             if (element.Attributes["href"] != null)
             {
-                element.SetAttribute("href", this.NormalizeUrl(element.Attributes["href"].Value, baseUrl));
+                element.SetAttribute("href", this.NormalizeUrl(element.Attributes["href"].Value));
             }
 
             if (element.Attributes["src"] != null)
             {
-                element.SetAttribute("src", this.NormalizeUrl(element.Attributes["src"].Value, baseUrl));
+                element.SetAttribute("src", this.NormalizeUrl(element.Attributes["src"].Value));
             }
 
             foreach (var node in element.Children)
             {
-                this.NormalizeUrlsRecursively(node, baseUrl);
+                this.NormalizeUrlsRecursively(node);
             }
         }
     }

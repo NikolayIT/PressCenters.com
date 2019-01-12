@@ -53,7 +53,7 @@
             contentElement.RemoveRecursively(timeElement);
             contentElement.RemoveRecursively(imageElement);
             contentElement.RemoveRecursively(socialMediaShareElement);
-            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
+            this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement?.InnerHtml;
 
             return new RemoteNews(title, content, time, imageUrl);

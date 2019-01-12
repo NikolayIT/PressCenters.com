@@ -58,7 +58,7 @@
             contentElement.RemoveRecursively(titleElement);
             contentElement.RemoveRecursively(timeElement);
             contentElement.RemoveRecursively(document.QuerySelector(".tab-container"));
-            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
+            this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement.InnerHtml.Trim();
 
             var imageElement = document.QuerySelector(".slide img");

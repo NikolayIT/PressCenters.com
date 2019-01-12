@@ -44,7 +44,7 @@
             var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/mrrb.bg.jpg";
 
             var contentElement = document.QuerySelector(".article-description");
-            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
+            this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement?.InnerHtml;
 
             return new RemoteNews(title, content, time, imageUrl);

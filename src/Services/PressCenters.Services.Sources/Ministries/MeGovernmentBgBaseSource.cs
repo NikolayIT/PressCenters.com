@@ -65,7 +65,7 @@
             contentElement.RemoveRecursively(document.QuerySelector("article.item-article .article-image-container"));
             contentElement.RemoveRecursively(document.QuerySelector("article.item-article .print-article"));
             contentElement.RemoveRecursively(document.QuerySelector("article.item-article .article-footer"));
-            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
+            this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement?.InnerHtml;
 
             return new RemoteNews(title, content, time, imageUrl);

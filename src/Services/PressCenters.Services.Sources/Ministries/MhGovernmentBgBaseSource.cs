@@ -43,13 +43,13 @@
             var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/mh.government.bg.jpg";
 
             var contentElement = document.QuerySelector(".single_news");
-            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
+            this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement.InnerHtml;
 
             var documentElement = document.QuerySelector(".single_news + .panel");
             if (documentElement != null)
             {
-                this.NormalizeUrlsRecursively(documentElement, this.BaseUrl);
+                this.NormalizeUrlsRecursively(documentElement);
                 content += documentElement.InnerHtml;
             }
 

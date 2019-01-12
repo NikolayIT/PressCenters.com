@@ -32,7 +32,7 @@
             var time = DateTime.ParseExact(timeAsString, "dd MMMM, yyyy", CultureInfo.GetCultureInfo("bg-BG"));
 
             var contentElement = document.QuerySelector(".l9 .card-content .card-content");
-            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
+            this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement.InnerHtml.Trim();
 
             var imageElement = document.QuerySelector(".l9 .card-image img.img-blog");

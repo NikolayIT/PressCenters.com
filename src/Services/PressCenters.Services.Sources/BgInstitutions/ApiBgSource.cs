@@ -55,7 +55,7 @@
 
             contentElement.RemoveChild(timeNode);
             contentElement.RemoveRecursively(imageElement);
-            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
+            this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement.InnerHtml;
 
             return new RemoteNews(title, content, time, imageUrl);

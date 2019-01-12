@@ -47,7 +47,7 @@
             var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/mfa.bg.png";
 
             var contentElement = document.QuerySelector(".news-item .content");
-            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
+            this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement?.InnerHtml;
 
             return new RemoteNews(title, content, time, imageUrl);

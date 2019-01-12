@@ -42,7 +42,7 @@
             contentElement.RemoveRecursively(titleElement);
             contentElement.RemoveRecursively(timeElement);
             contentElement.RemoveRecursively(document.QuerySelector(".view .gallery"));
-            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
+            this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement.InnerHtml.Trim();
 
             return new RemoteNews(title, content, time, imageUrl);

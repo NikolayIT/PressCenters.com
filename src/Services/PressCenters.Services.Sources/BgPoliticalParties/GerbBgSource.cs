@@ -28,7 +28,7 @@
             time = time.Date == DateTime.UtcNow.Date ? DateTime.Now : time;
 
             var contentElement = document.QuerySelector(".news-info");
-            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
+            this.NormalizeUrlsRecursively(contentElement);
             contentElement.RemoveRecursively(document.QuerySelector(".news-info .social"));
             contentElement.RemoveRecursively(document.QuerySelector(".news-info .date"));
             contentElement.RemoveRecursively(document.QuerySelector(".news-info h1"));

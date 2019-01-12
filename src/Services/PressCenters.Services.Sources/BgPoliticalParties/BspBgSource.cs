@@ -36,10 +36,10 @@
             var time = new DateTime(year, monthIndex, dayOfMonth);
 
             var contentElement = document.QuerySelector(".post-content");
-            this.NormalizeUrlsRecursively(contentElement, this.BaseUrl);
             contentElement.RemoveRecursively(document.QuerySelector(".post-content h2"));
             contentElement.RemoveRecursively(document.QuerySelector(".post-content .social-buttons"));
             contentElement.RemoveRecursively(document.QuerySelector(".post-content .item_meta"));
+            this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement.InnerHtml.Trim();
 
             var imageElement = document.QuerySelector(".post-poster img");
