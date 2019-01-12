@@ -107,7 +107,12 @@
 
         protected string ReadStringFromUrl(string url)
         {
-            var webClient = new WebClient { Encoding = this.Encoding };
+            var webClient = new WebClient();
+            if (this.Encoding != null)
+            {
+                webClient.Encoding = this.Encoding;
+            }
+
             var html = webClient.DownloadString(url);
             return html;
         }

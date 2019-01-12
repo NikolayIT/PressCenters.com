@@ -10,6 +10,7 @@
     /// <summary>
     /// Министерство на труда и социалната политика.
     /// </summary>
+    //// TODO: Rename to MlspGovernmentBgSource
     public class MlspBgSource : BaseSource
     {
         public override string BaseUrl { get; } = "https://www.mlsp.government.bg/";
