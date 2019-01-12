@@ -64,7 +64,7 @@
             foreach (var source in sourcesRepository.All().ToList())
             {
                 // Run only for selected sources
-                if (!new[] { "MjsBgSource" }.Any(x => source.TypeName.Contains(x)))
+                if (!new[] { "MpesGovernmentBgSource" }.Any(x => source.TypeName.Contains(x)))
                 {
                     continue;
                 }
