@@ -41,15 +41,7 @@
             }
         }
 
-        public override string ExtractIdFromUrl(string url)
-        {
-            // TODO: Extract as base method (same as MlspBgSource)
-            var matches = Regex.Matches(url, @"[\?&](([^&=]+)=([^&=#]*))", RegexOptions.Compiled);
-            var parameters = matches.Cast<Match>().ToDictionary(
-                m => Uri.UnescapeDataString(m.Groups[2].Value),
-                m => Uri.UnescapeDataString(m.Groups[3].Value));
-            return parameters["n"];
-        }
+        public override string ExtractIdFromUrl(string url) => this.GetUrlParameterValue(url, "n");
 
         protected override RemoteNews ParseDocument(IDocument document)
         {

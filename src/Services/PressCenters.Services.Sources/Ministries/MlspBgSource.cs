@@ -34,14 +34,7 @@
             }
         }
 
-        public override string ExtractIdFromUrl(string url)
-        {
-            var matches = Regex.Matches(url, @"[\?&](([^&=]+)=([^&=#]*))", RegexOptions.Compiled);
-            var parameters = matches.Cast<Match>().ToDictionary(
-                m => Uri.UnescapeDataString(m.Groups[2].Value),
-                m => Uri.UnescapeDataString(m.Groups[3].Value));
-            return parameters["prid"];
-        }
+        public override string ExtractIdFromUrl(string url) => this.GetUrlParameterValue(url, "prid");
 
         protected override RemoteNews ParseDocument(IDocument document)
         {

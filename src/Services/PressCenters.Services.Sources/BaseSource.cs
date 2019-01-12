@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Net;
     using System.Text;
+    using System.Text.RegularExpressions;
 
     using AngleSharp;
     using AngleSharp.Dom;
@@ -103,6 +104,15 @@
                 .Where(x => x?.Contains(urlShouldContain) == true).Distinct().ToList();
             var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
             return news;
+        }
+
+        protected string GetUrlParameterValue(string url, string parameterName)
+        {
+            var matches = Regex.Matches(url, @"[\?&](([^&=]+)=([^&=#]*))", RegexOptions.Compiled);
+            var parameters = matches.Cast<Match>().ToDictionary(
+                m => Uri.UnescapeDataString(m.Groups[2].Value),
+                m => Uri.UnescapeDataString(m.Groups[3].Value));
+            return parameters[parameterName];
         }
 
         protected string ReadStringFromUrl(string url)
