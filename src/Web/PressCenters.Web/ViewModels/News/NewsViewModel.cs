@@ -53,6 +53,16 @@
                     table.ClassName += " table table-striped table-bordered table-hover table-sm";
                 }
 
+                // Clear font size
+                var fontElements = document.QuerySelectorAll("font");
+                foreach (var fontElement in fontElements)
+                {
+                    if (fontElement.HasAttribute("size"))
+                    {
+                        fontElement.RemoveAttribute("size");
+                    }
+                }
+
                 return document.ToHtml();
             }
         }

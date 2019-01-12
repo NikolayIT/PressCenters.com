@@ -20,7 +20,7 @@
 
         public ActionResult List()
         {
-            var sources = this.sourcesRepository.All().OrderBy(x => x.Name).To<SourceViewModel>().ToList();
+            var sources = this.sourcesRepository.All().OrderBy(x => x.ShortName).To<SourceViewModel>().ToList();
             return this.View(sources);
         }
     }
