@@ -22,12 +22,14 @@
                                           "PressCenters.Services.Sources.MainNews.DnesBgMainNewsProvider"),
                                       ("Novini.bg", "https://novini.bg",
                                           "PressCenters.Services.Sources.MainNews.NoviniBgMainNewsProvider"),
-                                      ("Vesti.bg", "https://www.vesti.bg",
-                                          "PressCenters.Services.Sources.MainNews.VestiBgMainNewsProvider"),
-                                      ("CNN.com", "https://edition.cnn.com",
+                                      /*("Vesti.bg", "https://www.vesti.bg",
+                                          "PressCenters.Services.Sources.MainNews.VestiBgMainNewsProvider"),*/
+                                      ("CNN", "https://edition.cnn.com",
                                           "PressCenters.Services.Sources.MainNews.CnnMainNewsProvider"),
                                       ("Dnevnik.bg", "https://www.dnevnik.bg/",
                                           "PressCenters.Services.Sources.MainNews.DnevnikBgMainNewsProvider"),
+                                      ("Euronews", "https://www.euronews.com/",
+                                          "PressCenters.Services.Sources.MainNews.EuronewsMainNewsProvider"),
                                   };
 
             foreach (var mainNewsSource in mainNewsSources)

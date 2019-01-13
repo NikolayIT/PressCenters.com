@@ -21,7 +21,7 @@
 
         public IViewComponentResult Invoke()
         {
-            var news = this.mainNewsRepository.All().GroupBy(
+            var news = this.mainNewsRepository.All().Where(x => !x.Source.IsDeleted).GroupBy(
                     x => x.SourceId,
                     (key, g) => g.OrderByDescending(e => e.Id).FirstOrDefault()).OrderByDescending(x => x.CreatedOn)
                 .To<MainNewsViewModel>().ToList();

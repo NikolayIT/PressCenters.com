@@ -42,7 +42,9 @@
             <!-- Sidebar -->
             <div class="col-lg-4">
                 <div class="g-mb-20">
-                    <vc:main-news></vc:main-news>
+                    <cache expires-after="@TimeSpan.FromSeconds(10)">
+                        <vc:main-news></vc:main-news>
+                    </cache>
                 </div>
                 <div class="g-mb-20">
                     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
