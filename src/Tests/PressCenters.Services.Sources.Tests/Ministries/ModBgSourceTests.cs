@@ -10,8 +10,8 @@
     public class ModBgSourceTests
     {
         [Theory]
-        [InlineData("https://www.mod.bg/bg/news_archive.php?fn_month=1&fn_year=2019#10496", "10496")]
-        [InlineData("https://www.mod.bg/bg/news.php#10484", "10484")]
+        [InlineData("https://mod.bg/bg/news.php?fn_mode=fullnews&fn_id=10496", "10496")]
+        [InlineData("https://mod.bg/bg/news.php?fn_mode=fullnews&fn_id=10484", "10484")]
         public void ExtractIdFromPressUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new ModBgSource();
@@ -22,7 +22,7 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://www.mod.bg/bg/news_archive.php?fn_month=1&fn_year=2019#10498";
+            const string NewsUrl = "https://mod.bg/bg/news.php?fn_mode=fullnews&fn_id=10498";
             var provider = new ModBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
@@ -39,9 +39,28 @@
         }
 
         [Fact]
+        public void ParseRemoteNewsRelativeImageUrlShouldWorkCorrectly()
+        {
+            const string NewsUrl = "https://mod.bg/bg/news.php?fn_mode=fullnews&fn_id=3139";
+            var provider = new ModBgSource();
+            var news = provider.GetPublication(NewsUrl);
+            Assert.Equal(NewsUrl, news.OriginalUrl);
+            Assert.Equal("Новата академична година във Военната академия „Г. С. Раковски” ще започне с лекция на министъра на отбраната Аню Ангелов", news.Title);
+            Assert.Contains("Военната академия “Г. С. Раковски” отваря врати за новата академична година", news.Content);
+            Assert.Contains("Колеги, заповядайте.", news.Content);
+            Assert.DoesNotContain(news.Title, news.Content);
+            Assert.DoesNotContain("31.08.2012", news.Content);
+            Assert.DoesNotContain("201208311", news.Content);
+            Assert.DoesNotContain("<img", news.Content);
+            Assert.Equal("https://mod.bg/bg/galleries/201208311/1.jpg", news.ImageUrl);
+            Assert.Equal(new DateTime(2012, 8, 31), news.PostDate);
+            Assert.Equal("3139", news.RemoteId);
+        }
+
+        [Fact]
         public void ParseRemoteNewsWithoutImageShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://www.mod.bg/bg/news_archive.php?fn_month=4&fn_year=2011#1403";
+            const string NewsUrl = "https://mod.bg/bg/news.php?fn_mode=fullnews&fn_id=1403";
             var provider = new ModBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);

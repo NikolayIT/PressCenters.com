@@ -19,11 +19,11 @@
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetNews(
-                $"{this.BaseUrl}bg/news_archive.php?fn_month={DateTime.UtcNow.Month}&fn_year={DateTime.UtcNow.Year}");
+                $"{this.BaseUrl}bg/news.php");
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            for (var date = DateTime.UtcNow; date >= new DateTime(2010, 1, 1); date = date.AddMonths(-1))
+            for (var date = DateTime.UtcNow; date >= new DateTime(2011, 1, 1); date = date.AddMonths(-1))
             {
                 var news = this.GetNews($"{this.BaseUrl}bg/news_archive.php?fn_month={date.Month}&fn_year={date.Year}");
                 Console.WriteLine($"{date:yyyy, MMM} => {news.Count} news");
@@ -34,36 +34,37 @@
             }
         }
 
-        internal override string ExtractIdFromUrl(string url) => new Uri(url).Fragment.Trim('#');
+        internal override string ExtractIdFromUrl(string url) => this.GetUrlParameterValue(url, "fn_id");
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            var id = this.ExtractIdFromUrl(url);
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                return null;
-            }
-
-            var newsElement = document.QuerySelector($".tablelist2:has(div[id={id}])");
-
             // Title
-            var title = newsElement?.QuerySelector("h2").TextContent;
+            var title = document.QuerySelector(".tablelist2 h2").TextContent;
             if (title == null)
             {
                 return null;
             }
 
             // Time
-            var timeAsString = newsElement.PreviousElementSibling?.TextContent?.Trim();
+            var timeElement = document.QuerySelector(".tablelist");
+            var timeAsString = timeElement?.TextContent?.Trim();
             var time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
 
             // Image
-            var imageElement = newsElement.QuerySelector("a[rel^='lightbox'] img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/mod.bg.jpg";
+            var imageElement = document.QuerySelector(".tablelist2 div p a[rel^='lightbox'] img");
+            var imageUrl = imageElement?.GetAttribute("src");
+            if (imageUrl == null)
+            {
+                imageUrl = "/images/sources/mod.bg.jpg";
+            }
+            else if (!imageUrl.Contains("/bg/"))
+            {
+                imageUrl = "/bg/" + imageUrl;
+            }
 
             // Content
-            var contentElement = newsElement.QuerySelector($"div[id={id}]");
-            var images = newsElement.QuerySelectorAll("a[rel^='lightbox']");
+            var contentElement = document.QuerySelector(".tablelist2 div p");
+            var images = document.QuerySelectorAll("a[rel^='lightbox']");
             foreach (var image in images)
             {
                 contentElement.RemoveRecursively(image);
@@ -78,9 +79,9 @@
         private IList<RemoteNews> GetNews(string address)
         {
             var document = this.BrowsingContext.OpenAsync(address).GetAwaiter().GetResult();
-            var links = document.QuerySelectorAll(".tablelist2 a").Select(x => x?.Attributes["href"]?.Value)
-                .Where(x => x?.Contains("show(") == true).Select(x => $"{address}#{x.GetStringBetween("show(", ");")}")
-                .ToList();
+            var links = document.QuerySelectorAll("#cat1 .tablelist2 a").Select(x => x?.Attributes["href"]?.Value)
+                .Where(x => x?.Contains("show(") == true).Select(
+                    x => $"{this.BaseUrl}bg/news.php?fn_mode=fullnews&fn_id={x.GetStringBetween("show(", ");")}").ToList();
             var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
             return news;
         }

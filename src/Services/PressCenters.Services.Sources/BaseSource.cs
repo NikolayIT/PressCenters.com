@@ -132,6 +132,7 @@ namespace PressCenters.Services.Sources
             return html;
         }
 
+        // TODO: Normalize using current url as base url instead of this.BaseUrl?
         protected string NormalizeUrl(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
