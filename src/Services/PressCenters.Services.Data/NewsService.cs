@@ -61,5 +61,10 @@
 
             await this.newsRepository.SaveChangesAsync();
         }
+
+        public int Count()
+        {
+            return this.newsRepository.All().Count();
+        }
     }
 }

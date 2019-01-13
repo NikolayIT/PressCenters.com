@@ -114,6 +114,8 @@
             services.AddTransient<ISmsSender, NullMessageSender>();
             services.AddTransient<ISettingsService, SettingsService>();
             services.AddTransient<INewsService, NewsService>();
+            services.AddTransient<ISourcesService, SourcesService>();
+            services.AddTransient<IMainNewsSourcesService, MainNewsSourcesService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
