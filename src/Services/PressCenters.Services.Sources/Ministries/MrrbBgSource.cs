@@ -31,7 +31,7 @@
             }
         }
 
-        protected override RemoteNews ParseDocument(IDocument document)
+        protected override RemoteNews ParseDocument(IDocument document, string url)
         {
             var titleElement = document.QuerySelector("h1.page-heading");
             var title = titleElement?.TextContent;

@@ -46,7 +46,7 @@
             }
         }
 
-        protected override RemoteNews ParseDocument(IDocument document)
+        protected override RemoteNews ParseDocument(IDocument document, string url)
         {
             var titleElement = document.QuerySelector(".article__description h1");
             if (titleElement == null)

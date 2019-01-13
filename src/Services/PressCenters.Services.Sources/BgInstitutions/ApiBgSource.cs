@@ -32,7 +32,7 @@
             }
         }
 
-        protected override RemoteNews ParseDocument(IDocument document)
+        protected override RemoteNews ParseDocument(IDocument document, string url)
         {
             var title = document.QuerySelector(".box h1")?.TextContent?.Trim();
             if (title == null)

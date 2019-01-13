@@ -26,7 +26,7 @@
             return base.ExtractIdFromUrl(url);
         }
 
-        protected override RemoteNews ParseDocument(IDocument document)
+        protected override RemoteNews ParseDocument(IDocument document, string url)
         {
             var title = document.QuerySelector("h1.page__title").TextContent.Trim();
             var imageAndContent = document.QuerySelectorAll("article .field-items .field-item");

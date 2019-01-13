@@ -30,7 +30,7 @@
             }
         }
 
-        protected override RemoteNews ParseDocument(IDocument document)
+        protected override RemoteNews ParseDocument(IDocument document, string url)
         {
             var titleElement = document.QuerySelector(".full-article h1");
             var title = titleElement?.TextContent;

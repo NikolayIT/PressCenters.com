@@ -34,7 +34,7 @@
             return uri.Segments[uri.Segments.Length - 2] + uri.Segments[uri.Segments.Length - 1];
         }
 
-        protected override RemoteNews ParseDocument(IDocument document)
+        protected override RemoteNews ParseDocument(IDocument document, string url)
         {
             var titleElement = document.QuerySelector("h1");
             var title = titleElement?.TextContent;

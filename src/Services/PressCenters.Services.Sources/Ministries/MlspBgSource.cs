@@ -36,7 +36,7 @@
 
         internal override string ExtractIdFromUrl(string url) => this.GetUrlParameterValue(url, "prid");
 
-        protected override RemoteNews ParseDocument(IDocument document)
+        protected override RemoteNews ParseDocument(IDocument document, string url)
         {
             var titleElement = document.QuerySelector(".grid_2_3_long_bless h3");
             var title = titleElement?.TextContent;

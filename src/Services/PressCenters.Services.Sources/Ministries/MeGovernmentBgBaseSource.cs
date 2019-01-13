@@ -38,7 +38,7 @@
 
         internal override string ExtractIdFromUrl(string url) => url.GetLastStringBetween("-", ".html", url);
 
-        protected override RemoteNews ParseDocument(IDocument document)
+        protected override RemoteNews ParseDocument(IDocument document, string url)
         {
             var titleElement = document.QuerySelector("article.item-article h1.section-title");
             if (titleElement == null)

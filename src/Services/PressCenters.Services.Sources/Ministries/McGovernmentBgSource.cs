@@ -41,7 +41,7 @@
 
         internal override string ExtractIdFromUrl(string url) => this.GetUrlParameterValue(url, "n");
 
-        protected override RemoteNews ParseDocument(IDocument document)
+        protected override RemoteNews ParseDocument(IDocument document, string url)
         {
             var titleElement = document.QuerySelector("td.conNewsTitle");
             if (titleElement == null)

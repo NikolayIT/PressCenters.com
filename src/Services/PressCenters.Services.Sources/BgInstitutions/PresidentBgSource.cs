@@ -30,7 +30,7 @@
 
         internal override string ExtractIdFromUrl(string originalUrl) => originalUrl?.GetStringBetween("/news", "/");
 
-        protected override RemoteNews ParseDocument(IDocument document)
+        protected override RemoteNews ParseDocument(IDocument document, string url)
         {
             var titleElement = document.QuerySelector(".print-content h2");
             var title = titleElement.TextContent.Trim();

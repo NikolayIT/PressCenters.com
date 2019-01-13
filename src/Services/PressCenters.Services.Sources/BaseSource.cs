@@ -36,19 +36,20 @@ namespace PressCenters.Services.Sources
 
         public RemoteNews GetPublication(string url)
         {
+            var urlToLoad = new Uri(url).GetLeftPart(UriPartial.Query); // Remove hash fragment
             IDocument document;
             if (this.Encoding == null)
             {
-                document = this.BrowsingContext.OpenAsync(url).GetAwaiter().GetResult();
+                document = this.BrowsingContext.OpenAsync(urlToLoad).GetAwaiter().GetResult();
             }
             else
             {
                 var parser = new HtmlParser();
-                var html = this.ReadStringFromUrl(url);
+                var html = this.ReadStringFromUrl(urlToLoad);
                 document = parser.Parse(html);
             }
 
-            var publication = this.ParseDocument(document);
+            var publication = this.ParseDocument(document, url);
             if (publication == null)
             {
                 return null;
@@ -73,7 +74,7 @@ namespace PressCenters.Services.Sources
             }
 
             // Original URL
-            publication.OriginalUrl = url?.Trim();
+            publication.OriginalUrl = url.Trim();
 
             // Image URL
             publication.ImageUrl = publication.ImageUrl?.Trim();
@@ -95,7 +96,7 @@ namespace PressCenters.Services.Sources
             return WebUtility.UrlDecode(lastSegment);
         }
 
-        protected abstract RemoteNews ParseDocument(IDocument document);
+        protected abstract RemoteNews ParseDocument(IDocument document, string url);
 
         protected IList<RemoteNews> GetPublications(string address, string anchorSelector, string urlShouldContain = "")
         {
@@ -119,6 +120,8 @@ namespace PressCenters.Services.Sources
 
         protected string ReadStringFromUrl(string url)
         {
+            url = new Uri(url).GetLeftPart(UriPartial.Query); // Remove hash fragment
+
             var webClient = new WebClient();
             if (this.Encoding != null)
             {
