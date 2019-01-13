@@ -9,7 +9,7 @@
     {
         public override string BaseUrl { get; } = "http://www.nsi.bg/";
 
-        public override string ExtractIdFromUrl(string url)
+        internal override string ExtractIdFromUrl(string url)
         {
             var uri = new Uri(url.Trim().Trim('/'));
 

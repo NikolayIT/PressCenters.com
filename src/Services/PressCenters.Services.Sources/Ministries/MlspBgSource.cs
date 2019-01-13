@@ -34,7 +34,7 @@
             }
         }
 
-        public override string ExtractIdFromUrl(string url) => this.GetUrlParameterValue(url, "prid");
+        internal override string ExtractIdFromUrl(string url) => this.GetUrlParameterValue(url, "prid");
 
         protected override RemoteNews ParseDocument(IDocument document)
         {

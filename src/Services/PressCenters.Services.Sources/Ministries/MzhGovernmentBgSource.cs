@@ -28,7 +28,7 @@
             }
         }
 
-        public override string ExtractIdFromUrl(string url)
+        internal override string ExtractIdFromUrl(string url)
         {
             var uri = new Uri(url.Trim().Trim('/'));
             return uri.Segments[uri.Segments.Length - 2] + uri.Segments[uri.Segments.Length - 1];

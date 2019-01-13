@@ -13,7 +13,7 @@
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("news", ".post a");
 
-        public override string ExtractIdFromUrl(string url)
+        internal override string ExtractIdFromUrl(string url)
         {
             var uri = new Uri(url.Trim('/'));
             return uri.Segments[uri.Segments.Length - 4] +

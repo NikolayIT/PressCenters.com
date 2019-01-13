@@ -3,9 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.Linq;
     using System.Text;
-    using System.Text.RegularExpressions;
 
     using AngleSharp.Dom;
 
@@ -16,7 +14,7 @@
     {
         public override string BaseUrl { get; } = "http://www.mc.government.bg/";
 
-        public override Encoding Encoding
+        protected override Encoding Encoding
         {
             get
             {
@@ -41,7 +39,7 @@
             }
         }
 
-        public override string ExtractIdFromUrl(string url) => this.GetUrlParameterValue(url, "n");
+        internal override string ExtractIdFromUrl(string url) => this.GetUrlParameterValue(url, "n");
 
         protected override RemoteNews ParseDocument(IDocument document)
         {

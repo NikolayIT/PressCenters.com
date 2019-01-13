@@ -15,7 +15,7 @@
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("bg/news/spisyk-novini-1.html", "#container-main-ajax article p a");
 
-        public override string ExtractIdFromUrl(string url) =>
+        internal override string ExtractIdFromUrl(string url) =>
             url.GetStringBetween("-", ".html", url.LastIndexOf("-", StringComparison.InvariantCulture));
 
         protected override RemoteNews ParseDocument(IDocument document)

@@ -14,7 +14,7 @@
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("news.html", ".post-content h3 a");
 
-        public override string ExtractIdFromUrl(string url) => url?.GetStringBetween("news/view/", "-");
+        internal override string ExtractIdFromUrl(string url) => url?.GetStringBetween("news/view/", "-");
 
         protected override RemoteNews ParseDocument(IDocument document)
         {

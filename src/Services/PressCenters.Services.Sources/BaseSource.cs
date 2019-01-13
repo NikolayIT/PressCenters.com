@@ -1,4 +1,6 @@
-﻿namespace PressCenters.Services.Sources
+﻿[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("PressCenters.Services.Sources.Tests")]
+
+namespace PressCenters.Services.Sources
 {
     using System;
     using System.Collections.Generic;
@@ -11,7 +13,7 @@
     using AngleSharp.Dom;
     using AngleSharp.Parser.Html;
 
-    public abstract class BaseSource
+    public abstract class BaseSource : ISource
     {
         protected BaseSource()
         {
@@ -21,7 +23,7 @@
 
         public abstract string BaseUrl { get; }
 
-        public virtual Encoding Encoding => null;
+        protected virtual Encoding Encoding => null;
 
         protected IBrowsingContext BrowsingContext { get; }
 
@@ -86,7 +88,7 @@
             return publication;
         }
 
-        public virtual string ExtractIdFromUrl(string url)
+        internal virtual string ExtractIdFromUrl(string url)
         {
             var uri = new Uri(url.Trim().Trim('/'));
             var lastSegment = uri.Segments[uri.Segments.Length - 1];
