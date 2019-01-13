@@ -156,6 +156,10 @@
                     "news",
                     "News/{id:int:min(1)}/{slug:required}",
                     new { controller = "News", action = "ById", });
+                routes.MapRoute(
+                    "news",
+                    "News/{id:int:min(1)}",
+                    new { controller = "News", action = "ById", });
                 routes.MapRoute("default", "{controller=News}/{action=List}/{id?}");
             });
         }
