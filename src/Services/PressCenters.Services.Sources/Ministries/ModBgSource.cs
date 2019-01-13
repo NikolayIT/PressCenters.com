@@ -17,9 +17,7 @@
     {
         public override string BaseUrl => "https://mod.bg/";
 
-        public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetNews(
-                $"{this.BaseUrl}bg/news.php");
+        public override IEnumerable<RemoteNews> GetLatestPublications() => this.GetNews($"{this.BaseUrl}bg/news.php");
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
