@@ -16,6 +16,7 @@
             var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
 
             SeedRole(roleManager, GlobalConstants.AdministratorRoleName);
+            SeedRole(roleManager, GlobalConstants.ProUserRoleName);
         }
 
         private static void SeedRole(RoleManager<ApplicationRole> roleManager, string roleName)
