@@ -11,6 +11,23 @@
     }
 }
 
+@if (!string.IsNullOrWhiteSpace(this.Model.Search))
+{
+    <h3>Търсене за "@this.Model.Search", страница @this.Model.CurrentPage, резултати @this.Model.NewsCount</h3>
+}
+
+@if (this.User.IsInRole(GlobalConstants.ProUserRoleName))
+{
+    <form method="get" asp-controller="News" asp-action="List" asp-route-id="1">
+        <div class="input-group mb-4">
+            <input type="search" name="search" class="form-control" value="@this.Model.Search" placeholder="Въведете думи за търсене, разделени с интервал..." />
+            <div class="input-group-append">
+                <input type="submit" value="Търси" class="btn btn-outline-secondary" />
+            </div>
+        </div>
+    </form>
+}
+
 @foreach (var news in this.Model.News)
 {
     <article class="g-mb-20 clearfix">
@@ -46,7 +63,7 @@
         @if (this.Model.CurrentPage > 1)
         {
             <li class="page-item">
-                <a class="page-link" asp-controller="News" asp-action="List" asp-route-id="@this.Model.PreviousPage" aria-label="Предишна">
+                <a class="page-link" asp-controller="News" asp-action="List" asp-route-id="@this.Model.PreviousPage" asp-route-search="@this.Model.Search" aria-label="Предишна">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
@@ -84,14 +101,14 @@
             }
             if (i > 0 && pageNumber - 1 != pagesToShow[i - 1])
             {
-                <li class="page-item @className"><a class="page-link" asp-controller="News" asp-action="List" asp-route-id="@(pagesToShow[i - 1] + 1)">...</a></li>
+                <li class="page-item @className"><a class="page-link" asp-controller="News" asp-action="List" asp-route-id="@(pagesToShow[i - 1] + 1)" asp-route-search="@this.Model.Search" >...</a></li>
             }
-            <li class="page-item @className"><a class="page-link" asp-controller="News" asp-action="List" asp-route-id="@pageNumber">@pageNumber</a></li>
+            <li class="page-item @className"><a class="page-link" asp-controller="News" asp-action="List" asp-route-id="@pageNumber" asp-route-search="@this.Model.Search" >@pageNumber</a></li>
         }
         @if (this.Model.CurrentPage < this.Model.PagesCount)
         {
             <li class="page-item">
-                <a class="page-link" asp-controller="News" asp-action="List" asp-route-id="@this.Model.NextPage" aria-label="Следваща">
+                <a class="page-link" asp-controller="News" asp-action="List" asp-route-id="@this.Model.NextPage" asp-route-search="@this.Model.Search"  aria-label="Следваща">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
