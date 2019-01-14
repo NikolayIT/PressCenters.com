@@ -59,7 +59,26 @@
         {
             var sw = Stopwatch.StartNew();
 
+            var newsRepository = serviceProvider.GetService<IDeletableEntityRepository<News>>();
+            var allNews = newsRepository.AllWithDeleted().Where(x => x.SearchText == null).ToList();
             var newsService = serviceProvider.GetService<INewsService>();
+            Console.WriteLine("All news: " + allNews.Count);
+            for (var i = 0; i < allNews.Count; i++)
+            {
+                var news = allNews[i];
+                news.SearchText = newsService.GetSearchText(news);
+                if ((i + 1) % 100 == 0)
+                {
+                    newsRepository.SaveChangesAsync().GetAwaiter().GetResult();
+                    Console.WriteLine(i + 1);
+                }
+            }
+
+            newsRepository.SaveChangesAsync().GetAwaiter().GetResult();
+            Console.WriteLine(allNews.Count);
+
+            return 0;
+
             var sourcesRepository = serviceProvider.GetService<IDeletableEntityRepository<Source>>();
             foreach (var source in sourcesRepository.All().ToList())
             {
