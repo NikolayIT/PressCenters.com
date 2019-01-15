@@ -17,17 +17,20 @@
             <h2 class="lead">@subTitle</h2>
         </div>
         <div class="col-lg-8">
-            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-            <!-- PressCenters.com_Header -->
-            <ins class="adsbygoogle"
-                 style="display: block"
-                 data-ad-client="ca-pub-4541634013740958"
-                 data-ad-slot="3910508436"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
+            @if (!this.User.IsInRole(GlobalConstants.ProUserRoleName))
+            {
+                <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                <!-- PressCenters.com_Header -->
+                <ins class="adsbygoogle"
+                     style="display: block"
+                     data-ad-client="ca-pub-4541634013740958"
+                     data-ad-slot="3910508436"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            }
         </div>
     </div>
 </div>
@@ -47,17 +50,20 @@
                     </cache>
                 </div>
                 <div class="g-mb-20">
-                    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                    <!-- PressCenters.com_Sidebar -->
-                    <ins class="adsbygoogle"
-                         style="display:block"
-                         data-ad-client="ca-pub-4541634013740958"
-                         data-ad-slot="6075962183"
-                         data-ad-format="auto"
-                         data-full-width-responsive="true"></ins>
-                    <script>
-                        (adsbygoogle = window.adsbygoogle || []).push({});
-                    </script>
+                    @if (!this.User.IsInRole(GlobalConstants.ProUserRoleName))
+                    {
+                        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                        <!-- PressCenters.com_Sidebar -->
+                        <ins class="adsbygoogle"
+                             style="display: block"
+                             data-ad-client="ca-pub-4541634013740958"
+                             data-ad-slot="6075962183"
+                             data-ad-format="auto"
+                             data-full-width-responsive="true"></ins>
+                        <script>
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                        </script>
+                    }
                 </div>
             </div>
         </div>
