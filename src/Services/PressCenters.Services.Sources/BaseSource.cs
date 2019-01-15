@@ -25,6 +25,8 @@ namespace PressCenters.Services.Sources
 
         protected virtual Encoding Encoding => null;
 
+        protected virtual List<(HttpRequestHeader Header, string Value)> Headers => null;
+
         protected IBrowsingContext BrowsingContext { get; }
 
         public abstract IEnumerable<RemoteNews> GetLatestPublications();
@@ -38,15 +40,15 @@ namespace PressCenters.Services.Sources
         {
             var urlToLoad = new Uri(url).GetLeftPart(UriPartial.Query); // Remove hash fragment
             IDocument document;
-            if (this.Encoding == null)
-            {
-                document = this.BrowsingContext.OpenAsync(urlToLoad).GetAwaiter().GetResult();
-            }
-            else
+            if (this.Encoding != null || this.Headers != null)
             {
                 var parser = new HtmlParser();
                 var html = this.ReadStringFromUrl(urlToLoad);
                 document = parser.Parse(html);
+            }
+            else
+            {
+                document = this.BrowsingContext.OpenAsync(urlToLoad).GetAwaiter().GetResult();
             }
 
             var publication = this.ParseDocument(document, url);
@@ -98,13 +100,30 @@ namespace PressCenters.Services.Sources
 
         protected abstract RemoteNews ParseDocument(IDocument document, string url);
 
-        protected IList<RemoteNews> GetPublications(string address, string anchorSelector, string urlShouldContain = "")
+        protected IList<RemoteNews> GetPublications(string address, string anchorSelector, string urlShouldContain = "", int count = 0)
         {
             address = $"{this.BaseUrl}{address}";
-            var document = this.BrowsingContext.OpenAsync(address).GetAwaiter().GetResult();
+            IDocument document;
+            if (this.Encoding != null || this.Headers != null)
+            {
+                var parser = new HtmlParser();
+                var html = this.ReadStringFromUrl(address);
+                document = parser.Parse(html);
+            }
+            else
+            {
+                document = this.BrowsingContext.OpenAsync(address).GetAwaiter().GetResult();
+            }
+
             var links = document.QuerySelectorAll(anchorSelector)
                 .Select(x => this.NormalizeUrl(x?.Attributes["href"]?.Value))
-                .Where(x => x?.Contains(urlShouldContain) == true).Distinct().ToList();
+                .Where(x => x?.Contains(urlShouldContain) == true).Distinct();
+
+            if (count > 0)
+            {
+                links = links.Take(count);
+            }
+
             var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
             return news;
         }
@@ -123,6 +142,17 @@ namespace PressCenters.Services.Sources
             url = new Uri(url).GetLeftPart(UriPartial.Query); // Remove hash fragment
 
             var webClient = new WebClient();
+            webClient.Headers.Add(
+                HttpRequestHeader.UserAgent,
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36");
+            if (this.Headers != null)
+            {
+                foreach (var (header, value) in this.Headers)
+                {
+                    webClient.Headers.Add(header, value);
+                }
+            }
+
             if (this.Encoding != null)
             {
                 webClient.Encoding = this.Encoding;

@@ -30,7 +30,7 @@
 
         public static string GetLastStringBetween(this string input, string startString, string endString, string defaultValue = "")
         {
-            var endIndex = input.LastIndexOf(endString, StringComparison.Ordinal);
+            var endIndex = input.IndexOf(endString, StringComparison.Ordinal);
             if (endIndex == -1)
             {
                 return defaultValue;
