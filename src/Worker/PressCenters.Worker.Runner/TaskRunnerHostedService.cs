@@ -1,6 +1,7 @@
 ﻿namespace PressCenters.Worker.Runner
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
@@ -10,7 +11,6 @@
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
 
-    using PressCenters.Services.Data;
     using PressCenters.Worker.Common;
     using PressCenters.Worker.Tasks;
 
@@ -18,7 +18,7 @@
     {
         private readonly ICollection<TaskExecutor> taskExecutors = new List<TaskExecutor>();
         private readonly IList<Thread> threads = new List<Thread>();
-        private readonly SynchronizedHashtable<int> tasksSet = new SynchronizedHashtable<int>();
+        private readonly ConcurrentDictionary<int, bool> tasksIds;
         private readonly IServiceProvider serviceProvider;
         private readonly ILoggerFactory loggerFactory;
         private readonly ILogger logger;
@@ -29,6 +29,7 @@
             ILoggerFactory loggerFactory)
         {
             var threadsCount = int.Parse(configuration["JobScheduler:ThreadsCount"]);
+            this.tasksIds = new ConcurrentDictionary<int, bool>(threadsCount, 1024);
             for (var i = 1; i <= threadsCount; i++)
             {
                 var thread = new Thread(this.CreateAndStartTaskExecutor) { Name = $"Thread #{i}" };
@@ -52,7 +53,7 @@
 
                 // Give the thread some time to start properly before starting another threads.
                 // (Prevents "System.ArgumentException: An item with the same key has already been added" related to the DI framework)
-                Thread.Sleep(500);
+                Thread.Sleep(400);
             }
 
             this.logger.LogInformation($"JobSchedulerService started with {this.threads.Count} threads.");
@@ -83,15 +84,14 @@
                 {
                     taskExecutor = new TaskExecutor(
                         taskExecutorName,
-                        this.tasksSet,
-                        serviceScope.ServiceProvider.GetRequiredService<IWorkerTasksDataService>(),
+                        this.tasksIds,
                         serviceScope.ServiceProvider,
                         this.loggerFactory,
                         typeof(DbCleanupTask).Assembly);
 
                     this.taskExecutors.Add(taskExecutor);
 
-                    await taskExecutor.Start();
+                    await taskExecutor.Work();
                 }
             }
             catch (Exception ex)

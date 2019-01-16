@@ -1,6 +1,7 @@
 ﻿namespace PressCenters.Worker.Common
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Diagnostics;
     using System.Reflection;
     using System.Threading.Tasks;
@@ -18,7 +19,7 @@
 
         private readonly string name;
 
-        private readonly SynchronizedHashtable<int> tasksSet;
+        private readonly ConcurrentDictionary<int, bool> tasksIds;
 
         private readonly IWorkerTasksDataService workerTasksData;
 
@@ -32,28 +33,25 @@
 
         public TaskExecutor(
             string name,
-            SynchronizedHashtable<int> tasksSet,
-            IWorkerTasksDataService workerTasksData,
+            ConcurrentDictionary<int, bool> tasksIds,
             IServiceProvider serviceProvider,
             ILoggerFactory loggerFactory,
             Assembly tasksAssembly)
         {
             this.name = name;
-            this.tasksSet = tasksSet;
-            this.workerTasksData = workerTasksData;
+            this.tasksIds = tasksIds;
             this.serviceProvider = serviceProvider;
+            this.workerTasksData = serviceProvider.GetService<IWorkerTasksDataService>();
             this.tasksAssembly = tasksAssembly;
             this.logger = loggerFactory.CreateLogger<TaskExecutor>();
         }
 
-        public async Task Start()
+        public async Task Work()
         {
             this.logger.LogInformation($"{this.name} starting...");
             while (!this.stopping)
             {
                 await this.ExecuteNextTask();
-
-                // Wait 1 second
                 await Task.Delay(1000);
             }
 
@@ -87,7 +85,7 @@
                 return;
             }
 
-            if (!this.tasksSet.Add(workerTask.Id))
+            if (!this.tasksIds.TryAdd(workerTask.Id, true))
             {
                 // Other thread is processing the same task.
                 // Wait the other thread to set Processing to true and then get new from the DB.
@@ -105,7 +103,7 @@
                 this.logger.LogError(
                     $"Unable to set workerTask.{nameof(WorkerTask.Processing)} to true! Error: {ex}");
 
-                this.tasksSet.Remove(workerTask.Id);
+                this.tasksIds.TryRemove(workerTask.Id, out _);
 
                 await Task.Delay(WaitTimeOnErrorInSeconds * 1000);
                 return;
@@ -181,7 +179,7 @@
                 await this.workerTasksData.UpdateAsync(workerTask);
 
                 // For re-runs
-                this.tasksSet.Remove(workerTask.Id);
+                this.tasksIds.TryRemove(workerTask.Id, out _);
             }
             catch (Exception ex)
             {
