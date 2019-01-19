@@ -62,7 +62,7 @@
         {
             var provider = new MfaBgSource();
             var result = provider.GetLatestPublications();
-            Assert.Equal(10, result.Count());
+            Assert.Equal(5, result.Count());
         }
     }
 }

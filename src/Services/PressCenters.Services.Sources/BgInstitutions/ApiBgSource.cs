@@ -14,7 +14,8 @@
             this.GetPublications(
                 "index.php/bg/prescentar/novini",
                 ".ccm-page-list .news-item a.news_more_link",
-                "bg/prescentar/novini");
+                "bg/prescentar/novini",
+                5);
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {

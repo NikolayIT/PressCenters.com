@@ -80,7 +80,7 @@
         {
             var provider = new ApiBgSource();
             var result = provider.GetLatestPublications();
-            Assert.Equal(9, result.Count());
+            Assert.Equal(5, result.Count());
         }
     }
 }

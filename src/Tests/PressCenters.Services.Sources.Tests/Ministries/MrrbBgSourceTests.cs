@@ -54,7 +54,7 @@
         {
             var provider = new MrrbBgSource();
             var result = provider.GetLatestPublications();
-            Assert.Equal(12, result.Count());
+            Assert.Equal(5, result.Count());
         }
     }
 }

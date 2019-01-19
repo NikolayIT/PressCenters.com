@@ -17,7 +17,7 @@
     {
         public override string BaseUrl => "https://mod.bg/";
 
-        public override IEnumerable<RemoteNews> GetLatestPublications() => this.GetNews($"{this.BaseUrl}bg/news.php");
+        public override IEnumerable<RemoteNews> GetLatestPublications() => this.GetNews($"{this.BaseUrl}bg/news.php", 5);
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
@@ -74,12 +74,17 @@
             return new RemoteNews(title, content, time, imageUrl);
         }
 
-        private IList<RemoteNews> GetNews(string address)
+        private IList<RemoteNews> GetNews(string address, int count = 0)
         {
             var document = this.Parser.Parse(this.ReadStringFromUrl(address));
             var links = document.QuerySelectorAll("#cat1 .tablelist2 a").Select(x => x?.Attributes["href"]?.Value)
                 .Where(x => x?.Contains("show(") == true).Select(
                     x => $"{this.BaseUrl}bg/news.php?fn_mode=fullnews&fn_id={x.GetStringBetween("show(", ");")}").ToList();
+            if (count > 0)
+            {
+                links = links.Take(5).ToList();
+            }
+
             var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
             return news;
         }

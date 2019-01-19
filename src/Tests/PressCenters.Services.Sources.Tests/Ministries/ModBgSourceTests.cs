@@ -80,7 +80,7 @@
         {
             var provider = new ModBgSource();
             var result = provider.GetLatestPublications();
-            Assert.Equal(15, result.Count());
+            Assert.Equal(5, result.Count());
         }
     }
 }

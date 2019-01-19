@@ -13,7 +13,7 @@
         public override string BaseUrl { get; } = "https://www.president.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("news/", ".inside-article-box a.dblock");
+            this.GetPublications("news/", ".inside-article-box a.dblock", count: 5);
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {

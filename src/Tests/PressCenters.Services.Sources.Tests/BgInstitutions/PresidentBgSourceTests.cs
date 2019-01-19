@@ -60,7 +60,7 @@
         {
             var provider = new PresidentBgSource();
             var result = provider.GetLatestPublications();
-            Assert.Equal(17, result.Count());
+            Assert.Equal(5, result.Count());
         }
     }
 }

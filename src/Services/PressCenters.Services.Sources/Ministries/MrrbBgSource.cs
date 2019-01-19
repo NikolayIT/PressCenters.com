@@ -14,7 +14,7 @@
         public override string BaseUrl { get; } = "https://www.mrrb.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("bg/prescentur/novini/", ".category-articles .list-article a");
+            this.GetPublications("bg/prescentur/novini/", ".category-articles .list-article a", count: 5);
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {

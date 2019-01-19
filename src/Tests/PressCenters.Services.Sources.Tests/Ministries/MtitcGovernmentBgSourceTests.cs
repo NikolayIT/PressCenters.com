@@ -44,7 +44,7 @@
         {
             var provider = new MtitcGovernmentBgSource();
             var result = provider.GetLatestPublications();
-            Assert.Equal(20, result.Count());
+            Assert.Equal(5, result.Count());
         }
     }
 }

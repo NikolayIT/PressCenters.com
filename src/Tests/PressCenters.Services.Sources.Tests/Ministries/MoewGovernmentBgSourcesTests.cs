@@ -15,7 +15,7 @@
         [InlineData("https://www.moew.government.bg/bg/otnovo-sa-izmereni-stojnosti-na-vredni-vestestva-nad-normata-ot-mk-kremikovci-ad", "otnovo-sa-izmereni-stojnosti-na-vredni-vestestva-nad-normata-ot-mk-kremikovci-ad")]
         public void ExtractIdFromPressUrlShouldWorkCorrectly(string url, string id)
         {
-            var sources = new List<BaseSource>()
+            var sources = new List<BaseSource>
                           {
                               new MoewGovernmentBgNationalNewsSource(),
                               new MoewGovernmentBgRegionalNewsSource(),
@@ -71,7 +71,7 @@
         {
             var provider = new MoewGovernmentBgNationalNewsSource();
             var result = provider.GetLatestPublications();
-            Assert.Equal(12, result.Count());
+            Assert.Equal(5, result.Count());
         }
 
         [Fact]
@@ -79,7 +79,7 @@
         {
             var provider = new MoewGovernmentBgRegionalNewsSource();
             var result = provider.GetLatestPublications();
-            Assert.Equal(12, result.Count());
+            Assert.Equal(5, result.Count());
         }
     }
 }

@@ -72,7 +72,7 @@
         {
             var provider = new MhGovernmentBgNewsSource();
             var result = provider.GetLatestPublications();
-            Assert.Equal(10, result.Count());
+            Assert.Equal(5, result.Count());
         }
 
         [Fact]
@@ -80,7 +80,7 @@
         {
             var provider = new MhGovernmentBgEpidemicSource();
             var result = provider.GetLatestPublications();
-            Assert.Equal(10, result.Count());
+            Assert.Equal(5, result.Count());
         }
 
         [Fact]
@@ -88,7 +88,7 @@
         {
             var provider = new MhGovernmentBgMinisterskiSuvetSource();
             var result = provider.GetLatestPublications();
-            Assert.Equal(10, result.Count());
+            Assert.Equal(5, result.Count());
         }
 
         [Fact]
@@ -96,7 +96,7 @@
         {
             var provider = new MhGovernmentBgParlamentarenKontrolSource();
             var result = provider.GetLatestPublications();
-            Assert.Equal(10, result.Count());
+            Assert.Equal(5, result.Count());
         }
     }
 }

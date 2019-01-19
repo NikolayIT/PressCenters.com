@@ -14,7 +14,7 @@
         public override string BaseUrl { get; } = "https://www.mtitc.government.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("bg/category/1", "#main .views-field-title a", "bg/category/1");
+            this.GetPublications("bg/category/1", "#main .views-field-title a", "bg/category/1", 5);
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {

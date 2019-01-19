@@ -15,7 +15,7 @@
         protected abstract int NewsListPagesCount { get; }
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications(this.NewsListUrl, "ul.news-list-internal li a.green-btn");
+            this.GetPublications(this.NewsListUrl, "ul.news-list-internal li a.green-btn", count: 5);
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {

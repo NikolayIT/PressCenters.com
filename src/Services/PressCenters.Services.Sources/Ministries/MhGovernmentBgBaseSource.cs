@@ -14,7 +14,7 @@
         protected abstract int NewsListPagesCount { get; }
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications(this.NewsListUrl, ".news h2 a");
+            this.GetPublications(this.NewsListUrl, ".news h2 a", count: 5);
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
