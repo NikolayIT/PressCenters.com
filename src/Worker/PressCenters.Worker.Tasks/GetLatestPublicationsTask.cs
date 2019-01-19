@@ -23,7 +23,6 @@
         private readonly ILogger logger;
 
         public GetLatestPublicationsTask(IServiceProvider serviceProvider)
-            : base(serviceProvider)
         {
             this.sourcesRepository = serviceProvider.GetService<IDeletableEntityRepository<Source>>();
             this.newsService = serviceProvider.GetService<INewsService>();

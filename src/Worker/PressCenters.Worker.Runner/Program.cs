@@ -99,18 +99,16 @@
             services.AddTransient<INewsService, NewsService>();
             services.AddTransient<IWorkerTasksDataService, WorkerTasksDataService>();
 
-            // Worker services
-            services.AddTransient<ITaskAssemblyProvider>(x => new TaskAssemblyProvider());
-
             // Register TaskRunnerHostedService
-            var threadsCount = int.Parse(configuration["JobScheduler:ThreadsCount"]);
-            for (var i = 0; i < threadsCount; i++)
+            services.AddTransient<ITasksAssemblyProvider, TasksAssemblyProvider>();
+            var parallelTasksCount = int.Parse(configuration["TasksExecutor:ParallelTasksCount"]);
+            for (var i = 0; i < parallelTasksCount; i++)
             {
-                services.AddHostedService<TaskExecutor>();
+                services.AddHostedService<TasksExecutor>();
             }
         }
 
-        public class TaskAssemblyProvider : ITaskAssemblyProvider
+        public class TasksAssemblyProvider : ITasksAssemblyProvider
         {
             public Assembly GetAssembly()
             {

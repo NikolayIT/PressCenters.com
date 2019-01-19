@@ -11,13 +11,6 @@
         where TInput : BaseTaskInput
         where TOutput : BaseTaskOutput, new()
     {
-        protected BaseTask(IServiceProvider serviceProvider)
-        {
-            this.ServiceProvider = serviceProvider;
-        }
-
-        protected IServiceProvider ServiceProvider { get; }
-
         public async Task<string> DoWork(string parameters)
         {
             var taskParameters = JsonConvert.DeserializeObject<TInput>(parameters);

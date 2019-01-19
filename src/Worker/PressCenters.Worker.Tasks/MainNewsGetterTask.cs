@@ -22,7 +22,6 @@
         private readonly ILogger logger;
 
         public MainNewsGetterTask(IServiceProvider serviceProvider)
-            : base(serviceProvider)
         {
             this.mainNewsSourcesRepository = serviceProvider.GetService<IDeletableEntityRepository<MainNewsSource>>();
             this.mainNewsRepository = serviceProvider.GetService<IDeletableEntityRepository<MainNews>>();

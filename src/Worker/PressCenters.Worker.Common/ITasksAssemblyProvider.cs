@@ -2,7 +2,7 @@
 {
     using System.Reflection;
 
-    public interface ITaskAssemblyProvider
+    public interface ITasksAssemblyProvider
     {
         Assembly GetAssembly();
     }

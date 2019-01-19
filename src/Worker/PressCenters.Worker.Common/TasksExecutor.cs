@@ -14,7 +14,7 @@
     using PressCenters.Data.Models;
     using PressCenters.Services.Data;
 
-    public class TaskExecutor : IHostedService
+    public class TasksExecutor : IHostedService
     {
         private const int WaitTimeOnErrorInSeconds = 20;
         private static readonly ConcurrentDictionary<int, bool> TasksIds = new ConcurrentDictionary<int, bool>(4, 1024);
@@ -24,14 +24,14 @@
         private readonly Assembly tasksAssembly;
         private bool stopping;
 
-        public TaskExecutor(
+        public TasksExecutor(
             IServiceProvider serviceProvider,
             ILoggerFactory loggerFactory,
-            ITaskAssemblyProvider assemblyProvider)
+            ITasksAssemblyProvider assemblyProvider)
         {
             this.serviceProvider = serviceProvider;
             var id = Interlocked.Increment(ref nextId);
-            this.logger = loggerFactory.CreateLogger($"{nameof(TaskExecutor)} #{id}");
+            this.logger = loggerFactory.CreateLogger($"{nameof(TasksExecutor)} #{id}");
             this.tasksAssembly = assemblyProvider.GetAssembly();
         }
 

@@ -17,7 +17,6 @@
         private readonly ILogger<DbCleanupTask> logger;
 
         public DbCleanupTask(IServiceProvider serviceProvider)
-            : base(serviceProvider)
         {
             this.queryRunner = serviceProvider.GetService<IDbQueryRunner>();
             this.logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<DbCleanupTask>();
