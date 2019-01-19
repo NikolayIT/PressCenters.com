@@ -95,7 +95,7 @@
                 return;
             }
 
-            this.logger.LogInformation($"Started work with task #{workerTask.Id}");
+            this.logger.LogInformation($"Task #{workerTask.Id} started...");
 
             ITask task = null;
             try
@@ -104,70 +104,87 @@
             }
             catch (Exception ex)
             {
-                this.logger.LogError(
-                    $"{nameof(this.GetTaskInstance)} on task #{workerTask.Id} has thrown an exception: {ex}");
+                this.logger.LogError($"Exception in {nameof(this.GetTaskInstance)} on task #{workerTask.Id}: {ex}");
                 workerTask.ProcessingComment = $"Error in {nameof(this.GetTaskInstance)}: {ex}";
             }
 
-            if (task != null)
+            if (task == null)
             {
                 try
                 {
-                    var stopwatch = Stopwatch.StartNew();
-
-                    workerTask.Result = await task.DoWork(workerTask.Parameters);
-
-                    workerTask.Duration = stopwatch.Elapsed.TotalDays >= 1.0
-                                              ? new TimeSpan(0, 23, 59, 59)
-                                              : stopwatch.Elapsed;
-
-                    this.logger.LogInformation(
-                        $"Task #{workerTask.Id} completed in {stopwatch.Elapsed} ({DateTime.UtcNow}) with result: {workerTask.Result}");
-
+                    workerTask.Processed = true;
+                    workerTask.Processing = false;
                     await workerTasksData.UpdateAsync(workerTask);
+                    this.tasksIds.TryRemove(workerTask.Id, out _);
                 }
                 catch (Exception ex)
                 {
-                    this.logger.LogError(
-                        $"Task #{workerTask.Id} has thrown an exception: {ex}");
-
-                    workerTask.ProcessingComment = $"Error in {nameof(ITask.DoWork)}: {ex}";
+                    this.logger.LogError($"Unable to save final changes on task #{workerTask.Id}! Error: {ex}");
+                    await Task.Delay(WaitTimeOnErrorInSeconds * 1000);
                 }
 
-                try
-                {
-                    var nextTask = task.Recreate(workerTask);
-                    if (nextTask != null)
-                    {
-                        await workerTasksData.AddAsync(nextTask);
-                    }
-
-                    await workerTasksData.UpdateAsync(workerTask);
-                }
-                catch (Exception ex)
-                {
-                    this.logger.LogError(
-                        $"{nameof(ITask.Recreate)} on task #{workerTask.Id} has thrown an exception: {ex}");
-
-                    workerTask.ProcessingComment = $"Error in {nameof(ITask.Recreate)}: {ex}";
-                }
+                return;
             }
 
+            // Call DoWork()
+            string result = null;
+            var doWorkStopwatch = Stopwatch.StartNew();
             try
             {
+                result = await task.DoWork(workerTask.Parameters);
+                doWorkStopwatch.Stop();
+                this.logger.LogInformation(
+                    $"Task #{workerTask.Id} completed in {doWorkStopwatch.Elapsed} ({DateTime.UtcNow}) with result: {result}");
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError($"Error in {nameof(ITask.DoWork)} on task #{workerTask.Id}: {ex}");
+                workerTask.ProcessingComment = $"Error in {nameof(ITask.DoWork)}: {ex}";
+            }
+
+            // Call Recreate()
+            WorkerTask nextTask = null;
+            try
+            {
+                nextTask = task.Recreate(workerTask);
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError($"Error in {nameof(ITask.Recreate)} on task #{workerTask.Id}: {ex}");
+                workerTask.ProcessingComment += $"Error in {nameof(ITask.Recreate)}: {ex}";
+            }
+
+            // Save result
+            try
+            {
+                workerTask.Result = result;
+                workerTask.Duration = doWorkStopwatch.Elapsed.TotalDays >= 1.0
+                                          ? new TimeSpan(0, 23, 59, 59)
+                                          : doWorkStopwatch.Elapsed;
                 workerTask.Processed = true;
                 workerTask.Processing = false;
                 await workerTasksData.UpdateAsync(workerTask);
-
-                // For re-runs
                 this.tasksIds.TryRemove(workerTask.Id, out _);
             }
             catch (Exception ex)
             {
-                this.logger.LogError(
-                    $"Unable to save final changes to the task #{workerTask.Id}! Error: {ex}");
+                this.logger.LogError($"Unable to save result on task #{workerTask.Id}! Error: {ex}");
+                await Task.Delay(WaitTimeOnErrorInSeconds * 1000);
+                return;
+            }
 
-                await Task.Delay(20 * 1000);
+            // Save the new task
+            if (nextTask != null)
+            {
+                try
+                {
+                    await workerTasksData.AddAsync(nextTask);
+                }
+                catch (Exception ex)
+                {
+                    this.logger.LogError($"Unable to recreate task #{workerTask.Id}! Error: {ex}");
+                    await Task.Delay(WaitTimeOnErrorInSeconds * 1000);
+                }
             }
         }
 
