@@ -4,6 +4,7 @@
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Text;
     using System.Threading.Tasks;
 
@@ -21,6 +22,8 @@
     using PressCenters.Data.Repositories;
     using PressCenters.Data.Seeding;
     using PressCenters.Services.Data;
+    using PressCenters.Worker.Common;
+    using PressCenters.Worker.Tasks;
 
     public static class Program
     {
@@ -68,7 +71,7 @@
             var loggerFactory = new LoggerFactory();
             services.AddDbContext<ApplicationDbContext>(
                 options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
-                    .UseLoggerFactory(loggerFactory), ServiceLifetime.Transient);
+                    .UseLoggerFactory(loggerFactory));
 
             services.AddIdentity<ApplicationUser, ApplicationRole>(IdentityOptionsProvider.GetIdentityOptions)
                 .AddEntityFrameworkStores<ApplicationDbContext>().AddUserStore<ApplicationUserStore>()
@@ -96,10 +99,23 @@
             services.AddTransient<INewsService, NewsService>();
             services.AddTransient<IWorkerTasksDataService, WorkerTasksDataService>();
 
-            // Register TaskRunnerHostedService
-            services.AddHostedService<TaskRunnerHostedService>();
+            // Worker services
+            services.AddTransient<ITaskAssemblyProvider>(x => new TaskAssemblyProvider());
 
-            services.AddTransient(x => services);
+            // Register TaskRunnerHostedService
+            var threadsCount = int.Parse(configuration["JobScheduler:ThreadsCount"]);
+            for (var i = 0; i < threadsCount; i++)
+            {
+                services.AddHostedService<TaskExecutor>();
+            }
+        }
+
+        public class TaskAssemblyProvider : ITaskAssemblyProvider
+        {
+            public Assembly GetAssembly()
+            {
+                return typeof(DbCleanupTask).Assembly;
+            }
         }
     }
 }

@@ -4,60 +4,73 @@
     using System.Collections.Concurrent;
     using System.Diagnostics;
     using System.Reflection;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
 
     using PressCenters.Data.Models;
     using PressCenters.Services.Data;
 
-    public class TaskExecutor : ITaskExecutor
+    public class TaskExecutor : IHostedService
     {
         private const int WaitTimeOnErrorInSeconds = 20;
-        private readonly ConcurrentDictionary<int, bool> tasksIds;
-        private readonly IServiceCollection serviceCollection;
-        private readonly Assembly tasksAssembly;
+        private static readonly ConcurrentDictionary<int, bool> TasksIds = new ConcurrentDictionary<int, bool>(4, 1024);
+        private static int nextId;
+        private readonly IServiceProvider serviceProvider;
         private readonly ILogger logger;
+        private readonly Assembly tasksAssembly;
         private bool stopping;
 
         public TaskExecutor(
-            string name,
-            ConcurrentDictionary<int, bool> tasksIds,
-            IServiceCollection serviceCollection,
+            IServiceProvider serviceProvider,
             ILoggerFactory loggerFactory,
-            Assembly tasksAssembly)
+            ITaskAssemblyProvider assemblyProvider)
         {
-            this.tasksIds = tasksIds;
-            this.serviceCollection = serviceCollection;
-            this.logger = loggerFactory.CreateLogger(name);
-            this.tasksAssembly = tasksAssembly;
+            this.serviceProvider = serviceProvider;
+            var id = Interlocked.Increment(ref nextId);
+            this.logger = loggerFactory.CreateLogger($"{nameof(TaskExecutor)} #{id}");
+            this.tasksAssembly = assemblyProvider.GetAssembly();
         }
 
-        public async Task Work()
+        public Task StartAsync(CancellationToken cancellationToken)
+        {
+#pragma warning disable 4014
+            this.RunContinuouslyAsync(cancellationToken);
+#pragma warning restore 4014
+            return Task.CompletedTask;
+        }
+
+        public async Task StopAsync(CancellationToken cancellationToken)
+        {
+            this.stopping = true;
+            this.logger.LogInformation("Stopping...");
+
+            // ReSharper disable once MethodSupportsCancellation
+            await Task.Delay(3000);
+        }
+
+        private async Task RunContinuouslyAsync(CancellationToken cancellationToken)
         {
             this.logger.LogInformation("Starting...");
-            while (!this.stopping)
+            while (!this.stopping && !cancellationToken.IsCancellationRequested)
             {
                 // New scope is created for each task that's being executed
-                using (var serviceProvider = this.serviceCollection.BuildServiceProvider())
+                using (var serviceScope = this.serviceProvider.CreateScope())
                 {
-                    await this.ExecuteNextTask(serviceProvider);
-                    await Task.Delay(1000);
+                    await this.ExecuteNextTask(serviceScope.ServiceProvider);
+                    await Task.Delay(1000, cancellationToken);
                 }
             }
 
             this.logger.LogInformation("Stopped.");
         }
 
-        public void Stop()
+        private async Task ExecuteNextTask(IServiceProvider scopedServiceProvider)
         {
-            this.stopping = true;
-        }
-
-        private async Task ExecuteNextTask(IServiceProvider serviceProvider)
-        {
-            var workerTasksData = serviceProvider.GetService<IWorkerTasksDataService>();
+            var workerTasksData = scopedServiceProvider.GetService<IWorkerTasksDataService>();
             WorkerTask workerTask;
             try
             {
@@ -76,7 +89,7 @@
                 return;
             }
 
-            if (!this.tasksIds.TryAdd(workerTask.Id, true))
+            if (!TasksIds.TryAdd(workerTask.Id, true))
             {
                 // Other thread is processing the same task.
                 return;
@@ -89,7 +102,7 @@
             }
             catch (Exception ex)
             {
-                this.tasksIds.TryRemove(workerTask.Id, out _);
+                TasksIds.TryRemove(workerTask.Id, out _);
                 this.logger.LogError($"Unable to set workerTask.{nameof(WorkerTask.Processing)} to true! Error: {ex}");
                 await Task.Delay(WaitTimeOnErrorInSeconds * 1000);
                 return;
@@ -100,7 +113,7 @@
             ITask task = null;
             try
             {
-                task = this.GetTaskInstance(workerTask.TypeName, serviceProvider);
+                task = this.GetTaskInstance(workerTask.TypeName, scopedServiceProvider);
             }
             catch (Exception ex)
             {
@@ -115,7 +128,7 @@
                     workerTask.Processed = true;
                     workerTask.Processing = false;
                     await workerTasksData.UpdateAsync(workerTask);
-                    this.tasksIds.TryRemove(workerTask.Id, out _);
+                    TasksIds.TryRemove(workerTask.Id, out _);
                 }
                 catch (Exception ex)
                 {
@@ -164,7 +177,7 @@
                 workerTask.Processed = true;
                 workerTask.Processing = false;
                 await workerTasksData.UpdateAsync(workerTask);
-                this.tasksIds.TryRemove(workerTask.Id, out _);
+                TasksIds.TryRemove(workerTask.Id, out _);
             }
             catch (Exception ex)
             {
