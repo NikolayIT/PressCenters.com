@@ -3,27 +3,25 @@
     using System.Net;
     using System.Text;
 
-    using AngleSharp;
     using AngleSharp.Dom;
     using AngleSharp.Parser.Html;
+
+    using PressCenters.Common;
 
     public abstract class BaseMainNewsProvider
     {
         public abstract RemoteMainNews GetMainNews();
 
-        // TODO: Async
-        public IDocument GetDocument(string url)
-        {
-            var configuration = Configuration.Default.WithDefaultLoader();
-            var browsingContext = AngleSharp.BrowsingContext.New(configuration);
-            return browsingContext.OpenAsync(url).GetAwaiter().GetResult();
-        }
-
-        // TODO: Async
-        public IDocument GetDocument(string url, Encoding encoding)
+        public IDocument GetDocument(string url, Encoding encoding = null)
         {
             var parser = new HtmlParser();
-            var webClient = new WebClient { Encoding = encoding };
+            var webClient = new WebClient();
+            webClient.Headers.Add(HttpRequestHeader.UserAgent, GlobalConstants.DefaultUserAgent);
+            if (encoding != null)
+            {
+                webClient.Encoding = encoding;
+            }
+
             var html = webClient.DownloadString(url);
             var document = parser.Parse(html);
             return document;

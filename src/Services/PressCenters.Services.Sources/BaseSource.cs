@@ -12,6 +12,8 @@ namespace PressCenters.Services.Sources
     using AngleSharp.Dom;
     using AngleSharp.Parser.Html;
 
+    using PressCenters.Common;
+
     public abstract class BaseSource : ISource
     {
         protected BaseSource()
@@ -118,9 +120,7 @@ namespace PressCenters.Services.Sources
             url = new Uri(url).GetLeftPart(UriPartial.Query); // Remove hash fragment
 
             var webClient = new WebClient();
-            webClient.Headers.Add(
-                HttpRequestHeader.UserAgent,
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36");
+            webClient.Headers.Add(HttpRequestHeader.UserAgent, GlobalConstants.DefaultUserAgent);
             if (this.Headers != null)
             {
                 foreach (var (header, value) in this.Headers)
