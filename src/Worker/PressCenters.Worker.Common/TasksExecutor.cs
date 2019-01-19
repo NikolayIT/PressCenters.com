@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Concurrent;
     using System.Diagnostics;
+    using System.Linq;
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
@@ -108,7 +109,7 @@
                 return;
             }
 
-            this.logger.LogInformation($"Task #{workerTask.Id} started...");
+            this.logger.LogInformation($"Task #{workerTask.Id} started with parameters: {workerTask.Parameters}");
 
             ITask task = null;
             try
@@ -201,10 +202,12 @@
             }
         }
 
-        private ITask GetTaskInstance(string typeName, IServiceProvider scopedServiceProvider)
+        private ITask GetTaskInstance(string typeName, IServiceProvider provider)
         {
             var type = this.tasksAssembly.GetType(typeName);
-            if (!(Activator.CreateInstance(type, scopedServiceProvider) is ITask task))
+            var constructor = type.GetConstructors()[0];
+            var args = constructor.GetParameters().Select(p => provider.GetService(p.ParameterType)).ToArray();
+            if (!(Activator.CreateInstance(type, args) is ITask task))
             {
                 throw new Exception($"Unable to create {nameof(ITask)} instance from \"{typeName}\"!");
             }

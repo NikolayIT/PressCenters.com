@@ -3,7 +3,6 @@
     using System;
     using System.Threading.Tasks;
 
-    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
 
     using PressCenters.Data.Common;
@@ -16,10 +15,10 @@
 
         private readonly ILogger<DbCleanupTask> logger;
 
-        public DbCleanupTask(IServiceProvider serviceProvider)
+        public DbCleanupTask(IDbQueryRunner queryRunner, ILoggerFactory loggerFactory)
         {
-            this.queryRunner = serviceProvider.GetService<IDbQueryRunner>();
-            this.logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<DbCleanupTask>();
+            this.queryRunner = queryRunner;
+            this.logger = loggerFactory.CreateLogger<DbCleanupTask>();
         }
 
         protected override async Task<Output> DoWork(Input input)

@@ -4,7 +4,6 @@
     using System.Linq;
     using System.Threading.Tasks;
 
-    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
 
     using PressCenters.Common;
@@ -21,11 +20,14 @@
 
         private readonly ILogger logger;
 
-        public MainNewsGetterTask(IServiceProvider serviceProvider)
+        public MainNewsGetterTask(
+            IDeletableEntityRepository<MainNewsSource> mainNewsSourcesRepository,
+            IDeletableEntityRepository<MainNews> mainNewsRepository,
+            ILoggerFactory loggerFactory)
         {
-            this.mainNewsSourcesRepository = serviceProvider.GetService<IDeletableEntityRepository<MainNewsSource>>();
-            this.mainNewsRepository = serviceProvider.GetService<IDeletableEntityRepository<MainNews>>();
-            this.logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger<MainNewsGetterTask>();
+            this.mainNewsSourcesRepository = mainNewsSourcesRepository;
+            this.mainNewsRepository = mainNewsRepository;
+            this.logger = loggerFactory.CreateLogger<MainNewsGetterTask>();
         }
 
         protected override async Task<Output> DoWork(Input input)
