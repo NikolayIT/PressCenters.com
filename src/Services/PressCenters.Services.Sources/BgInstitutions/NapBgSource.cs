@@ -19,8 +19,7 @@
 
         public override IEnumerable<RemoteNews> GetLatestPublications()
         {
-            var address = $"{this.BaseUrl}page?id=223";
-            var document = this.BrowsingContext.OpenAsync(address).GetAwaiter().GetResult();
+            var document = this.Parser.Parse(this.ReadStringFromUrl($"{this.BaseUrl}page?id=223"));
             var links = document.QuerySelectorAll(".news_list li a").Select(x => x?.Attributes["onclick"]?.Value)
                 .Where(x => x?.Contains("ShowWindow('/news?id=") == true).Select(
                     x => $"{this.BaseUrl}{x.GetStringBetween("ShowWindow('/", "'")}").ToList();

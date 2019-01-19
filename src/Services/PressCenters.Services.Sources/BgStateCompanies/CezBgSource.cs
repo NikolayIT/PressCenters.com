@@ -23,8 +23,7 @@
         {
             for (var page = 1; page <= 105; page++)
             {
-                var document = this.BrowsingContext.OpenAsync($"{this.BaseUrl}bg/novini/?pg={page}").GetAwaiter()
-                    .GetResult();
+                var document = this.Parser.Parse(this.ReadStringFromUrl($"{this.BaseUrl}bg/novini/?pg={page}"));
                 var newsElements = document.QuerySelectorAll(".first-child-no-margin-top .margin-bottom-20");
                 var newsCount = 0;
                 foreach (var newsElement in newsElements)

@@ -9,7 +9,6 @@ namespace PressCenters.Services.Sources
     using System.Text;
     using System.Text.RegularExpressions;
 
-    using AngleSharp;
     using AngleSharp.Dom;
     using AngleSharp.Parser.Html;
 
@@ -17,8 +16,7 @@ namespace PressCenters.Services.Sources
     {
         protected BaseSource()
         {
-            var configuration = Configuration.Default.WithDefaultLoader();
-            this.BrowsingContext = AngleSharp.BrowsingContext.New(configuration);
+            this.Parser = new HtmlParser();
         }
 
         public abstract string BaseUrl { get; }
@@ -27,7 +25,7 @@ namespace PressCenters.Services.Sources
 
         protected virtual List<(HttpRequestHeader Header, string Value)> Headers => null;
 
-        protected IBrowsingContext BrowsingContext { get; }
+        protected HtmlParser Parser { get; }
 
         public abstract IEnumerable<RemoteNews> GetLatestPublications();
 
@@ -39,17 +37,7 @@ namespace PressCenters.Services.Sources
         public RemoteNews GetPublication(string url)
         {
             var urlToLoad = new Uri(url).GetLeftPart(UriPartial.Query); // Remove hash fragment
-            IDocument document;
-            if (this.Encoding != null || this.Headers != null)
-            {
-                var parser = new HtmlParser();
-                var html = this.ReadStringFromUrl(urlToLoad);
-                document = parser.Parse(html);
-            }
-            else
-            {
-                document = this.BrowsingContext.OpenAsync(urlToLoad).GetAwaiter().GetResult();
-            }
+            var document = this.Parser.Parse(this.ReadStringFromUrl(urlToLoad));
 
             var publication = this.ParseDocument(document, url);
             if (publication == null)
@@ -102,19 +90,7 @@ namespace PressCenters.Services.Sources
 
         protected IList<RemoteNews> GetPublications(string address, string anchorSelector, string urlShouldContain = "", int count = 0)
         {
-            address = $"{this.BaseUrl}{address}";
-            IDocument document;
-            if (this.Encoding != null || this.Headers != null)
-            {
-                var parser = new HtmlParser();
-                var html = this.ReadStringFromUrl(address);
-                document = parser.Parse(html);
-            }
-            else
-            {
-                document = this.BrowsingContext.OpenAsync(address).GetAwaiter().GetResult();
-            }
-
+            var document = this.Parser.Parse(this.ReadStringFromUrl($"{this.BaseUrl}{address}"));
             var links = document.QuerySelectorAll(anchorSelector)
                 .Select(x => this.NormalizeUrl(x?.Attributes["href"]?.Value))
                 .Where(x => x?.Contains(urlShouldContain) == true).Distinct();

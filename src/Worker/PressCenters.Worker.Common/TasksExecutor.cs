@@ -61,7 +61,7 @@
                 using (var serviceScope = this.serviceProvider.CreateScope())
                 {
                     await this.ExecuteNextTask(serviceScope.ServiceProvider);
-                    await Task.Delay(1000, cancellationToken);
+                    await Task.Delay(750, cancellationToken);
                 }
             }
 
@@ -201,10 +201,10 @@
             }
         }
 
-        private ITask GetTaskInstance(string typeName, IServiceProvider serviceProvider)
+        private ITask GetTaskInstance(string typeName, IServiceProvider scopedServiceProvider)
         {
             var type = this.tasksAssembly.GetType(typeName);
-            if (!(Activator.CreateInstance(type, serviceProvider) is ITask task))
+            if (!(Activator.CreateInstance(type, scopedServiceProvider) is ITask task))
             {
                 throw new Exception($"Unable to create {nameof(ITask)} instance from \"{typeName}\"!");
             }
