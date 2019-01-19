@@ -16,15 +16,15 @@
 
     public class TaskRunnerHostedService : IHostedService
     {
-        private readonly ICollection<TaskExecutor> taskExecutors = new List<TaskExecutor>();
+        private readonly ICollection<ITaskExecutor> taskExecutors = new List<ITaskExecutor>();
         private readonly IList<Thread> threads = new List<Thread>();
         private readonly ConcurrentDictionary<int, bool> tasksIds;
-        private readonly IServiceProvider serviceProvider;
+        private readonly IServiceCollection serviceCollection;
         private readonly ILoggerFactory loggerFactory;
         private readonly ILogger logger;
 
         public TaskRunnerHostedService(
-            IServiceProvider serviceProvider,
+            IServiceCollection serviceCollection,
             IConfiguration configuration,
             ILoggerFactory loggerFactory)
         {
@@ -36,7 +36,7 @@
                 this.threads.Add(thread);
             }
 
-            this.serviceProvider = serviceProvider;
+            this.serviceCollection = serviceCollection;
             this.loggerFactory = loggerFactory;
             this.logger = loggerFactory.CreateLogger<TaskRunnerHostedService>();
         }
@@ -56,7 +56,7 @@
                 Thread.Sleep(400);
             }
 
-            this.logger.LogInformation($"JobSchedulerService started with {this.threads.Count} threads.");
+            this.logger.LogInformation($"{nameof(TaskRunnerHostedService)} started with {this.threads.Count} threads.");
             return Task.CompletedTask;
         }
 
@@ -67,32 +67,29 @@
                 taskExecutor.Stop();
             }
 
-            this.logger.LogInformation("JobSchedulerService stopped.");
+            this.logger.LogInformation($"{nameof(TaskRunnerHostedService)} stopped.");
             return Task.CompletedTask;
         }
 
         private async void CreateAndStartTaskExecutor(object taskExecutorNumber)
         {
-            var taskExecutorName = $"TaskExecutor #{taskExecutorNumber}";
-            TaskExecutor taskExecutor = null;
+            var taskExecutorName = $"{nameof(TaskExecutor)} #{taskExecutorNumber}";
+            ITaskExecutor taskExecutor = null;
 
             // This is an important exception handling because an exception in async void method would crash the app.
             // (https://blogs.msdn.microsoft.com/ptorr/2014/12/10/async-exceptions-in-c/)
             try
             {
-                using (var serviceScope = this.serviceProvider.CreateScope())
-                {
-                    taskExecutor = new TaskExecutor(
-                        taskExecutorName,
-                        this.tasksIds,
-                        serviceScope.ServiceProvider,
-                        this.loggerFactory,
-                        typeof(DbCleanupTask).Assembly);
+                taskExecutor = new TaskExecutor(
+                    taskExecutorName,
+                    this.tasksIds,
+                    this.serviceCollection,
+                    this.loggerFactory,
+                    typeof(DbCleanupTask).Assembly);
 
-                    this.taskExecutors.Add(taskExecutor);
+                this.taskExecutors.Add(taskExecutor);
 
-                    await taskExecutor.Work();
-                }
+                await taskExecutor.Work();
             }
             catch (Exception ex)
             {

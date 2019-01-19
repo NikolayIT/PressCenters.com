@@ -92,9 +92,10 @@
                 .Build();
 
             services.AddSingleton<IConfiguration>(configuration);
+            var loggerFactory = new LoggerFactory();
             services.AddDbContext<ApplicationDbContext>(
                 options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
-                    .EnableSensitiveDataLogging().UseLoggerFactory(new LoggerFactory()));
+                    .EnableSensitiveDataLogging().UseLoggerFactory(loggerFactory));
 
             services
                 .AddIdentity<ApplicationUser, ApplicationRole>(IdentityOptionsProvider.GetIdentityOptions)

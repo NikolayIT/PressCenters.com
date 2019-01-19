@@ -65,9 +65,10 @@
                 .AddJsonFile("appsettings.json", false, true).AddEnvironmentVariables().Build();
             services.AddSingleton<IConfiguration>(configuration);
 
+            var loggerFactory = new LoggerFactory();
             services.AddDbContext<ApplicationDbContext>(
                 options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
-                    .UseLoggerFactory(new LoggerFactory()));
+                    .UseLoggerFactory(loggerFactory), ServiceLifetime.Transient);
 
             services.AddIdentity<ApplicationUser, ApplicationRole>(IdentityOptionsProvider.GetIdentityOptions)
                 .AddEntityFrameworkStores<ApplicationDbContext>().AddUserStore<ApplicationUserStore>()
@@ -97,6 +98,8 @@
 
             // Register TaskRunnerHostedService
             services.AddHostedService<TaskRunnerHostedService>();
+
+            services.AddTransient(x => services);
         }
     }
 }
