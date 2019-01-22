@@ -9,6 +9,7 @@
     using PressCenters.Common;
     using PressCenters.Data.Common.Repositories;
     using PressCenters.Data.Models;
+    using PressCenters.Services;
     using PressCenters.Services.Sources.MainNews;
     using PressCenters.Worker.Common;
 
@@ -33,6 +34,7 @@
         protected override async Task<Output> DoWork(Input input)
         {
             var updated = 0;
+            string errors = null;
             foreach (var source in this.mainNewsSourcesRepository.All().ToList())
             {
                 var lastNews =
@@ -40,7 +42,23 @@
                         .OrderByDescending(x => x.Id)
                         .FirstOrDefault();
                 var instance = ReflectionHelpers.GetInstance<BaseMainNewsProvider>(source.TypeName);
-                var news = instance.GetMainNews();
+
+                RemoteMainNews news = null;
+                try
+                {
+                    news = instance.GetMainNews();
+                }
+                catch (Exception e)
+                {
+                    errors += $"Error in {source.TypeName}: {e.Message}; ";
+                }
+
+                if (news == null)
+                {
+                    errors += $"Null news in {source.TypeName}; ";
+                    continue;
+                }
+
                 if (lastNews?.Title == news.Title && lastNews?.ImageUrl == news.ImageUrl)
                 {
                     // The last news has the same title
@@ -61,7 +79,7 @@
             }
 
             await this.mainNewsRepository.SaveChangesAsync();
-            return new Output { Updated = updated };
+            return new Output { Updated = updated, Error = errors };
         }
 
         protected override WorkerTask Recreate(WorkerTask currentTask, Input parameters) =>
