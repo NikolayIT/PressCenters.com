@@ -1,0 +1,18 @@
+﻿@model PressCenters.Web.Areas.Administration.ViewModels.Sources.IndexViewModel
+@{
+    this.ViewData["Title"] = "Sources admin";
+}
+
+<table class="table table-bordered table-hover table-striped">
+    <tr>
+        <th>Source</th>
+        <th>Last news</th>
+    </tr>
+    @foreach (var source in this.Model.Sources)
+    {
+        <tr>
+            <td><a href="@source.SourceUrl" target="_blank">@source.Name</a></td>
+            <td><a asp-area="" asp-controller="News" asp-action="ById" asp-route-id="@source.LastNewsId">@source.LastNewsDate</a></td>
+        </tr>
+    }
+</table>
