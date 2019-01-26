@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Globalization;
 
-    using AngleSharp;
     using AngleSharp.Dom;
 
     using PressCenters.Common;

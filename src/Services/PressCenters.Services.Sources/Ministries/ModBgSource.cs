@@ -5,7 +5,6 @@
     using System.Globalization;
     using System.Linq;
 
-    using AngleSharp;
     using AngleSharp.Dom;
 
     using PressCenters.Common;

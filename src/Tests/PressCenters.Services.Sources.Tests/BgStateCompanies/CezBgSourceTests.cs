@@ -1,6 +1,5 @@
 ﻿namespace PressCenters.Services.Sources.Tests.BgStateCompanies
 {
-    using System;
     using System.Linq;
 
     using PressCenters.Services.Sources.BgStateCompanies;
