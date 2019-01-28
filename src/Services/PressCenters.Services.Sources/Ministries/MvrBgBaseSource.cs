@@ -4,26 +4,29 @@
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using System.Net;
     using System.Net.Http;
 
     using AngleSharp.Dom;
     using AngleSharp.Parser.Html;
 
-    public class MvrBgSource : BaseSource
+    public abstract class MvrBgBaseSource : BaseSource
     {
         public override string BaseUrl { get; } = "https://www.mvr.bg/";
 
+        public abstract string NewsListUrl { get; }
+
+        public abstract int NewsListPagesCount { get; }
+
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications(
-                "press/актуална-информация/актуална-информация/актуално",
-                ".article__list .article .article__description a.link--clear");
+            this.GetPublications(this.NewsListUrl, ".article__list .article .article__description a.link--clear");
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            var address = $"{this.BaseUrl}press/актуална-информация/актуална-информация/актуално";
+            var address = $"{this.BaseUrl}{this.NewsListUrl}";
             var parser = new HtmlParser();
             var httpClient = new HttpClient();
-            for (var i = 1; i < 100; i++)
+            for (var i = 1; i <= this.NewsListPagesCount; i++)
             {
                 var response = httpClient.PostAsync(
                     address,
@@ -36,7 +39,8 @@
                 var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                 var document = parser.Parse(content);
                 var links = document.QuerySelectorAll(".article__list .article .article__description a.link--clear")
-                    .Select(x => this.NormalizeUrl(x.Attributes["href"].Value)).Distinct().ToList();
+                    .Select(x => this.NormalizeUrl(x.Attributes["href"].Value)).Where(x => !new Uri(x).PathAndQuery.Contains(":")).Distinct()
+                    .ToList();
                 var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
                 Console.WriteLine($"Page {i} => {news.Count} news");
                 foreach (var remoteNews in news)
@@ -44,6 +48,13 @@
                     yield return remoteNews;
                 }
             }
+        }
+
+        internal override string ExtractIdFromUrl(string url)
+        {
+            // Get last 2 url segments
+            var uri = new Uri(url.Trim().Trim('/'));
+            return WebUtility.UrlDecode(uri.Segments[uri.Segments.Length - 2] + uri.Segments[uri.Segments.Length - 1]);
         }
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
@@ -66,7 +77,26 @@
             }
 
             var imageElement = document.QuerySelector("#image_source");
-            var imageUrl = imageElement?.GetAttribute("src") ?? $"/images/sources/mvr.bg.jpg";
+            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/mvr.bg.jpg";
+
+            // Try to get exact time
+            var modifiedTimeElement = document.QuerySelector(".article__container .timestamp");
+            var modifiedTimeText = modifiedTimeElement?.TextContent?.Trim();
+            if (!string.IsNullOrWhiteSpace(modifiedTimeText))
+            {
+                if (DateTime.TryParseExact(
+                    modifiedTimeText,
+                    "dd MMMM yyyy | HH:mm",
+                    CultureInfo.GetCultureInfo("bg-BG"),
+                    DateTimeStyles.AllowWhiteSpaces,
+                    out var modifiedTime))
+                {
+                    if (time.Date == modifiedTime.Date)
+                    {
+                        time = modifiedTime;
+                    }
+                }
+            }
 
             var contentElement = document.QuerySelector(".article__container");
             contentElement.RemoveRecursively(timeElement);

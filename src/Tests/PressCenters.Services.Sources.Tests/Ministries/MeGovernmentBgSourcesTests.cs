@@ -13,7 +13,7 @@
         [Theory]
         [InlineData("https://www.me.government.bg/bg/news/v-ministerstvoto-na-energetikata-se-provede-sreshta-vav-vrazka-s-podobryavane-na-elektrosnabdyavaneto-v-2686.html", "2686")]
         [InlineData("https://www.me.government.bg/bg/news/ministar-petkova-balgarskata-strana-shte-cherpi-opit-ot-avstriiskiya-centralnoevropeiski-gazov-hab-v-ra-2684.html?p=eyJ0eXBlIjoiaG90In0=", "2684")]
-        public void ExtractIdFromPressUrlShouldWorkCorrectly(string url, string id)
+        public void ExtractIdFromUrlShouldWorkCorrectly(string url, string id)
         {
             var sources = new List<BaseSource> { new MeGovernmentBgNewsSource(), new MeGovernmentBgHotNewsSource(), };
             foreach (var source in sources)

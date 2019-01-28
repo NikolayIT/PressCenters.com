@@ -13,7 +13,7 @@
         [Theory]
         [InlineData("https://www.moew.government.bg/bg/ministur-dimov-uchastva-v-poslednoto-za-godinata-zasedanie-na-suveta-na-es-po-okolna-sreda/", "ministur-dimov-uchastva-v-poslednoto-za-godinata-zasedanie-na-suveta-na-es-po-okolna-sreda")]
         [InlineData("https://www.moew.government.bg/bg/otnovo-sa-izmereni-stojnosti-na-vredni-vestestva-nad-normata-ot-mk-kremikovci-ad", "otnovo-sa-izmereni-stojnosti-na-vredni-vestestva-nad-normata-ot-mk-kremikovci-ad")]
-        public void ExtractIdFromPressUrlShouldWorkCorrectly(string url, string id)
+        public void ExtractIdFromUrlShouldWorkCorrectly(string url, string id)
         {
             var sources = new List<BaseSource>
                           {

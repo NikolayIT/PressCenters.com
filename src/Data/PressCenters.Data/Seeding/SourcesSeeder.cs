@@ -12,8 +12,12 @@
         {
             var sources = new List<(string TypeName, string ShortName, string Name, string Description, string Url)>
                           {
-                              ("PressCenters.Services.Sources.Ministries.MvrBgSource",
-                                  "МВР", "Министерство на вътрешните работи",
+                              ("PressCenters.Services.Sources.Ministries.MvrBgAktualnoSource",
+                                  "МВР", "Министерство на вътрешните работи - Актуално",
+                                  "Министерството на вътрешните работи (МВР) е българска държавна институция с ранг на министерство, която се грижи за защитата на националната сигурност, борбата с престъпността, опазването на обществения ред и други.",
+                                  "https://www.mvr.bg/"),
+                              ("PressCenters.Services.Sources.Ministries.MvrBgNoviniSource",
+                                  "МВР", "Министерство на вътрешните работи - Новини",
                                   "Министерството на вътрешните работи (МВР) е българска държавна институция с ранг на министерство, която се грижи за защитата на националната сигурност, борбата с престъпността, опазването на обществения ред и други.",
                                   "https://www.mvr.bg/"),
                               ("PressCenters.Services.Sources.Ministries.MhGovernmentBgNewsSource",
