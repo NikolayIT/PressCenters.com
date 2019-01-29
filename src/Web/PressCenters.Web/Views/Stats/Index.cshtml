@@ -7,60 +7,81 @@
 
 <div class="card rounded-0">
     <h3 class="card-header h5 rounded-0">
-        Прессъобщения
+        Новини
     </h3>
     <div class="card-block">
         <ul class="list-group">
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                Общо прессъобщения в сайта
+                Общо новини в сайта
                 <span class="badge badge-secondary badge-pill g-font-size-15">@this.Model.NewsCount</span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                Прессъобщения днес
+                Новини днес
                 <span class="badge badge-secondary badge-pill g-font-size-15">@this.Model.NewsToday</span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                Прессъобщения вчера
+                Новини вчера
                 <span class="badge badge-secondary badge-pill g-font-size-15">@this.Model.NewsYesterday</span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                Прессъобщения @(new CultureInfo("bg-BG").DateTimeFormat.GetDayName(DateTime.Today.AddDays(-2).DayOfWeek))
+                Новини @(new CultureInfo("bg-BG").DateTimeFormat.GetDayName(DateTime.Today.AddDays(-2).DayOfWeek))
                 <span class="badge badge-secondary badge-pill g-font-size-15">@this.Model.NewsTheDayBeforeYesterday</span>
             </li>
         </ul>
     </div>
 </div>
 
-<div class="card rounded-0">
-    <h3 class="card-header h5 rounded-0">
-        Брой прессъобщения по ден от седмицата
-    </h3>
-    <div class="card-block">
-        <ul class="list-group">
-            @foreach (var item in this.Model.NewsByDayOfWeek.OrderBy(x => ((int)x.DayOfWeek + 6) % 7))
-            {
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    @(new CultureInfo("bg-BG").DateTimeFormat.GetDayName(item.DayOfWeek))
-                    <span class="badge badge-secondary badge-pill g-font-size-14">@item.Count</span>
-                </li>
-            }
-        </ul>
+<div class="row no-gutters">
+    <div class="col-md-6">
+        <div class="card rounded-0">
+            <h3 class="card-header h5 rounded-0">
+                Брой новини по година
+            </h3>
+            <div class="card-block">
+                <ul class="list-group">
+                    @foreach (var item in this.Model.NewsByYear.OrderByDescending(x => x.Group))
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @item.Group
+                            <span class="badge badge-secondary badge-pill g-font-size-14">@item.Count</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
     </div>
-</div>
-
-<div class="card rounded-0">
-    <h3 class="card-header h5 rounded-0">
-        Брой прессъобщения по година
-    </h3>
-    <div class="card-block">
-        <ul class="list-group">
-            @foreach (var item in this.Model.NewsByYear.OrderByDescending(x => x.Year))
-            {
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    @item.Year
-                    <span class="badge badge-secondary badge-pill g-font-size-14">@item.Count</span>
-                </li>
-            }
-        </ul>
+    <div class="col-md-6">
+        <div class="card rounded-0">
+            <h3 class="card-header h5 rounded-0">
+                Брой новини по ден от седмицата
+            </h3>
+            <div class="card-block">
+                <ul class="list-group">
+                    @foreach (var item in this.Model.NewsByDayOfWeek.OrderBy(x => ((int)x.Group + 6) % 7))
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @(new CultureInfo("bg-BG").DateTimeFormat.GetDayName(item.Group))
+                            <span class="badge badge-secondary badge-pill g-font-size-14">@item.Count</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="card rounded-0">
+            <h3 class="card-header h5 rounded-0">
+                Брой новини по месец
+            </h3>
+            <div class="card-block">
+                <ul class="list-group">
+                    @foreach (var item in this.Model.NewsByMonth.OrderBy(x => x.Group))
+                    {
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        @(new CultureInfo("bg-BG").DateTimeFormat.GetMonthName(item.Group))
+                        <span class="badge badge-secondary badge-pill g-font-size-14">@item.Count</span>
+                    </li>
+                    }
+                </ul>
+            </div>
+        </div>
     </div>
 </div>

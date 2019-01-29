@@ -25,7 +25,7 @@
                 this.ReadStringFromUrl($"{this.BaseUrl}feed").Replace(
                     "xmlns:georss=\"http://www.georss.org/georss\"",
                     string.Empty));
-            var links = document.QuerySelectorAll("item link").Select(x => this.NormalizeUrl(x.TextContent));
+            var links = document.QuerySelectorAll("item link").Select(x => this.NormalizeUrl(x.TextContent)).Take(5);
             var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
             return news;
         }

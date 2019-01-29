@@ -1,8 +1,8 @@
 ﻿namespace PressCenters.Web.ViewModels.Stats
 {
-    public class ByYearViewModel
+    public class GroupByViewModel<T>
     {
-        public int Year { get; set; }
+        public T Group { get; set; }
 
         public int Count { get; set; }
     }
