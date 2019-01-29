@@ -10,19 +10,20 @@
         gtag('js', new Date());
         gtag('config', 'UA-72806246-1');
     </script>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@(this.ViewData["Title"] ?? GlobalConstants.SystemSlogan) - @GlobalConstants.SystemName</title>
+    <meta name="description" content="Най-новите прессъобщения и новини от над 40 източника.">
 
     <environment names="Development">
-        <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" asp-append-version="true"/>
-        <link href="~/css/site.css" rel="stylesheet" asp-append-version="true"/>
-        <link href="~/css/unify.css" rel="stylesheet" asp-append-version="true"/>
+        <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" asp-append-version="true" />
+        <link href="~/css/site.css" rel="stylesheet" asp-append-version="true" />
+        <link href="~/css/unify.css" rel="stylesheet" asp-append-version="true" />
     </environment>
     <environment names="Staging,Production">
-        <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true"/>
-        <link href="~/css/site.min.css" rel="stylesheet" asp-append-version="true"/>
-        <link href="~/css/unify.min.css" rel="stylesheet" asp-append-version="true"/>
+        <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true" />
+        <link href="~/css/site.min.css" rel="stylesheet" asp-append-version="true" />
+        <link href="~/css/unify.min.css" rel="stylesheet" asp-append-version="true" />
     </environment>
     @this.Html.Raw(this.JavaScriptSnippet.FullScript)
 </head>

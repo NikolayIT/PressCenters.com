@@ -42,7 +42,7 @@
                 return defaultValue;
             }
 
-            return input.Substring(startIndex + 1, endIndex - startIndex - 1);
+            return input.Substring(startIndex + startString.Length, endIndex - startIndex - startString.Length);
         }
 
         public static int ToInteger(this string input)
