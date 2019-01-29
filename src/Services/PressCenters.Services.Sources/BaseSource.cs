@@ -10,6 +10,7 @@ namespace PressCenters.Services.Sources
     using System.Text.RegularExpressions;
 
     using AngleSharp.Dom;
+    using AngleSharp.Dom.Html;
     using AngleSharp.Parser.Html;
 
     using PressCenters.Common;
@@ -39,7 +40,22 @@ namespace PressCenters.Services.Sources
         public RemoteNews GetPublication(string url)
         {
             var urlToLoad = new Uri(url).GetLeftPart(UriPartial.Query); // Remove hash fragment
-            var document = this.Parser.Parse(this.ReadStringFromUrl(urlToLoad));
+
+            IHtmlDocument document;
+            try
+            {
+                document = this.Parser.Parse(this.ReadStringFromUrl(urlToLoad));
+            }
+            catch (WebException e)
+            {
+                if (e.Status == WebExceptionStatus.ProtocolError
+                    && (e.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return null;
+                }
+
+                throw;
+            }
 
             var publication = this.ParseDocument(document, url);
             if (publication == null)
