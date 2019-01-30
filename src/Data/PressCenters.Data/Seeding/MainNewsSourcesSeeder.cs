@@ -32,6 +32,8 @@
                                           "PressCenters.Services.Sources.MainNews.EuronewsMainNewsProvider"),
                                       ("BTA.bg", "http://www.bta.bg/bg/",
                                           "PressCenters.Services.Sources.MainNews.BtaBgMainNewsProvider"),
+                                      ("Mediapool.bg", "https://www.mediapool.bg/",
+                                          "PressCenters.Services.Sources.MainNews.MediapoolBgMainNewsProvider"),
                                   };
 
             foreach (var mainNewsSource in mainNewsSources)

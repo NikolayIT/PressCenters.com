@@ -60,7 +60,7 @@
         }
 
         protected override WorkerTask Recreate(WorkerTask currentTask, Input parameters) =>
-            new WorkerTask(currentTask, DateTime.UtcNow.AddMinutes(3));
+            new WorkerTask(currentTask, DateTime.UtcNow.AddSeconds(150));
 
         public class Input : BaseTaskInput
         {
