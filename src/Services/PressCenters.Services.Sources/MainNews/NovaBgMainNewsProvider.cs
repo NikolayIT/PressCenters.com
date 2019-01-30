@@ -2,11 +2,11 @@
 {
     public class NovaBgMainNewsProvider : BaseMainNewsProvider
     {
-        private const string BaseUrl = "https://nova.bg";
+        public override string BaseUrl { get; } = "https://nova.bg";
 
         public override RemoteMainNews GetMainNews()
         {
-            var document = this.GetDocument(BaseUrl);
+            var document = this.GetDocument(this.BaseUrl);
 
             var titleElement = document.QuerySelector(".main-accent-wrapper .thumb-title h1 a");
             var title = titleElement.TextContent.Trim();

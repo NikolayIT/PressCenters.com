@@ -10,6 +10,8 @@
 
     public abstract class BaseMainNewsProvider
     {
+        public abstract string BaseUrl { get; }
+
         public abstract RemoteMainNews GetMainNews();
 
         public IDocument GetDocument(string url, Encoding encoding = null)

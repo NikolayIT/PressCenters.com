@@ -2,11 +2,11 @@
 {
     public class NewsBgMainNewsProvider : BaseMainNewsProvider
     {
-        private const string BaseUrl = "https://news.bg";
+        public override string BaseUrl { get; } = "https://news.bg";
 
         public override RemoteMainNews GetMainNews()
         {
-            var document = this.GetDocument(BaseUrl);
+            var document = this.GetDocument(this.BaseUrl);
 
             var titleElement = document.QuerySelector("#content-main .main-news a.main-thumb .news-info h2");
             var title = titleElement.TextContent.Trim(); // $"{title} ({shortTitle})"
@@ -16,7 +16,6 @@
 
             //// var shortTitleElement = document.QuerySelector("#content-main .main-news a.main-thumb .news-info p");
             //// var shortTitle = shortTitleElement?.TextContent?.Trim();
-
             var imageElement = document.QuerySelector("#content-main .main-news a.main-thumb img.thumb");
             var imageUrl = imageElement?.Attributes["src"]?.Value?.Trim();
 

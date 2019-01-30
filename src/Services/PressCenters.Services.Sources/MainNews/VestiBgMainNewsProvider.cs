@@ -2,11 +2,11 @@
 {
     public class VestiBgMainNewsProvider : BaseMainNewsProvider
     {
-        private const string BaseUrl = "https://www.vesti.bg";
+        public override string BaseUrl { get; } = "https://www.vesti.bg";
 
         public override RemoteMainNews GetMainNews()
         {
-            var document = this.GetDocument(BaseUrl);
+            var document = this.GetDocument(this.BaseUrl);
 
             var titleElement = document.QuerySelector(".leading h2");
             var title = titleElement.TextContent.Trim();

@@ -2,11 +2,11 @@
 {
     public class NoviniBgMainNewsProvider : BaseMainNewsProvider
     {
-        private const string BaseUrl = "https://novini.bg";
+        public override string BaseUrl { get; } = "https://novini.bg";
 
         public override RemoteMainNews GetMainNews()
         {
-            var document = this.GetDocument(BaseUrl);
+            var document = this.GetDocument(this.BaseUrl);
 
             var titleElement = document.QuerySelector(".content-left .leading-news .first h3");
             var title = titleElement.TextContent.Trim();
