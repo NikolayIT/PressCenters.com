@@ -2,7 +2,7 @@
 {
     public class EuronewsMainNewsProvider : BaseMainNewsProvider
     {
-        public override string BaseUrl { get; } = "https://www.euronews.com/";
+        public override string BaseUrl { get; } = "https://www.euronews.com";
 
         public override RemoteMainNews GetMainNews()
         {
@@ -11,8 +11,7 @@
             var titleElement = document.QuerySelector(".c-first-topstory .media__main h1.media__body__title a");
             var title = titleElement.TextContent.Trim();
 
-            var urlElement = document.QuerySelector(".c-first-topstory .media__main h1.media__body__title a");
-            var url = this.BaseUrl + urlElement.Attributes["href"].Value.Trim();
+            var url = this.BaseUrl + titleElement.Attributes["href"].Value.Trim();
 
             var imageElement = document.QuerySelector(".c-first-topstory .media__main img.media__img__obj");
             var imageUrl = imageElement?.Attributes["src"]?.Value?.Trim();

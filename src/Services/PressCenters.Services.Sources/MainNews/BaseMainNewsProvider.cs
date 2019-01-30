@@ -1,7 +1,6 @@
 ﻿namespace PressCenters.Services.Sources.MainNews
 {
-    using System.Net;
-    using System.Text;
+    using System.Net.Http;
 
     using AngleSharp.Dom;
     using AngleSharp.Parser.Html;
@@ -14,17 +13,12 @@
 
         public abstract RemoteMainNews GetMainNews();
 
-        public IDocument GetDocument(string url, Encoding encoding = null)
+        public IDocument GetDocument(string url)
         {
             var parser = new HtmlParser();
-            var webClient = new WebClient();
-            webClient.Headers.Add(HttpRequestHeader.UserAgent, GlobalConstants.DefaultUserAgent);
-            if (encoding != null)
-            {
-                webClient.Encoding = encoding;
-            }
-
-            var html = webClient.DownloadString(url);
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Add("User-Agent", GlobalConstants.DefaultUserAgent);
+            var html = httpClient.GetStringAsync(url).GetAwaiter().GetResult();
             var document = parser.Parse(html);
             return document;
         }

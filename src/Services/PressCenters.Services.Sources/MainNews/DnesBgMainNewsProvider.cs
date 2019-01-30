@@ -9,7 +9,7 @@
         public override RemoteMainNews GetMainNews()
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            var document = this.GetDocument(this.BaseUrl, Encoding.GetEncoding("windows-1251"));
+            var document = this.GetDocument(this.BaseUrl);
 
             var titleElement = document.QuerySelector(".top-news-wrapper .left .top-news .image-title > a");
             var title = titleElement.TextContent.Trim();
