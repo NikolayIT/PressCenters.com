@@ -30,6 +30,9 @@
             {
                 // Sanitize
                 var htmlSanitizer = new HtmlSanitizer();
+                htmlSanitizer.AllowedCssProperties.Remove("font-size");
+                htmlSanitizer.AllowedSchemes.Add("mailto");
+                htmlSanitizer.AllowDataAttributes = false;
                 var html = htmlSanitizer.Sanitize(this.Content);
 
                 // Parse document
@@ -40,7 +43,8 @@
                 var paragraphs = document.QuerySelectorAll("p");
                 foreach (var paragraph in paragraphs)
                 {
-                    if (string.IsNullOrWhiteSpace(paragraph.TextContent))
+                    if (string.IsNullOrWhiteSpace(paragraph.TextContent) &&
+                        paragraph.QuerySelector("img") == null)
                     {
                         document.RemoveRecursively(paragraph);
                     }
