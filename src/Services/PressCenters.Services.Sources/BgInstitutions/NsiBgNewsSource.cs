@@ -11,7 +11,7 @@
 
         protected override string GetContent(IHtmlCollection<IElement> imageAndContent)
         {
-            return imageAndContent[1].InnerHtml;
+            return imageAndContent.Length == 1 ? string.Empty : imageAndContent[1].InnerHtml;
         }
     }
 }
