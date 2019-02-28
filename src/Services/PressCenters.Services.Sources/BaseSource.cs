@@ -48,10 +48,14 @@ namespace PressCenters.Services.Sources
             }
             catch (WebException e)
             {
-                if (e.Status == WebExceptionStatus.ProtocolError
-                    && (e.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound)
+                if (e.Status == WebExceptionStatus.ProtocolError)
                 {
-                    return null;
+                    switch ((e.Response as HttpWebResponse)?.StatusCode)
+                    {
+                        case HttpStatusCode.NotFound:
+                        case HttpStatusCode.InternalServerError:
+                            return null;
+                    }
                 }
 
                 throw;

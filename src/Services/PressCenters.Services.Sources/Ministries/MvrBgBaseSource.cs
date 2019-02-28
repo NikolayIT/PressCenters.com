@@ -16,10 +16,12 @@
 
         public abstract string NewsListUrl { get; }
 
+        public abstract string NewsLinkSelector { get; }
+
         public abstract int NewsListPagesCount { get; }
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications(this.NewsListUrl, ".article__list .article .article__description a.link--clear");
+            this.GetPublications(this.NewsListUrl, this.NewsLinkSelector, count: 5);
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
@@ -38,11 +40,11 @@
                         })).GetAwaiter().GetResult();
                 var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                 var document = parser.Parse(content);
-                var links = document.QuerySelectorAll(".article__list .article .article__description a.link--clear")
+                var links = document.QuerySelectorAll(this.NewsLinkSelector)
                     .Select(x => this.NormalizeUrl(x.Attributes["href"].Value)).Where(x => !new Uri(x).PathAndQuery.Contains(":")).Distinct()
                     .ToList();
                 var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
-                Console.WriteLine($"Page {i} => {news.Count} news");
+                Console.WriteLine($"№{i} => {news.Count} news ({news.DefaultIfEmpty().Min(x => x?.PostDate)} - {news.DefaultIfEmpty().Max(x => x?.PostDate)})");
                 foreach (var remoteNews in news)
                 {
                     yield return remoteNews;
