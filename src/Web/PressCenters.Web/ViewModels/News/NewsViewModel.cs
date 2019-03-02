@@ -39,17 +39,6 @@
                 var parser = new HtmlParser();
                 var document = parser.Parse(html);
 
-                // Remove empty paragraphs
-                var paragraphs = document.QuerySelectorAll("p");
-                foreach (var paragraph in paragraphs)
-                {
-                    if (string.IsNullOrWhiteSpace(paragraph.TextContent) &&
-                        paragraph.QuerySelector("img") == null)
-                    {
-                        document.RemoveRecursively(paragraph);
-                    }
-                }
-
                 // Add .table class for tables
                 var tables = document.QuerySelectorAll("table");
                 foreach (var table in tables)

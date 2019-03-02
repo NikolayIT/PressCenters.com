@@ -79,7 +79,7 @@
             }
 
             await this.mainNewsRepository.SaveChangesAsync();
-            return new Output { Updated = updated, Error = errors };
+            return new Output { Updated = updated, Error = errors, Ok = errors == null };
         }
 
         protected override WorkerTask Recreate(WorkerTask currentTask, Input parameters) =>
