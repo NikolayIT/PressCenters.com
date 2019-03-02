@@ -9,7 +9,10 @@
     Empty RemoteId: @this.Model.CountNullNewsRemoteId
 </h4>
 
-<h4>Not processed tasks: @this.Model.NotProcessedTaskCount</h4>
+<h4>
+    Not processed tasks: @this.Model.NotProcessedTaskCount --
+    Processed: @this.Model.ProcessedTaskCount [<a asp-action="RemoveProcessed">Clear processed</a>]
+</h4>
 
 <h4>Processing tasks: @this.Model.ProcessingWorkerTasks.Count() [<a asp-action="RemoveProcessing">Clear</a>]</h4>
 @foreach (var processingTask in this.Model.ProcessingWorkerTasks)

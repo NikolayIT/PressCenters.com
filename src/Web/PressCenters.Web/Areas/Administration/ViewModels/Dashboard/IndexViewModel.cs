@@ -14,6 +14,8 @@
 
         public int NotProcessedTaskCount { get; set; }
 
+        public int ProcessedTaskCount { get; set; }
+
         public IEnumerable<WorkerTask> LastWorkerTaskErrors { get; set; }
 
         public IEnumerable<WorkerTask> ProcessingWorkerTasks { get; set; }
