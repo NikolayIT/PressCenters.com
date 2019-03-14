@@ -6,6 +6,11 @@
 
     public class MainNewsSource : BaseDeletableModel<int>
     {
+        public MainNewsSource()
+        {
+            this.MainNews = new HashSet<MainNews>();
+        }
+
         public string TypeName { get; set; }
 
         public string Name { get; set; }
