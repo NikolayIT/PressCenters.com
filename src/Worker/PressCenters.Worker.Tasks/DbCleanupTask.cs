@@ -34,7 +34,7 @@
             return new Output();
         }
 
-        protected override WorkerTask Recreate(WorkerTask currentTask, Input parameters) =>
+        protected override WorkerTask Recreate(WorkerTask currentTask, Input currentParameters, Output currentResult) =>
             new WorkerTask(currentTask, DateTime.UtcNow.AddDays(7).Date.AddHours(4));
 
         public class Input : BaseTaskInput

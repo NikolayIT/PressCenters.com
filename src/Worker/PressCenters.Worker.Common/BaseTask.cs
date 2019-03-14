@@ -30,11 +30,12 @@
 
         public WorkerTask Recreate(WorkerTask currentTask)
         {
-            var taskParameters = JsonConvert.DeserializeObject<TInput>(currentTask.Parameters);
-            return taskParameters.Recreate ? this.Recreate(currentTask, taskParameters) : null;
+            var currentParameters = JsonConvert.DeserializeObject<TInput>(currentTask.Parameters);
+            var currentResult = JsonConvert.DeserializeObject<TOutput>(currentTask.Result);
+            return currentParameters.Recreate ? this.Recreate(currentTask, currentParameters, currentResult) : null;
         }
 
-        protected virtual WorkerTask Recreate(WorkerTask currentTask, TInput parameters) => null; // Returning null means no recreation
+        protected virtual WorkerTask Recreate(WorkerTask currentTask, TInput currentParameters, TOutput currentResult) => null; // Returning null means no recreation
 
         protected abstract Task<TOutput> DoWork(TInput input);
     }

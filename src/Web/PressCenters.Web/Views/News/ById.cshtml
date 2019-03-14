@@ -38,7 +38,13 @@
     </div>
 
     <span>(@this.Model.RemoteId)</span>
-    <hr />
+    <div>
+        Tags:
+        @foreach (var tag in this.Model.Tags)
+        {
+            @tag@:,
+        }
+    </div>
 }
 
 <div class="media g-font-size-12 g-color-gray-dark-v4 g-mb-20">
@@ -52,8 +58,6 @@
 </div>
 
 <img class="img-fluid mx-auto d-block g-mb-20 g-mb-0--md" src="@this.Model.ImageUrl" alt="@this.Model.Title" title="@this.Model.Title">
-
-<hr />
 
 <article>
     @this.Html.Raw(this.Model.SanitizedContent)

@@ -59,7 +59,7 @@
             return new Output { Added = added };
         }
 
-        protected override WorkerTask Recreate(WorkerTask currentTask, Input parameters) =>
+        protected override WorkerTask Recreate(WorkerTask currentTask, Input currentParameters, Output currentResult) =>
             new WorkerTask(currentTask, DateTime.UtcNow.AddSeconds(150));
 
         public class Input : BaseTaskInput

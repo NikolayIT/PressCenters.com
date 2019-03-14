@@ -1,12 +1,16 @@
 ﻿namespace PressCenters.Web.ViewModels.News
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
     using System.Net;
     using System.Text.RegularExpressions;
 
     using AngleSharp.Extensions;
     using AngleSharp.Parser.Html;
+
+    using AutoMapper;
 
     using Ganss.XSS;
 
@@ -14,9 +18,8 @@
     using PressCenters.Data.Models;
     using PressCenters.Services;
     using PressCenters.Services.Mapping;
-    using PressCenters.Services.Sources;
 
-    public class NewsViewModel : IMapFrom<News>
+    public class NewsViewModel : IMapFrom<News>, IHaveCustomMappings
     {
         public int Id { get; set; }
 
@@ -90,6 +93,8 @@
 
         public string SourceUrl { get; set; }
 
+        public IEnumerable<string> Tags { get; set; }
+
         public string ShorterOriginalUrl
         {
             get
@@ -111,5 +116,12 @@
                 : this.CreatedOn.ToString("ddd, dd MMM yyyy HH:mm", new CultureInfo("bg-BG"));
 
         public string Url => $"/News/{this.Id}/{new SlugGenerator().GenerateSlug(this.Title)}";
+
+        public void CreateMappings(IMapperConfigurationExpression configuration)
+        {
+            configuration.CreateMap<News, NewsViewModel>().ForMember(
+                m => m.Tags,
+                opt => opt.MapFrom(x => x.Tags.Select(t => t.Tag.Name)));
+        }
     }
 }
