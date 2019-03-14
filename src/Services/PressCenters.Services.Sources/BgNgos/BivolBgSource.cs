@@ -56,7 +56,7 @@
             }
 
             var timeAsString = document.QuerySelector(".post-box-meta-single time.entry-date")?.Attributes["datetime"]?.Value;
-            var time = DateTime.Parse(timeAsString, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal);
+            var time = DateTime.Parse(timeAsString, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal).AddHours(2); // TODO: Remove .AddHours when move to UTC
 
             var imageElement = document.QuerySelector(".post-image a");
             var imageUrl = imageElement?.GetAttribute("href") ?? "/images/sources/bivol.bg.jpg";

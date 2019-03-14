@@ -30,8 +30,8 @@
 
         public WorkerTask Recreate(WorkerTask currentTask)
         {
-            var currentParameters = JsonConvert.DeserializeObject<TInput>(currentTask.Parameters);
-            var currentResult = JsonConvert.DeserializeObject<TOutput>(currentTask.Result);
+            var currentParameters = JsonConvert.DeserializeObject<TInput>(currentTask.Parameters ?? string.Empty);
+            var currentResult = JsonConvert.DeserializeObject<TOutput>(currentTask.Result ?? string.Empty);
             return currentParameters.Recreate ? this.Recreate(currentTask, currentParameters, currentResult) : null;
         }
 

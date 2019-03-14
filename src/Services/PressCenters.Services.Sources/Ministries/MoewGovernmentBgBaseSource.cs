@@ -40,7 +40,7 @@
             var time = DateTime.ParseExact(timeAsString, "dd MMMM yyyy | HH:mm", CultureInfo.GetCultureInfo("bg-BG"));
 
             var imageElement = document.QuerySelector(".content-box .image-container img");
-            var imageUrl = imageElement?.GetAttribute("src");
+            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/moew.government.bg.jpg";
 
             var contentElement = document.QuerySelector(".description_holder_div");
             this.NormalizeUrlsRecursively(contentElement);
