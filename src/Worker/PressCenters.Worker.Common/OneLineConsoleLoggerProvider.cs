@@ -1,4 +1,4 @@
-﻿namespace PressCenters.Worker.Runner
+﻿namespace PressCenters.Worker.Common
 {
     using System;
 

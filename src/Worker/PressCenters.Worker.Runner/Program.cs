@@ -97,6 +97,7 @@
             // Application services
             services.AddTransient<ISettingsService, SettingsService>();
             services.AddTransient<INewsService, NewsService>();
+            services.AddTransient<ITagsService, TagsService>();
             services.AddTransient<IWorkerTasksDataService, WorkerTasksDataService>();
 
             // Register TaskRunnerHostedService

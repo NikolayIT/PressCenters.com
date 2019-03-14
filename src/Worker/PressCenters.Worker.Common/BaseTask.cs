@@ -8,12 +8,12 @@
     using PressCenters.Data.Models;
 
     public abstract class BaseTask<TInput, TOutput> : ITask
-        where TInput : BaseTaskInput
+        where TInput : BaseTaskInput, new()
         where TOutput : BaseTaskOutput, new()
     {
         public async Task<string> DoWork(string parameters)
         {
-            var taskParameters = JsonConvert.DeserializeObject<TInput>(parameters);
+            var taskParameters = JsonConvert.DeserializeObject<TInput>(parameters) ?? new TInput();
             TOutput taskResult;
             try
             {

@@ -2,7 +2,7 @@
   "profiles": {
     "Sandbox": {
       "commandName": "Project",
-      "commandLineArgs": "task -t \"DbCleanupTask\""
+      "commandLineArgs": "task -t \"NewsTagsTask\""
     }
   }
 }

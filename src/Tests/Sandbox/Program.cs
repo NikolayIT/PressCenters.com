@@ -63,6 +63,7 @@
             var sw = Stopwatch.StartNew();
 
             var newsService = serviceProvider.GetService<INewsService>();
+            var tagsService = serviceProvider.GetService<ITagsService>();
             var sourcesRepository = serviceProvider.GetService<IDeletableEntityRepository<Source>>();
             foreach (var source in sourcesRepository.All().ToList())
             {
@@ -103,7 +104,8 @@
                 }
 
                 var sw = Stopwatch.StartNew();
-                task.DoWork(options.Parameters);
+                var result = task.DoWork(options.Parameters).GetAwaiter().GetResult();
+                Console.WriteLine($"Result: {result}");
                 Console.WriteLine($"Time elapsed: {sw.Elapsed}");
             }
             catch (Exception ex)
@@ -135,6 +137,13 @@
                 .AddRoleStore<ApplicationRoleStore>()
                 .AddDefaultTokenProviders();
 
+            services.AddSingleton<ILoggerFactory>(
+                provider =>
+                {
+                    var factory = new LoggerFactory();
+                    factory.AddProvider(new OneLineConsoleLoggerProvider(true));
+                    return factory;
+                });
             services.AddScoped(typeof(IDeletableEntityRepository<>), typeof(EfDeletableEntityRepository<>));
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
             services.AddScoped<IDbQueryRunner, DbQueryRunner>();
@@ -144,6 +153,7 @@
             services.AddTransient<ISmsSender, NullMessageSender>();
             services.AddTransient<ISettingsService, SettingsService>();
             services.AddTransient<INewsService, NewsService>();
+            services.AddTransient<ITagsService, TagsService>();
             services.AddTransient<IWorkerTasksDataService, WorkerTasksDataService>();
         }
     }
