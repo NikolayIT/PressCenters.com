@@ -30,6 +30,10 @@
 
         public DbSet<News> News { get; set; }
 
+        public DbSet<Tag> Tags { get; set; }
+
+        public DbSet<NewsTag> NewsTags { get; set; }
+
         public DbSet<MainNewsSource> MainNewsSources { get; set; }
 
         public DbSet<MainNews> MainNews { get; set; }
