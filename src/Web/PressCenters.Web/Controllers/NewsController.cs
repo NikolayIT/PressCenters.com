@@ -24,11 +24,6 @@
 
         public IActionResult List(int id, string search)
         {
-            if (!this.User.IsInRole(GlobalConstants.ProUserRoleName))
-            {
-                search = null;
-            }
-
             id = Math.Max(1, id);
             var skip = (id - 1) * ItemsPerPage;
             var query = this.newsRepository.All();

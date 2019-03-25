@@ -16,7 +16,7 @@
     <h3>Търсене за "@this.Model.Search", страница @this.Model.CurrentPage, резултати @this.Model.NewsCount</h3>
 }
 
-@if (this.User.IsInRole(GlobalConstants.ProUserRoleName))
+@if (this.User.Identity.IsAuthenticated)
 {
     <form method="get" asp-controller="News" asp-action="List" asp-route-id="1">
         <div class="input-group mb-4">

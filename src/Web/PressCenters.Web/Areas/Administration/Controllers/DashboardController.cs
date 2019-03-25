@@ -16,15 +16,19 @@
 
         private readonly IDeletableEntityRepository<News> newsRepository;
 
+        private readonly IDeletableEntityRepository<ApplicationUser> usersRepository;
+
         private readonly IDbQueryRunner queryRunner;
 
         public DashboardController(
             IRepository<WorkerTask> workerTasksRepository,
             IDeletableEntityRepository<News> newsRepository,
+            IDeletableEntityRepository<ApplicationUser> usersRepository,
             IDbQueryRunner queryRunner)
         {
             this.workerTasksRepository = workerTasksRepository;
             this.newsRepository = newsRepository;
+            this.usersRepository = usersRepository;
             this.queryRunner = queryRunner;
         }
 
@@ -32,6 +36,7 @@
         {
             var viewModel = new IndexViewModel
                             {
+                                UsersCount = this.usersRepository.All().Count(),
                                 CountNullNewsImageUrls = this.newsRepository.All().Count(x => string.IsNullOrWhiteSpace(x.ImageUrl)),
                                 CountNullNewsOriginalUrl = this.newsRepository.All().Count(x => string.IsNullOrWhiteSpace(x.OriginalUrl)),
                                 CountNullNewsRemoteId = this.newsRepository.All().Count(x => string.IsNullOrWhiteSpace(x.RemoteId)),
