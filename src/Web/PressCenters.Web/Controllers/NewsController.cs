@@ -4,6 +4,7 @@
     using System.Linq;
 
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
 
     using PressCenters.Common;
     using PressCenters.Data.Common.Repositories;
@@ -33,7 +34,8 @@
             {
                 foreach (var word in words)
                 {
-                    query = query.Where(x => x.SearchText.Contains(word));
+                    query = query.Where(c => EF.Functions.FreeText(c.SearchText, word));
+                    //// query = query.Where(x => x.SearchText.Contains(word));
                 }
             }
 
