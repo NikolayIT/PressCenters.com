@@ -22,6 +22,7 @@
     using PressCenters.Data.Models;
     using PressCenters.Data.Repositories;
     using PressCenters.Data.Seeding;
+    using PressCenters.Services;
     using PressCenters.Services.Data;
     using PressCenters.Services.Mapping;
     using PressCenters.Services.Messaging;
@@ -116,6 +117,7 @@
             services.AddTransient<INewsService, NewsService>();
             services.AddTransient<ISourcesService, SourcesService>();
             services.AddTransient<IMainNewsSourcesService, MainNewsSourcesService>();
+            services.AddTransient<ISlugGenerator, SlugGenerator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
