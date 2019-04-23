@@ -63,23 +63,7 @@
             }
         }
 
-        public string ShortContent
-        {
-            get
-            {
-                // TODO: Extract as a service
-                const int MaxLength = 235;
-                var htmlSanitizer = new HtmlSanitizer();
-                var html = htmlSanitizer.Sanitize(this.Content);
-                var strippedContent = WebUtility.HtmlDecode(html?.StripHtml() ?? string.Empty);
-                strippedContent = strippedContent.Replace("\n", " ");
-                strippedContent = strippedContent.Replace("\t", " ");
-                strippedContent = Regex.Replace(strippedContent, @"\s+", " ").Trim();
-                return strippedContent.Length <= MaxLength
-                           ? strippedContent
-                           : strippedContent.Substring(0, MaxLength) + "...";
-            }
-        }
+        public string ShortContent => this.GetShortContent(235);
 
         public string ImageUrl { get; set; }
 
@@ -122,6 +106,18 @@
             configuration.CreateMap<News, NewsViewModel>().ForMember(
                 m => m.Tags,
                 opt => opt.MapFrom(x => x.Tags.Select(t => t.Tag.Name)));
+        }
+
+        public string GetShortContent(int maxLength)
+        {
+            // TODO: Extract as a service
+            var htmlSanitizer = new HtmlSanitizer();
+            var html = htmlSanitizer.Sanitize(this.Content);
+            var strippedContent = WebUtility.HtmlDecode(html?.StripHtml() ?? string.Empty);
+            strippedContent = strippedContent.Replace("\n", " ");
+            strippedContent = strippedContent.Replace("\t", " ");
+            strippedContent = Regex.Replace(strippedContent, @"\s+", " ").Trim();
+            return strippedContent.Length <= maxLength ? strippedContent : strippedContent.Substring(0, maxLength) + "...";
         }
     }
 }

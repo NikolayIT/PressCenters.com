@@ -18,7 +18,10 @@
             <div id="source-body-@source.Id" class="collapse" role="tabpanel" aria-labelledby="accordion-06-heading-01" data-parent="#sources-list">
                 <div class="u-accordion__body g-color-gray-dark-v5 g-pa-0-20-20 text-justify">
                     @source.Description
-                    <a class="float-right" href="@source.Url" target="_blank">Към сайта...</a>
+                    <div class="float-right">
+                        <a asp-controller="Rss" asp-action="Latest" asp-route-id="@source.Id" target="_blank">RSS</a> /
+                        <a href="@source.Url" target="_blank">Към сайта...</a>
+                    </div>
                 </div>
             </div>
         </div>

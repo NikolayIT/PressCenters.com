@@ -14,6 +14,8 @@
     using PressCenters.Data.Common.Repositories;
     using PressCenters.Data.Models;
     using PressCenters.Services;
+    using PressCenters.Services.Mapping;
+    using PressCenters.Web.ViewModels.News;
 
     [AllowAnonymous]
     public class RssController : BaseController
@@ -22,12 +24,9 @@
 
         private readonly IDeletableEntityRepository<News> newsRepository;
 
-        private readonly ISlugGenerator slugGenerator;
-
-        public RssController(IDeletableEntityRepository<News> newsRepository, ISlugGenerator slugGenerator)
+        public RssController(IDeletableEntityRepository<News> newsRepository)
         {
             this.newsRepository = newsRepository;
-            this.slugGenerator = slugGenerator;
         }
 
         public async Task<IActionResult> Latest(int? id)
@@ -46,13 +45,18 @@
                 query = query.Where(x => x.SourceId == id);
             }
 
-            var news = await query.OrderByDescending(x => x.CreatedOn).Take(NewsCount)
-                           .Select(x => new { x.Id, x.Title, x.CreatedOn, SourceName = x.Source.Name }).ToListAsync();
+            var news = await query.OrderByDescending(x => x.CreatedOn).Take(NewsCount).To<NewsViewModel>().ToListAsync();
 
             foreach (var newsItem in news)
             {
-                var url = $"{GlobalConstants.SystemBaseUrl}/News/{newsItem.Id}/{this.slugGenerator.GenerateSlug(newsItem.Title)}";
-                sb.AppendLine($"<item><title>{WebUtility.HtmlEncode(newsItem.Title)}</title><link>{url}</link><pubDate>{newsItem.CreatedOn:R}</pubDate><category>{newsItem.SourceName}</category></item>");
+                sb.AppendLine($@"<item>
+    <title>{newsItem.SourceShortName}: {WebUtility.HtmlEncode(newsItem.Title)}</title>
+    <link>{GlobalConstants.SystemBaseUrl}{newsItem.Url}</link>
+    <description>{newsItem.GetShortContent(10000)}</description>
+    <pubDate>{newsItem.CreatedOn.AddHours(-3):ddd, dd MMM yyyy HH:mm:ss zzz}</pubDate>
+    <category>{newsItem.SourceName}</category>
+    <guid>{GlobalConstants.SystemBaseUrl}{newsItem.Url}</guid>
+</item>");
             }
 
             sb.AppendLine("</channel>");
