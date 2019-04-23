@@ -3,6 +3,7 @@
     public static class GlobalConstants
     {
         public const string SystemName = "PressCenters.com";
+        public const string SystemBaseUrl = "https://presscenters.com";
 
         public const string SystemSlogan = "Новините без редакция";
 

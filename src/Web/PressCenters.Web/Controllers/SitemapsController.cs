@@ -9,6 +9,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
 
+    using PressCenters.Common;
     using PressCenters.Data.Common.Repositories;
     using PressCenters.Data.Models;
     using PressCenters.Services;
@@ -16,7 +17,6 @@
     [AllowAnonymous]
     public class SitemapsController : BaseController
     {
-        private const string BaseUrl = "https://presscenters.com";
         private const int UrlsPerFile = 50000;
 
         private readonly IDeletableEntityRepository<News> newsRepository;
@@ -40,7 +40,7 @@
 
             foreach (var newsItem in news)
             {
-                var url = $"{BaseUrl}/News/{newsItem.Id}/{this.slugGenerator.GenerateSlug(newsItem.Title)}";
+                var url = $"{GlobalConstants.SystemBaseUrl}/News/{newsItem.Id}/{this.slugGenerator.GenerateSlug(newsItem.Title)}";
                 sb.AppendLine($"<url><loc>{url}</loc><lastmod>{newsItem.CreatedOn:yyyy-MM-dd}</lastmod></url>");
             }
 
