@@ -2,6 +2,7 @@
 @model PressCenters.Web.ViewModels.News.NewsViewModel
 @{
     this.ViewData["Title"] = this.Model.Title;
+    this.ViewData["Description"] = this.Model.ShortContent;
 }
 
 <h3 class="g-mb-15">@this.Model.Title</h3>

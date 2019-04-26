@@ -13,7 +13,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@(this.ViewData["Title"] ?? GlobalConstants.SystemSlogan) - @GlobalConstants.SystemName</title>
-    <meta name="description" content="Най-новите прессъобщения и новини от над 40 източника.">
+    <meta name="description" content="@(this.ViewData["Description"] ?? "Най-новите прессъобщения и новини от над 40 източника.")">
     <link rel="alternate" type="application/rss+xml" title="Последните новини" href="/Rss/Latest" />
 
     <environment names="Development">
