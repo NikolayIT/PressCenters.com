@@ -5,7 +5,7 @@
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
 
-    using AngleSharp.Parser.Html;
+    using AngleSharp.Html.Parser;
 
     using PressCenters.Data.Common.Repositories;
     using PressCenters.Data.Models;
@@ -78,7 +78,7 @@
         {
             // Get only text from content
             var parser = new HtmlParser();
-            var document = parser.Parse($"<html><body>{news.Content}</body></html>");
+            var document = parser.ParseDocument($"<html><body>{news.Content}</body></html>");
 
             // Append title
             var text = news.Title + " " + document.Body.TextContent;

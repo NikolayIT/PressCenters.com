@@ -8,7 +8,7 @@
     using System.Net.Http;
 
     using AngleSharp.Dom;
-    using AngleSharp.Parser.Html;
+    using AngleSharp.Html.Parser;
 
     public abstract class MvrBgBaseSource : BaseSource
     {
@@ -39,7 +39,7 @@
                             new KeyValuePair<string, string>("page_size", "24"),
                         })).GetAwaiter().GetResult();
                 var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                var document = parser.Parse(content);
+                var document = parser.ParseDocument(content);
                 var links = document.QuerySelectorAll(this.NewsLinkSelector)
                     .Select(x => this.NormalizeUrl(x.Attributes["href"].Value)).Where(x => !new Uri(x).PathAndQuery.Contains(":")).Distinct()
                     .ToList();

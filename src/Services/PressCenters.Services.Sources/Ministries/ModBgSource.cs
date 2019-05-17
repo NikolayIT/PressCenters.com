@@ -75,7 +75,7 @@
 
         private IList<RemoteNews> GetNews(string address, int count = 0)
         {
-            var document = this.Parser.Parse(this.ReadStringFromUrl(address));
+            var document = this.Parser.ParseDocument(this.ReadStringFromUrl(address));
             var links = document.QuerySelectorAll("#cat1 .tablelist2 a").Select(x => x?.Attributes["href"]?.Value)
                 .Where(x => x?.Contains("show(") == true).Select(
                     x => $"{this.BaseUrl}bg/news.php?fn_mode=fullnews&fn_id={x.GetStringBetween("show(", ");")}").ToList();

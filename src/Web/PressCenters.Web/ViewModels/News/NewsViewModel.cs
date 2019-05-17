@@ -7,8 +7,8 @@
     using System.Net;
     using System.Text.RegularExpressions;
 
-    using AngleSharp.Extensions;
-    using AngleSharp.Parser.Html;
+    using AngleSharp;
+    using AngleSharp.Html.Parser;
 
     using AutoMapper;
 
@@ -40,7 +40,7 @@
 
                 // Parse document
                 var parser = new HtmlParser();
-                var document = parser.Parse(html);
+                var document = parser.ParseDocument(html);
 
                 // Add .table class for tables
                 var tables = document.QuerySelectorAll("table");

@@ -22,7 +22,7 @@
         {
             for (var page = 1; page <= 105; page++)
             {
-                var document = this.Parser.Parse(this.ReadStringFromUrl($"{this.BaseUrl}bg/novini/?pg={page}"));
+                var document = this.Parser.ParseDocument(this.ReadStringFromUrl($"{this.BaseUrl}bg/novini/?pg={page}"));
                 var newsElements = document.QuerySelectorAll(".first-child-no-margin-top .margin-bottom-20");
                 var newsCount = 0;
                 foreach (var newsElement in newsElements)

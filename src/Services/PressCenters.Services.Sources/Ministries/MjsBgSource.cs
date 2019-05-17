@@ -6,7 +6,7 @@
     using System.Linq;
 
     using AngleSharp.Dom;
-    using AngleSharp.Parser.Html;
+    using AngleSharp.Html.Parser;
 
     using Newtonsoft.Json;
 
@@ -91,14 +91,14 @@
             }
 
             var parser = new HtmlParser();
-            var url = parser.Parse(newsAsJson.Info)?.QuerySelector("a")?.Attributes["href"]?.Value?.TrimStart('/');
+            var url = parser.ParseDocument(newsAsJson.Info)?.QuerySelector("a")?.Attributes["href"]?.Value?.TrimStart('/');
             if (string.IsNullOrWhiteSpace(url))
             {
                 return null;
             }
 
             url = this.NormalizeUrl(url);
-            var imageUrl = parser.Parse(newsAsJson.Img)?.QuerySelector("img")?.Attributes["src"]?.Value;
+            var imageUrl = parser.ParseDocument(newsAsJson.Img)?.QuerySelector("img")?.Attributes["src"]?.Value;
             var remoteNews = this.GetPublication(url);
             if (remoteNews == null)
             {

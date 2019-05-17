@@ -22,7 +22,7 @@
         {
             for (var page = 1; page <= 12; page++)
             {
-                var document = this.Parser.Parse(this.ReadStringFromUrl($"{this.BaseUrl}bg/novini_c61/{page}"));
+                var document = this.Parser.ParseDocument(this.ReadStringFromUrl($"{this.BaseUrl}bg/novini_c61/{page}"));
                 var newsElements = document.QuerySelectorAll(".card-section");
                 var newsCount = 0;
                 foreach (var newsElement in newsElements)

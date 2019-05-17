@@ -3,7 +3,7 @@
     using System.Net.Http;
 
     using AngleSharp.Dom;
-    using AngleSharp.Parser.Html;
+    using AngleSharp.Html.Parser;
 
     using PressCenters.Common;
 
@@ -19,7 +19,7 @@
             var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Add("User-Agent", GlobalConstants.DefaultUserAgent);
             var html = httpClient.GetStringAsync(url).GetAwaiter().GetResult();
-            var document = parser.Parse(html);
+            var document = parser.ParseDocument(html);
             return document;
         }
     }

@@ -10,8 +10,8 @@ namespace PressCenters.Services.Sources
     using System.Text.RegularExpressions;
 
     using AngleSharp.Dom;
-    using AngleSharp.Dom.Html;
-    using AngleSharp.Parser.Html;
+    using AngleSharp.Html.Dom;
+    using AngleSharp.Html.Parser;
 
     using PressCenters.Common;
 
@@ -44,7 +44,7 @@ namespace PressCenters.Services.Sources
             IHtmlDocument document;
             try
             {
-                document = this.Parser.Parse(this.ReadStringFromUrl(urlToLoad));
+                document = this.Parser.ParseDocument(this.ReadStringFromUrl(urlToLoad));
             }
             catch (WebException e)
             {
@@ -112,7 +112,7 @@ namespace PressCenters.Services.Sources
 
         protected IList<RemoteNews> GetPublications(string address, string anchorSelector, string urlShouldContain = "", int count = 0)
         {
-            var document = this.Parser.Parse(this.ReadStringFromUrl($"{this.BaseUrl}{address}"));
+            var document = this.Parser.ParseDocument(this.ReadStringFromUrl($"{this.BaseUrl}{address}"));
             var links = document.QuerySelectorAll(anchorSelector)
                 .Select(x => this.NormalizeUrl(x?.Attributes["href"]?.Value))
                 .Where(x => x?.Contains(urlShouldContain) == true).Distinct();

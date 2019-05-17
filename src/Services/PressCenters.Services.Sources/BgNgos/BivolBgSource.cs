@@ -7,7 +7,7 @@
     using System.Net;
 
     using AngleSharp.Dom;
-    using AngleSharp.Parser.Xml;
+    using AngleSharp.Xml.Parser;
 
     using PressCenters.Common;
 
@@ -21,7 +21,7 @@
         public override IEnumerable<RemoteNews> GetLatestPublications()
         {
             var parser = new XmlParser();
-            var document = parser.Parse(
+            var document = parser.ParseDocument(
                 this.ReadStringFromUrl($"{this.BaseUrl}feed").Replace(
                     "xmlns:georss=\"http://www.georss.org/georss\"",
                     string.Empty));
