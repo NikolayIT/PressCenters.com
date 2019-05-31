@@ -53,8 +53,11 @@
         <a href="@this.Model.SourceUrl" taget="_blank">@this.Model.SourceName</a>
         <span class="g-mx-6">/</span>
         <time>@this.Model.CreatedOnAsString</time>
-        <span class="g-mx-6">/</span>
-        <a href="@this.Model.OriginalUrl" target="_blank">@this.Model.ShorterOriginalUrl</a>
+        @if (this.Model.OriginalUrl != null)
+        {
+            <span class="g-mx-6">/</span>
+            <a href="@this.Model.OriginalUrl" target="_blank">@this.Model.ShorterOriginalUrl</a>
+        }
     </div>
 </div>
 

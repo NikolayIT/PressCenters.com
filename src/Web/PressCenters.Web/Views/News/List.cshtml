@@ -33,7 +33,13 @@
     <article class="g-mb-20 clearfix">
         <div class="g-pos-rel px-2">
             <h3 class="h5">
-                <a class="u-link-v5 g-color-black g-color-primary--hover" href="@news.Url"><span title="@news.SourceName">@news.SourceShortName</span>: @news.Title</a>
+                <a class="u-link-v5 g-color-black g-color-primary--hover" href="@news.Url">
+                    @if (!string.IsNullOrWhiteSpace(news.SourceShortName))
+                    {
+                        <span title="@news.SourceName">@news.SourceShortName:</span>
+                    }
+                    @news.Title
+                </a>
             </h3>
             <div class="media">
                 <a class="d-flex mr-2">

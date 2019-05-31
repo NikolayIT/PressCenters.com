@@ -83,6 +83,11 @@
         {
             get
             {
+                if (this.OriginalUrl == null)
+                {
+                    return string.Empty;
+                }
+
                 if (this.OriginalUrl.Length <= 65)
                 {
                     return this.OriginalUrl;
