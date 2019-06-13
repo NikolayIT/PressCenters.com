@@ -106,7 +106,7 @@
 
         public string Url => $"/News/{this.Id}/{new SlugGenerator().GenerateSlug(this.Title)}";
 
-        public void CreateMappings(IMapperConfigurationExpression configuration)
+        public void CreateMappings(IProfileExpression configuration)
         {
             configuration.CreateMap<News, NewsViewModel>().ForMember(
                 m => m.Tags,

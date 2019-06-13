@@ -5,6 +5,7 @@
     <UserSecretsId>aspnet-PressCenters-BBB373B5-EF3F-4DBB-B8AA-7152CEC275BF</UserSecretsId>
 	  <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <LangVersion>latest</LangVersion>
+    <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -23,7 +24,7 @@
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="2.9.406" />
     <PackageReference Include="HtmlSanitizer" Version="5.0.215-beta" />
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.6.1" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.0.48" />
