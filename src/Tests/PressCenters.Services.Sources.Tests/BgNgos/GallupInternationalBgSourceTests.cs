@@ -10,8 +10,8 @@
     public class GallupInternationalBgSourceTests
     {
         [Theory]
-        [InlineData("http://gallup-international.bg/bg/%D0%9F%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D0%B8/85-2019/475-Express-Opinion-Poll-on-Current-Issues", "475")]
-        [InlineData("http://gallup-international.bg/bg/%D0%9F%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D0%B8/2011/141-438-%D0%BB%D0%B2-%D0%BC%D0%B8%D0%BD%D0%B8%D0%BC%D0%B0%D0%BB%D0%BD%D0%B0-%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BD%D0%B0-%D0%B7%D0%B0%D0%BF%D0%BB%D0%B0%D1%82%D0%B0-%D0%B8%D1%81%D0%BA%D0%B0%D1%82-%D0%B1%D1%8A%D0%BB%D0%B3%D0%B0%D1%80%D0%B8%D1%82%D0%B5", "141")]
+        [InlineData("http://www.gallup-international.bg/41142/gallup-international-is-a-partner-in-a-key-project-for-dual-education/", "41142")]
+        [InlineData("http://www.gallup-international.bg/41107/electoral-profiles-general-elections-2019", "41107")]
         public void ExtractIdFromPressUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new GallupInternationalBgSource();
@@ -22,19 +22,19 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "http://www.gallup-international.bg/bg/%D0%9F%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D0%B8/1-2000/468-link";
+            const string NewsUrl = "http://www.gallup-international.bg/41285/attitudes-towards-democracy/";
             var provider = new GallupInternationalBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Експресен сондаж по актуални теми", news.Title);
-            Assert.Contains("Обществото по-скоро съчувства на Елена Йончева в създалия се политически казус", news.Content);
-            Assert.Contains("Gallup International Association or its members are not related to Gallup Inc.", news.Content);
-            Assert.Contains("gallup-international.bg/images/2019/Ekspresen sondaj-Ioncheva/Picture3.png", news.Content);
-            Assert.DoesNotContain("Следваща >", news.Content);
-            Assert.DoesNotContain("01 Февруари 2019", news.Content);
-            Assert.Equal("/images/sources/gallup-international.bg.png", news.ImageUrl);
-            Assert.Equal(new DateTime(2019, 2, 1, 9, 1, 0), news.PostDate);
-            Assert.Equal("468", news.RemoteId);
+            Assert.Equal("По света харесват демокрацията. У нас също я харесваме, но по-малко. Вярата в демокрацията изглежда в опасност.", news.Title);
+            Assert.Contains("76% от хората по света се съгласяват с твърдението, че демокрацията може да има недостатъци, но е най-добрата форма на управление", news.Content);
+            Assert.Contains("България е в съзвучие със страните в Източна Европа, които споделят по-скоро позитивни оценки за демокрацията, на не в особено висока степен.", news.Content);
+            Assert.Contains("Ако у нас наистина убедеността в качеството на демокрацията трайно спада, въпросът следва да получи адекватно внимание, защото е повод за тревога.", news.Content);
+            Assert.DoesNotContain("Вътрешна политика", news.Content);
+            Assert.DoesNotContain("26 юни 2019", news.Content);
+            Assert.Equal("http://www.gallup-international.bg/files/2019/02/vote-3569999_1280.jpg", news.ImageUrl);
+            Assert.Equal(new DateTime(2019, 6, 26, 10, 17, 17), news.PostDate);
+            Assert.Equal("41285", news.RemoteId);
         }
 
         [Fact]
@@ -42,7 +42,7 @@
         {
             var provider = new GallupInternationalBgSource();
             var result = provider.GetLatestPublications();
-            Assert.Equal(5, result.Count());
+            Assert.Equal(6, result.Count());
         }
     }
 }
