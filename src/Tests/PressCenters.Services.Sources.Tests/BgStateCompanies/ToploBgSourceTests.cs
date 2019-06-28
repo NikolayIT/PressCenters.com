@@ -22,18 +22,18 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://toplo.bg/news/2018/12/17/kolednaigra2018";
+            const string NewsUrl = "https://toplo.bg/news/2019/06/24/1-11";
             var provider = new ToploBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Коледна игра 2018", news.Title);
-            Assert.Equal("2018/12/17/kolednaigra2018", news.RemoteId);
-            Assert.Equal(new DateTime(2018, 12, 17), news.PostDate.Date);
-            Assert.Contains("Днес, 17.12.2018, в навечерието на коледните и новогодишни празници стартираме традиционната ни", news.Content);
-            Assert.Contains("Организаторът на „Коледната игра“ не е отговорен", news.Content);
-            Assert.Contains("или на фейсбук страницата", news.Content);
-            Assert.DoesNotContain("images/blog/1200x350.png", news.Content);
-            Assert.Equal("https://toplo.bg/assets/images/blog/1200x350.png", news.ImageUrl);
+            Assert.Equal("Профилактика в кв. „Младост\" 1, кв. „Мусагеница\", кв. „Студентски град\", кв. „Дървеница\" и кв.Витоша", news.Title);
+            Assert.Equal("2019/06/24/1-11", news.RemoteId);
+            Assert.Equal(new DateTime(2019, 6, 24), news.PostDate.Date);
+            Assert.Contains("„Топлофикация София” ЕАД съобщава на своите клиенти, че", news.Content);
+            Assert.Contains("хотел „Вега“, офис сграда „Трелеборг“,НХА", news.Content);
+            Assert.Contains("“Топлофикация София” ЕАД поднася своите извинения на засегнатите клиенти за причиненото неудобство и разчита на тяхното разбиране.", news.Content);
+            Assert.DoesNotContain("blog/URBAN_WORN.png", news.Content);
+            Assert.Equal("https://toplo.bg/assets/images/blog/URBAN_WORN.png", news.ImageUrl);
         }
 
         [Fact]
