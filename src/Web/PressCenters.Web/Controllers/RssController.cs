@@ -52,7 +52,7 @@
                 sb.AppendLine($@"<item>
     <title>{newsItem.SourceShortName}: {WebUtility.HtmlEncode(newsItem.Title)}</title>
     <link>{GlobalConstants.SystemBaseUrl}{newsItem.Url}</link>
-    <description>{newsItem.GetShortContent(10000)}</description>
+    <description>{WebUtility.HtmlEncode(newsItem.GetShortContent(10000))}</description>
     <pubDate>{newsItem.CreatedOn:ddd, dd MMM yyyy HH:mm:ss zzz}</pubDate>
     <category>{newsItem.SourceName}</category>
     <guid>{GlobalConstants.SystemBaseUrl}{newsItem.Url}</guid>
