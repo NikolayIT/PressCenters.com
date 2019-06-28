@@ -44,19 +44,20 @@
                 return null;
             }
 
-            var timeElement = document.QuerySelector("#news .date");
+            var timeElement = document.QuerySelector("#content .single-news-date");
             var timeAsString = timeElement?.TextContent?.Trim();
             timeAsString = timeAsString.Replace(".-0001", ".1999");
             var time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy г.", CultureInfo.InvariantCulture);
 
-            var contentElement = document.QuerySelector("#news");
+            var contentElement = document.QuerySelector("#content .inner-content");
             contentElement.RemoveRecursively(document.QuerySelector("#social"));
 
-            var imageElement = contentElement?.QuerySelector("#news img");
+            var imageElement = contentElement?.QuerySelector("#content img");
             var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/minfin.bg.jpg";
 
             contentElement.RemoveRecursively(timeElement);
-            contentElement.RemoveRecursively(document.QuerySelector("#news .news_images")); // All images
+            contentElement.RemoveRecursively(imageElement);
+            contentElement.RemoveRecursively(document.QuerySelector("#content .news_images")); // All images
             this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement?.InnerHtml;
             if (string.IsNullOrWhiteSpace(content) || content == "<p></p>")

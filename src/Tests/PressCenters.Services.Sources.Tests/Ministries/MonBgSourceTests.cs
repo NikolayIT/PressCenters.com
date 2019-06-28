@@ -45,7 +45,7 @@
             var provider = new MonBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Министър Клисарова Поздрави Катедрата По Български Език В Университета „Йотвьош Лоранд“ В Будапеща", news.Title);
+            Assert.Equal("Министър Клисарова Поздрави Катедрата По Български Език В Университета „Йотвьош Лоранд“  В Будапеща", news.Title);
             Assert.Contains("Министърът на образованието и науката проф. Анелия Клисарова", news.Content);
             Assert.Contains("България, Унгария, Чехия, Германия, Австрия, Русия, Румъния, Словения.", news.Content);
             Assert.DoesNotContain("soc-facebook", news.Content);
