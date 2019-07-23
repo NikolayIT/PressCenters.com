@@ -26,13 +26,13 @@
             var provider = new GallupInternationalBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("По света харесват демокрацията. У нас също я харесваме, но по-малко. Вярата в демокрацията изглежда в опасност.", news.Title);
+            Assert.Equal("По света харесват демокрацията. У нас също я харесваме, но по-малко. Вярата в демокрацията изглежда в опасност", news.Title);
             Assert.Contains("76% от хората по света се съгласяват с твърдението, че демокрацията може да има недостатъци, но е най-добрата форма на управление", news.Content);
             Assert.Contains("България е в съзвучие със страните в Източна Европа, които споделят по-скоро позитивни оценки за демокрацията, на не в особено висока степен.", news.Content);
             Assert.Contains("Ако у нас наистина убедеността в качеството на демокрацията трайно спада, въпросът следва да получи адекватно внимание, защото е повод за тревога.", news.Content);
             Assert.DoesNotContain("Вътрешна политика", news.Content);
             Assert.DoesNotContain("26 юни 2019", news.Content);
-            Assert.Equal("http://www.gallup-international.bg/files/2019/02/vote-3569999_1280.jpg", news.ImageUrl);
+            Assert.Equal("http://www.gallup-international.bg/files/2019/02/vote-3569999_1280-730x450.jpg", news.ImageUrl);
             Assert.Equal(new DateTime(2019, 6, 26, 10, 17, 17), news.PostDate);
             Assert.Equal("41285", news.RemoteId);
         }

@@ -26,14 +26,14 @@
             var provider = new ToploBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Профилактика в кв. „Младост\" 1, кв. „Мусагеница\", кв. „Студентски град\", кв. „Дървеница\" и кв.Витоша", news.Title);
+            Assert.Equal("Профилактика в кварталите „Младост\" 1, „Мусагеница\", „Студентски град\", „Дървеница\" и „Витоша\"", news.Title);
             Assert.Equal("2019/06/24/1-11", news.RemoteId);
             Assert.Equal(new DateTime(2019, 6, 24), news.PostDate.Date);
             Assert.Contains("„Топлофикация София” ЕАД съобщава на своите клиенти, че", news.Content);
-            Assert.Contains("хотел „Вега“, офис сграда „Трелеборг“,НХА", news.Content);
-            Assert.Contains("“Топлофикация София” ЕАД поднася своите извинения на засегнатите клиенти за причиненото неудобство и разчита на тяхното разбиране.", news.Content);
+            Assert.Contains("хотел „Вега“, офис сграда „Трелеборг“, НХА", news.Content);
+            Assert.Contains("Топлофикация София” ЕАД поднася своите извинения на засегнатите клиенти за причиненото неудобство и разчита на тяхното разбиране!", news.Content);
             Assert.DoesNotContain("blog/URBAN_WORN.png", news.Content);
-            Assert.Equal("https://toplo.bg/assets/images/blog/URBAN_WORN.png", news.ImageUrl);
+            Assert.Equal("https://toplo.bg/assets/images/blog/maine.png", news.ImageUrl);
         }
 
         [Fact]

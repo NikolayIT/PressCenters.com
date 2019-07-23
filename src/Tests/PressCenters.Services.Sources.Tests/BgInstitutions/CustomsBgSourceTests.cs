@@ -91,7 +91,7 @@
         {
             var provider = new CustomsBgOnFocusSource();
             var result = provider.GetLatestPublications();
-            Assert.Equal(6, result.Count());
+            Assert.True(result.Any());
         }
     }
 }

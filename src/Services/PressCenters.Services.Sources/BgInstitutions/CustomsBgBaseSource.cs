@@ -54,7 +54,7 @@
 
             var timeElement = document.QuerySelector("#publish-date");
             var timeAsString = timeElement?.TextContent?.Replace("Дата:", string.Empty)?.Trim();
-            var time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
+            var time = DateTime.ParseExact(timeAsString, "dd MMMM yyyy", CultureInfo.InvariantCulture);
 
             var imageElement = document.QuerySelector(".galleryList img");
             var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/customs.bg.jpg";
