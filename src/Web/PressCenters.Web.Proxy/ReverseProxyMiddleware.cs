@@ -7,6 +7,10 @@
     using System.Text;
     using System.Threading.Tasks;
 
+    using AngleSharp;
+    using AngleSharp.Dom;
+    using AngleSharp.Html.Parser;
+
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.WebUtilities;
 
@@ -22,35 +26,40 @@
 
         public async Task Invoke(HttpContext context)
         {
-            var targetUri = this.BuildTargetUri(context.Request.Path, out var replace);
+            var targetUri = BuildTargetUri(context.Request.Path, context.Request.QueryString, out var replace);
             if (targetUri == null)
             {
                 await this.nextMiddleware(context);
             }
 
-            var targetRequestMessage = this.CreateTargetMessage(context, targetUri);
+            var targetRequestMessage = CreateTargetMessage(context, targetUri);
             using (var responseMessage = await HttpClient.SendAsync(
                                              targetRequestMessage,
                                              HttpCompletionOption.ResponseHeadersRead,
                                              context.RequestAborted))
             {
                 context.Response.StatusCode = (int)responseMessage.StatusCode;
-                this.CopyFromTargetResponseHeaders(context, responseMessage);
-                await this.ProcessResponseContent(context, responseMessage, replace);
+                CopyFromTargetResponseHeaders(context, responseMessage);
+                await ProcessResponseContent(context, responseMessage, targetUri, replace);
             }
         }
 
-        private async Task ProcessResponseContent(HttpContext context, HttpResponseMessage responseMessage, bool replace)
+        private static async Task ProcessResponseContent(HttpContext context, HttpResponseMessage responseMessage, Uri targetUri, bool replace)
         {
             var content = await responseMessage.Content.ReadAsByteArrayAsync();
-
-            if (this.IsContentOfType(responseMessage, "text/html")
-                || this.IsContentOfType(responseMessage, "text/javascript")
-                || this.IsContentOfType(responseMessage, "text/css")
-                || this.IsContentOfType(responseMessage, "application/javascript"))
+            if (replace && (IsContentOfType("text/html") || IsContentOfType("text/javascript")
+                                                         || IsContentOfType("text/css")
+                                                         || IsContentOfType("application/javascript")))
             {
                 var stringContent = Encoding.UTF8.GetString(content);
-                if (replace)
+                if (IsContentOfType("text/html"))
+                {
+                    var parser = new HtmlParser();
+                    var document = parser.ParseDocument(stringContent);
+                    NormalizeUrlsRecursively(document.DocumentElement, targetUri);
+                    stringContent = document.ToHtml();
+                }
+                else
                 {
                     stringContent = stringContent.Replace("https://", "/https/").Replace("http://", "/http/");
                 }
@@ -61,24 +70,25 @@
             {
                 await context.Response.Body.WriteAsync(content);
             }
+
+            bool IsContentOfType(string type)
+            {
+                return responseMessage?.Content?.Headers?.ContentType?.MediaType?.StartsWith(type) == true;
+            }
         }
 
-        private bool IsContentOfType(HttpResponseMessage responseMessage, string type)
-        {
-            return responseMessage?.Content?.Headers?.ContentType?.MediaType?.StartsWith(type) == true;
-        }
-
-        private HttpRequestMessage CreateTargetMessage(HttpContext context, Uri targetUri)
+        private static HttpRequestMessage CreateTargetMessage(HttpContext context, Uri targetUri)
         {
             var requestMessage = new HttpRequestMessage();
-            this.CopyFromOriginalRequestContentAndHeaders(context, requestMessage);
+            CopyFromOriginalRequestContentAndHeaders(context, requestMessage);
             requestMessage.RequestUri = targetUri;
             requestMessage.Headers.Host = targetUri.Host;
+            requestMessage.Headers.Referrer = targetUri;
             requestMessage.Method = new HttpMethod(context.Request.Method);
             return requestMessage;
         }
 
-        private void CopyFromOriginalRequestContentAndHeaders(HttpContext context, HttpRequestMessage requestMessage)
+        private static void CopyFromOriginalRequestContentAndHeaders(HttpContext context, HttpRequestMessage requestMessage)
         {
             var requestMethod = context.Request.Method;
 
@@ -97,7 +107,7 @@
             }
         }
 
-        private void CopyFromTargetResponseHeaders(HttpContext context, HttpResponseMessage responseMessage)
+        private static void CopyFromTargetResponseHeaders(HttpContext context, HttpResponseMessage responseMessage)
         {
             foreach (var header in responseMessage.Headers)
             {
@@ -112,29 +122,70 @@
             context.Response.Headers.Remove("transfer-encoding");
         }
 
-        private Uri BuildTargetUri(PathString pathString, out bool replace)
+        private static Uri BuildTargetUri(PathString pathString, QueryString queryString, out bool replace)
         {
             replace = true;
             if (pathString.StartsWithSegments("/http", out var remainingHttpPath))
             {
-                return new Uri("http:/" + remainingHttpPath);
+                return new Uri("http:/" + remainingHttpPath + queryString);
             }
-            else if (pathString.StartsWithSegments("/https", out var remainingHttpsPath))
+
+            if (pathString.StartsWithSegments("/https", out var remainingHttpsPath))
             {
-                return new Uri("https:/" + remainingHttpsPath);
+                return new Uri("https:/" + remainingHttpsPath + queryString);
             }
-            else if (pathString.StartsWithSegments("/_plain/http", out var remainingHttpPathWithNoReplace))
-            {
-                replace = false;
-                return new Uri("http:/" + remainingHttpPathWithNoReplace);
-            }
-            else if (pathString.StartsWithSegments("/_plain/https", out var remainingHttpsPathWithNoReplace))
+
+            if (pathString.StartsWithSegments("/_plain/http", out var remainingHttpPathWithNoReplace))
             {
                 replace = false;
-                return new Uri("https:/" + remainingHttpsPathWithNoReplace);
+                return new Uri("http:/" + remainingHttpPathWithNoReplace + queryString);
+            }
+
+            if (pathString.StartsWithSegments("/_plain/https", out var remainingHttpsPathWithNoReplace))
+            {
+                replace = false;
+                return new Uri("https:/" + remainingHttpsPathWithNoReplace + queryString);
             }
 
             return null;
+        }
+
+        private static void NormalizeUrlsRecursively(IElement element, Uri originalUrl)
+        {
+            if (element == null)
+            {
+                return;
+            }
+
+            if (element.Attributes["href"] != null)
+            {
+                element.SetAttribute("href", NormalizeUrl(element.Attributes["href"].Value));
+            }
+
+            if (element.Attributes["src"] != null)
+            {
+                element.SetAttribute("src", NormalizeUrl(element.Attributes["src"].Value));
+            }
+
+            foreach (var node in element.Children)
+            {
+                NormalizeUrlsRecursively(node, originalUrl);
+            }
+
+            string NormalizeUrl(string url)
+            {
+                if (string.IsNullOrWhiteSpace(url))
+                {
+                    return string.Empty;
+                }
+
+                if (Uri.TryCreate(originalUrl, url, out var result))
+                {
+                    url = result.ToString();
+                }
+
+                return url.Replace("https://", "/https/").Replace("http://", "/http/");
+            }
         }
     }
 }
