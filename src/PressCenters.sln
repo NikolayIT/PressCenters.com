@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29123.88
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{E389DEB6-5F90-444B-A054-12A10D39C76F}"
 EndProject
@@ -49,7 +49,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PressCenters.Worker.Tasks",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PressCenters.Worker.Runner", "Worker\PressCenters.Worker.Runner\PressCenters.Worker.Runner.csproj", "{443A3AA8-3BA8-477B-B744-592CFB151076}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PressCenters.Services.Tests", "Services\PressCenters.Services.Tests\PressCenters.Services.Tests.csproj", "{1B784018-7D0F-4D27-82C7-4BE815363E5B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PressCenters.Services.Tests", "Services\PressCenters.Services.Tests\PressCenters.Services.Tests.csproj", "{1B784018-7D0F-4D27-82C7-4BE815363E5B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PressCenters.Web.Proxy", "Web\PressCenters.Web.Proxy\PressCenters.Web.Proxy.csproj", "{C1B5384A-22B1-438E-8604-A6241B2B334C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -133,6 +135,10 @@ Global
 		{1B784018-7D0F-4D27-82C7-4BE815363E5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B784018-7D0F-4D27-82C7-4BE815363E5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B784018-7D0F-4D27-82C7-4BE815363E5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1B5384A-22B1-438E-8604-A6241B2B334C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1B5384A-22B1-438E-8604-A6241B2B334C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1B5384A-22B1-438E-8604-A6241B2B334C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1B5384A-22B1-438E-8604-A6241B2B334C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -156,6 +162,7 @@ Global
 		{7F3042A2-739B-48DA-9363-5ADEFC3B6550} = {F1E14308-019E-43F9-AE91-86A7A42E7090}
 		{443A3AA8-3BA8-477B-B744-592CFB151076} = {F1E14308-019E-43F9-AE91-86A7A42E7090}
 		{1B784018-7D0F-4D27-82C7-4BE815363E5B} = {7A731632-6714-44E2-A9E4-069EBA9E666C}
+		{C1B5384A-22B1-438E-8604-A6241B2B334C} = {E389DEB6-5F90-444B-A054-12A10D39C76F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {384484BE-4680-4529-9CC2-AD37BA4D12D1}

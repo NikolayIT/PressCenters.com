@@ -24,6 +24,8 @@ namespace PressCenters.Services.Sources
 
         public abstract string BaseUrl { get; }
 
+        protected virtual bool UseProxy => false;
+
         protected virtual Encoding Encoding => null;
 
         protected virtual List<(HttpRequestHeader Header, string Value)> Headers => null;
@@ -39,12 +41,10 @@ namespace PressCenters.Services.Sources
 
         public RemoteNews GetPublication(string url)
         {
-            var urlToLoad = new Uri(url).GetLeftPart(UriPartial.Query); // Remove hash fragment
-
             IHtmlDocument document;
             try
             {
-                document = this.Parser.ParseDocument(this.ReadStringFromUrl(urlToLoad));
+                document = this.Parser.ParseDocument(this.ReadStringFromUrl(url));
             }
             catch (WebException e)
             {
@@ -138,6 +138,11 @@ namespace PressCenters.Services.Sources
         protected string ReadStringFromUrl(string url)
         {
             url = new Uri(url).GetLeftPart(UriPartial.Query); // Remove hash fragment
+            if (this.UseProxy)
+            {
+                url = url.Replace("https://", "https://proxy.presscenters.com/_plain/https/")
+                         .Replace("http://", "https://proxy.presscenters.com/_plain/http/");
+            }
 
             var webClient = new WebClient();
             webClient.Headers.Add(HttpRequestHeader.UserAgent, GlobalConstants.DefaultUserAgent);
