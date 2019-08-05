@@ -15,10 +15,8 @@
 
             var url = this.BaseUrl + titleElement.Attributes["href"].Value.Trim();
 
-            var imageElement = document.QuerySelector(".c-first-topstory .media__main img.media__img__obj")
-                               ?? document.QuerySelector(".media__img__link img");
-            var imageUrl = imageElement?.Attributes["src"]?.Value?.Trim()
-                           ?? imageElement?.Attributes["data-src"]?.Value?.Trim();
+            var imageElement = document.QuerySelector(".media__img__link img");
+            var imageUrl = imageElement?.Attributes["data-src"]?.Value?.Trim();
 
             return new RemoteMainNews(title, url, imageUrl);
         }
