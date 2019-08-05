@@ -12,7 +12,6 @@
     using AngleSharp.Html.Parser;
 
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.WebUtilities;
 
     public class ReverseProxyMiddleware
     {
@@ -29,23 +28,76 @@
             var targetUri = BuildTargetUri(context.Request.Path, context.Request.QueryString, out var replace);
             if (targetUri == null)
             {
-                await this.nextMiddleware(context);
+                var referer = context.Request.Headers["Referer"].FirstOrDefault();
+                if (referer?.Contains(context.Request.Host.ToString()) == true)
+                {
+                    var refererUri = new Uri(referer);
+                    var refererParts = refererUri.PathAndQuery.Split("/");
+                    targetUri = new Uri($"{refererParts[1]}://{refererParts[2]}" + context.Request.Path + context.Request.QueryString);
+                }
+                else
+                {
+                    await this.nextMiddleware(context);
+                    return;
+                }
             }
 
-            var targetRequestMessage = CreateTargetMessage(context, targetUri);
+            var targetRequestMessage = CreateTargetMessage(context.Request, targetUri, replace);
             using (var responseMessage = await HttpClient.SendAsync(
                                              targetRequestMessage,
                                              HttpCompletionOption.ResponseHeadersRead,
                                              context.RequestAborted))
             {
                 context.Response.StatusCode = (int)responseMessage.StatusCode;
-                CopyFromTargetResponseHeaders(context, responseMessage);
-                await ProcessResponseContent(context, responseMessage, targetUri, replace);
+                await ProcessResponseContent(context.Response, responseMessage, targetUri, replace);
             }
         }
 
-        private static async Task ProcessResponseContent(HttpContext context, HttpResponseMessage responseMessage, Uri targetUri, bool replace)
+        private static HttpRequestMessage CreateTargetMessage(HttpRequest originalRequest, Uri targetUri, bool replace)
         {
+            var stripHeaders = new List<string>();
+            if (replace)
+            {
+                stripHeaders.Add("accept-encoding");
+                stripHeaders.Add("content-encoding");
+            }
+
+            var requestMessage = new HttpRequestMessage();
+            foreach (var header in originalRequest.Headers)
+            {
+                if (!stripHeaders.Contains(header.Key.ToLower()))
+                {
+                    requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+                }
+            }
+
+            requestMessage.RequestUri = targetUri;
+            requestMessage.Headers.Host = targetUri.Host;
+            if (requestMessage.Headers.Contains("Origin"))
+            {
+                requestMessage.Headers.Remove("Origin");
+                requestMessage.Headers.Add("Origin", targetUri.GetLeftPart(UriPartial.Authority));
+            }
+
+            requestMessage.Headers.Referrer = targetUri;
+            requestMessage.Method = new HttpMethod(originalRequest.Method);
+            return requestMessage;
+        }
+
+        private static async Task ProcessResponseContent(HttpResponse response, HttpResponseMessage responseMessage, Uri targetUri, bool replace)
+        {
+            foreach (var header in responseMessage.Headers)
+            {
+                response.Headers[header.Key] = header.Value.ToArray();
+            }
+
+            foreach (var header in responseMessage.Content.Headers)
+            {
+                response.Headers[header.Key] = header.Value.ToArray();
+            }
+
+            response.Headers.Remove("transfer-encoding");
+
             var content = await responseMessage.Content.ReadAsByteArrayAsync();
             if (replace && (IsContentOfType("text/html") || IsContentOfType("text/javascript")
                                                          || IsContentOfType("text/css")
@@ -64,62 +116,17 @@
                     stringContent = stringContent.Replace("https://", "/https/").Replace("http://", "/http/");
                 }
 
-                await context.Response.WriteAsync(stringContent, Encoding.UTF8);
+                await response.WriteAsync(stringContent, Encoding.UTF8);
             }
             else
             {
-                await context.Response.Body.WriteAsync(content);
+                await response.Body.WriteAsync(content);
             }
 
             bool IsContentOfType(string type)
             {
                 return responseMessage?.Content?.Headers?.ContentType?.MediaType?.StartsWith(type) == true;
             }
-        }
-
-        private static HttpRequestMessage CreateTargetMessage(HttpContext context, Uri targetUri)
-        {
-            var requestMessage = new HttpRequestMessage();
-            CopyFromOriginalRequestContentAndHeaders(context, requestMessage);
-            requestMessage.RequestUri = targetUri;
-            requestMessage.Headers.Host = targetUri.Host;
-            requestMessage.Headers.Referrer = targetUri;
-            requestMessage.Method = new HttpMethod(context.Request.Method);
-            return requestMessage;
-        }
-
-        private static void CopyFromOriginalRequestContentAndHeaders(HttpContext context, HttpRequestMessage requestMessage)
-        {
-            var requestMethod = context.Request.Method;
-
-            if (!HttpMethods.IsGet(requestMethod) &&
-                !HttpMethods.IsHead(requestMethod) &&
-                !HttpMethods.IsDelete(requestMethod) &&
-                !HttpMethods.IsTrace(requestMethod))
-            {
-                var streamContent = new StreamContent(context.Request.Body);
-                requestMessage.Content = streamContent;
-            }
-
-            foreach (var header in context.Request.Headers)
-            {
-                requestMessage.Content?.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
-            }
-        }
-
-        private static void CopyFromTargetResponseHeaders(HttpContext context, HttpResponseMessage responseMessage)
-        {
-            foreach (var header in responseMessage.Headers)
-            {
-                context.Response.Headers[header.Key] = header.Value.ToArray();
-            }
-
-            foreach (var header in responseMessage.Content.Headers)
-            {
-                context.Response.Headers[header.Key] = header.Value.ToArray();
-            }
-
-            context.Response.Headers.Remove("transfer-encoding");
         }
 
         private static Uri BuildTargetUri(PathString pathString, QueryString queryString, out bool replace)

@@ -1,5 +1,7 @@
 ﻿namespace PressCenters.Web.Proxy
 {
+    using System.Threading.Tasks;
+
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
@@ -20,9 +22,10 @@
 
             app.UseMiddleware<ReverseProxyMiddleware>();
 
-            app.Run(async (context) =>
+            app.Run(context =>
             {
-                await context.Response.WriteAsync("Hello World!");
+                context.Response.StatusCode = StatusCodes.Status404NotFound;
+                return Task.CompletedTask;
             });
         }
     }
