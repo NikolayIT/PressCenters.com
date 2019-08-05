@@ -13,6 +13,8 @@
     {
         public override string BaseUrl { get; } = "https://www.mlsp.government.bg/";
 
+        protected override bool UseProxy => true;
+
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("index.php?section=PRESS", "#rub_co span a");
 

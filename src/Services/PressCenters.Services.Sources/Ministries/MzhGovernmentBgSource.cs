@@ -12,6 +12,8 @@
     {
         public override string BaseUrl { get; } = "http://www.mzh.government.bg/";
 
+        protected override bool UseProxy => true;
+
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("bg/press-center/novini/", ".news h2 a", "bg/press-center/novini");
 

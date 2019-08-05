@@ -16,6 +16,8 @@
     {
         public override string BaseUrl => "https://mod.bg/";
 
+        protected override bool UseProxy => true;
+
         public override IEnumerable<RemoteNews> GetLatestPublications() => this.GetNews($"{this.BaseUrl}bg/news.php", 5);
 
         public override IEnumerable<RemoteNews> GetAllPublications()

@@ -14,6 +14,8 @@
     {
         public override string BaseUrl { get; } = "http://www.mc.government.bg/";
 
+        protected override bool UseProxy => true;
+
         protected override Encoding Encoding
         {
             get

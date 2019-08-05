@@ -17,6 +17,8 @@
     {
         public override string BaseUrl { get; } = "http://www.mjs.bg/";
 
+        protected override bool UseProxy => true;
+
         public override IEnumerable<RemoteNews> GetLatestPublications()
         {
             var news = new List<RemoteNews>();

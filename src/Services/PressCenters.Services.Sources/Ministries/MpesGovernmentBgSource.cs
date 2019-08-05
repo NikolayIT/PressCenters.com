@@ -13,6 +13,8 @@
     {
         public override string BaseUrl { get; } = "http://www.mpes.government.bg/";
 
+        protected override bool UseProxy => true;
+
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications(
                 "Pages/Press/default.aspx",

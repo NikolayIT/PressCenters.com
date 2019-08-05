@@ -10,6 +10,8 @@
     {
         public override string BaseUrl { get; } = "https://www.moew.government.bg/";
 
+        protected override bool UseProxy => true;
+
         protected abstract string NewsListUrl { get; }
 
         protected abstract int NewsListPagesCount { get; }
