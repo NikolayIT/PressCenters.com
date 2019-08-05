@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PressCenters.Services\PressCenters.Services.csproj" />
+    <ProjectReference Include="..\..\Services\PressCenters.Services\PressCenters.Services.csproj" />
   </ItemGroup>
 
 </Project>
