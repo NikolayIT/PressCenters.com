@@ -50,9 +50,14 @@
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error() => this.View();
 
-        [Route("robots.txt", Name = "GetRobotsText")]
+        [HttpGet("robots.txt")]
         [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Any)]
         public IActionResult RobotsTxt() =>
-            this.Content("User-agent: *" + Environment.NewLine + "Disallow:", "text/plain", Encoding.UTF8);
+            this.Content("User-agent: *" + Environment.NewLine + "Disallow:");
+
+        [HttpGet("ads.txt")]
+        [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Any)]
+        public IActionResult AdsTxt() =>
+            this.Content("google.com, pub-4541634013740958, DIRECT, f08c47fec0942fa0");
     }
 }
