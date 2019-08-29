@@ -6,6 +6,9 @@
 
     using AngleSharp.Dom;
 
+    /// <summary>
+    /// Комисия за защита на потребителите.
+    /// </summary>
     public class KzpBgSource : BaseSource
     {
         public override string BaseUrl { get; } = "https://kzp.bg/";
