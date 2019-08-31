@@ -13,6 +13,8 @@
     {
         public override string BaseUrl { get; } = "https://www.cpdp.bg/";
 
+        protected override bool UseProxy => true;
+
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("/", ".center-part h6 a.news-title");
 
