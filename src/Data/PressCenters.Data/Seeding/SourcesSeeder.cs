@@ -10,7 +10,7 @@
     {
         public void Seed(ApplicationDbContext dbContext, IServiceProvider serviceProvider)
         {
-            var sources = new List<(string TypeName, string ShortName, string Name, string Description, string Url)>
+            var sources = new List<(string typeName, string shortName, string name, string description, string url)>
                           {
                               ("PressCenters.Services.Sources.Ministries.MvrBgAktualnoSource",
                                   "МВР", "Министерство на вътрешните работи - Актуално",
@@ -208,16 +208,16 @@
 
             foreach (var source in sources)
             {
-                if (!dbContext.Sources.Any(x => x.TypeName == source.TypeName))
+                if (!dbContext.Sources.Any(x => x.TypeName == source.typeName))
                 {
                     dbContext.Sources.Add(
                         new Source
                         {
-                            TypeName = source.TypeName,
-                            ShortName = source.ShortName,
-                            Name = source.Name,
-                            Description = source.Description,
-                            Url = source.Url,
+                            TypeName = source.typeName,
+                            ShortName = source.shortName,
+                            Name = source.name,
+                            Description = source.description,
+                            Url = source.url,
                         });
                 }
             }

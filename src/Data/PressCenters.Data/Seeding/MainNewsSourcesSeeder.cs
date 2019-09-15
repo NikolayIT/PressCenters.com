@@ -10,7 +10,7 @@
     {
         public void Seed(ApplicationDbContext dbContext, IServiceProvider serviceProvider)
         {
-            var mainNewsSources = new List<(string Name, string Url, string TypeName)>
+            var mainNewsSources = new List<(string name, string url, string typeName)>
                                   {
                                       ("bTV", "https://btvnovinite.bg",
                                           "PressCenters.Services.Sources.MainNews.BtvNoviniteMainNewsProvider"),
@@ -42,14 +42,14 @@
 
             foreach (var mainNewsSource in mainNewsSources)
             {
-                if (!dbContext.MainNewsSources.Any(x => x.TypeName == mainNewsSource.TypeName))
+                if (!dbContext.MainNewsSources.Any(x => x.TypeName == mainNewsSource.typeName))
                 {
                     dbContext.MainNewsSources.Add(
                         new MainNewsSource
                         {
-                            TypeName = mainNewsSource.TypeName,
-                            Name = mainNewsSource.Name,
-                            Url = mainNewsSource.Url,
+                            TypeName = mainNewsSource.typeName,
+                            Name = mainNewsSource.name,
+                            Url = mainNewsSource.url,
                         });
                 }
             }

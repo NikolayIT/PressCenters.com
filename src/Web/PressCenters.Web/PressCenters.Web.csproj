@@ -22,13 +22,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BuildBundlerMinifier" Version="2.9.406" />
-    <PackageReference Include="HtmlSanitizer" Version="5.0.215-beta" />
+    <PackageReference Include="BuildBundlerMinifier" Version="3.0.415" />
+    <PackageReference Include="HtmlSanitizer" Version="5.0.250-beta" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.7.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.0.76" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" PrivateAssets="all">
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.66" PrivateAssets="all">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
   </ItemGroup>

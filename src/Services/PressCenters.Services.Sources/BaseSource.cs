@@ -28,7 +28,7 @@ namespace PressCenters.Services.Sources
 
         protected virtual Encoding Encoding => null;
 
-        protected virtual List<(HttpRequestHeader Header, string Value)> Headers => null;
+        protected virtual List<(HttpRequestHeader header, string value)> Headers => null;
 
         protected HtmlParser Parser { get; }
 
