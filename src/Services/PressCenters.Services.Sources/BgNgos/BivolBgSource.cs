@@ -61,13 +61,13 @@
             var imageElement = document.QuerySelector(".post-image a");
             var imageUrl = imageElement?.GetAttribute("href") ?? "/images/sources/bivol.bg.jpg";
 
-            var contentElement = document.QuerySelector("#modal-ready");
-            contentElement.RemoveRecursively(document.QuerySelector("#modal-ready .dkpdf-button-container"));
-            contentElement.RemoveRecursively(document.QuerySelector("#modal-ready div:has(figure.wp-block-pullquote)"));
-            contentElement.RemoveRecursively(document.QuerySelector("#modal-ready div:has(figure.wp-block-pullquote)"));
-            contentElement.RemoveRecursively(document.QuerySelector("#modal-ready figure.wp-block-pullquote"));
-            contentElement.RemoveRecursively(document.QuerySelector("#modal-ready figure.wp-block-pullquote"));
-            contentElement.RemoveRecursively(document.QuerySelector("#modal-ready div:has(script)"));
+            var contentElement = document.QuerySelector("div[itemprop=articleBody]");
+            contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] .dkpdf-button-container"));
+            contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] div:has(figure.wp-block-pullquote)"));
+            contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] div:has(figure.wp-block-pullquote)"));
+            contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] figure.wp-block-pullquote"));
+            contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] figure.wp-block-pullquote"));
+            contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] div:has(script)"));
             this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement.InnerHtml.Trim();
 

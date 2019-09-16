@@ -40,7 +40,7 @@
         {
             var provider = new GovernmentBgSource();
             var result = provider.GetLatestPublications();
-            Assert.Equal(12, result.Count());
+            Assert.Equal(8, result.Count());
         }
     }
 }

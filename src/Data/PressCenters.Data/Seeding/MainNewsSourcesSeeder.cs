@@ -16,8 +16,8 @@
                                           "PressCenters.Services.Sources.MainNews.BtvNoviniteMainNewsProvider"),
                                       ("Nova", "https://nova.bg",
                                           "PressCenters.Services.Sources.MainNews.NovaBgMainNewsProvider"),
-                                      ("News.bg", "https://news.bg",
-                                          "PressCenters.Services.Sources.MainNews.NewsBgMainNewsProvider"),
+                                      /*("News.bg", "https://news.bg",
+                                          "PressCenters.Services.Sources.MainNews.NewsBgMainNewsProvider"),*/
                                       ("Dnes.bg", "https://www.dnes.bg",
                                           "PressCenters.Services.Sources.MainNews.DnesBgMainNewsProvider"),
                                       ("Novini.bg", "https://novini.bg",

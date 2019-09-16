@@ -7,7 +7,7 @@
 
     public abstract class NsiBgBaseSource : BaseSource
     {
-        public override string BaseUrl { get; } = "http://www.nsi.bg/";
+        public override string BaseUrl { get; } = "https://www.nsi.bg/";
 
         internal override string ExtractIdFromUrl(string url)
         {

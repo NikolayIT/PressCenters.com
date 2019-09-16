@@ -31,7 +31,7 @@
             Assert.Equal(new DateTime(2019, 8, 19), news.PostDate);
             Assert.Contains("Четири медала завоюваха българските участници в международната олимпиада по информатика, която се проведе от 3 до 11 август в гр. Баку, Азербайджан.", news.Content);
             Assert.Contains("Страната ни запазва 5-то място в света по медали в класирането за всичките олимпиади.", news.Content);
-            Assert.DoesNotContain("IMG_0214", news.Content);
+            Assert.DoesNotContain("IMG_0214-300x225.jpg", news.Content);
             Assert.DoesNotContain("19 август 2019", news.Content);
             Assert.Equal("http://www.bas.bg/wp-content/uploads/2019/08/IMG_0214-300x225.jpg", news.ImageUrl);
         }

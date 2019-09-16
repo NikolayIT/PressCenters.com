@@ -15,6 +15,10 @@
 
             var imageElement = document.QuerySelector("#topStory .story-photo img");
             var imageUrl = imageElement?.Attributes["src"]?.Value?.Trim();
+            if (imageUrl != null && !imageUrl.StartsWith("http"))
+            {
+                imageUrl = "https:" + imageUrl;
+            }
 
             return new RemoteMainNews(title, url, imageUrl);
         }

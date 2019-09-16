@@ -13,7 +13,7 @@
         protected override bool UseProxy => true;
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("bg/prestsentar/novini", ".articles .item a");
+            this.GetPublications("bg/prestsentar/novini", ".articles .item a", count: 8);
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
