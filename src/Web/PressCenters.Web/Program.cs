@@ -11,6 +11,6 @@
         }
 
         private static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args).UseStartup<Startup>().UseApplicationInsights();
+            WebHost.CreateDefaultBuilder(args).UseStartup<Startup>();
     }
 }

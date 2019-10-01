@@ -68,6 +68,8 @@
                     options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
                 });
 
+            services.AddApplicationInsightsTelemetry();
+
             if (this.hostingEnvironment.IsProduction())
             {
                 services.AddHttpsRedirection(options =>
