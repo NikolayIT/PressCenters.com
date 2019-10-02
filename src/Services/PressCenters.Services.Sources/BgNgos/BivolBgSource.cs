@@ -65,6 +65,7 @@
             contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] .dkpdf-button-container"));
             contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] div:has(figure.wp-block-pullquote)"));
             contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] div:has(figure.wp-block-pullquote)"));
+            contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] div:has(div.simpay-form-wrap)"));
             contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] figure.wp-block-pullquote"));
             contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] figure.wp-block-pullquote"));
             contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] div:has(script)"));
