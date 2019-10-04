@@ -5,12 +5,11 @@
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity.UI.Services;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
 
     using PressCenters.Common;
@@ -29,15 +28,12 @@
     public class Startup
     {
         private readonly IConfiguration configuration;
-        private readonly IHostingEnvironment hostingEnvironment;
 
-        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
+        public Startup(IConfiguration configuration)
         {
             this.configuration = configuration;
-            this.hostingEnvironment = hostingEnvironment;
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             GlobalConstants.SystemVersion =
@@ -49,18 +45,10 @@
             services.AddDefaultIdentity<ApplicationUser>(IdentityOptionsProvider.GetIdentityOptions)
                 .AddRoles<ApplicationRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddControllersWithViews();
+            services.AddRazorPages();
 
             services.AddApplicationInsightsTelemetry();
-
-            if (this.hostingEnvironment.IsProduction())
-            {
-                services.AddHttpsRedirection(options =>
-                {
-                    options.RedirectStatusCode = StatusCodes.Status308PermanentRedirect;
-                    options.HttpsPort = 443;
-                });
-            }
 
             services.AddSingleton(this.configuration);
 
@@ -84,8 +72,7 @@
             services.AddTransient<ISlugGenerator, SlugGenerator>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             AutoMapperConfig.RegisterMappings(typeof(ErrorViewModel).GetTypeInfo().Assembly);
 
@@ -110,23 +97,28 @@
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseRouting();
+
             app.UseCookiePolicy();
             app.UseAuthentication();
+            app.UseAuthorization();
 
-            app.UseMvc(routes =>
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     "areaRoute",
                     "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     "news",
                     "News/{id:int:min(1)}/{slug:required}",
                     new { controller = "News", action = "ById", });
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     "news",
                     "News/{id:int:min(1)}",
                     new { controller = "News", action = "ById", });
-                routes.MapRoute("default", "{controller=News}/{action=List}/{id?}");
+                endpoints.MapControllerRoute("default", "{controller=News}/{action=List}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
     }
