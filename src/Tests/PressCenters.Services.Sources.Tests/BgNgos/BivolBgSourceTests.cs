@@ -36,7 +36,7 @@
             Assert.DoesNotContain(news.ImageUrl, news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
             Assert.Equal("https://bivol.bg/wp-content/uploads/2018/12/nkzhi.png", news.ImageUrl);
-            Assert.Equal(new DateTime(2019, 1, 29, 16, 5, 57), news.PostDate);
+            Assert.Equal(new DateTime(2019, 1, 29, 15, 5, 57), news.PostDate);
             Assert.Equal("bombardier-gpgroup-nkzhi", news.RemoteId);
         }
 
@@ -57,7 +57,7 @@
             Assert.DoesNotContain(news.ImageUrl, news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
             Assert.Equal("/images/sources/bivol.bg.jpg", news.ImageUrl);
-            Assert.Equal(new DateTime(2005, 9, 7, 12, 9, 0), news.PostDate);
+            Assert.Equal(new DateTime(2005, 9, 7, 11, 9, 0), news.PostDate);
             Assert.Equal("2010-10-30-22-28-29-17", news.RemoteId);
         }
 

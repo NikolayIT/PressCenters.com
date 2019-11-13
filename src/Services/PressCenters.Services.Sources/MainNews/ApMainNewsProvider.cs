@@ -13,7 +13,7 @@
 
             var url = this.BaseUrl + titleElement.Attributes["href"].Value.Trim();
 
-            var imageElement = document.QuerySelector("div[data-key='main-story'] .LazyImage img");
+            var imageElement = document.QuerySelector("div[data-key='main-story'] div[data-key='media-placeholder'] img");
             var imageUrl = imageElement?.Attributes["src"]?.Value?.Trim()?.Replace("/800.jpeg", "/400.jpeg");
 
             return new RemoteMainNews(title, url, imageUrl);
