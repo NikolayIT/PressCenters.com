@@ -28,7 +28,7 @@ namespace PressCenters.Services.Sources
 
         protected virtual Encoding Encoding => null;
 
-        protected virtual List<(HttpRequestHeader header, string value)> Headers => null;
+        protected virtual List<(HttpRequestHeader Header, string Value)> Headers => null;
 
         protected HtmlParser Parser { get; }
 
@@ -104,7 +104,7 @@ namespace PressCenters.Services.Sources
         internal virtual string ExtractIdFromUrl(string url)
         {
             var uri = new Uri(url.Trim().Trim('/'));
-            var lastSegment = uri.Segments[uri.Segments.Length - 1];
+            var lastSegment = uri.Segments[^1];
             return WebUtility.UrlDecode(lastSegment);
         }
 
@@ -144,7 +144,7 @@ namespace PressCenters.Services.Sources
                          .Replace("http://", "https://proxy.presscenters.com/_plain/http/");
             }
 
-            var webClient = new WebClient();
+            using var webClient = new WebClient();
             webClient.Headers.Add(HttpRequestHeader.UserAgent, GlobalConstants.DefaultUserAgent);
             if (this.Headers != null)
             {
