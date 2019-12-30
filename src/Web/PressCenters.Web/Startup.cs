@@ -5,12 +5,10 @@
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Identity.UI.Services;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using Microsoft.Extensions.Logging;
 
     using PressCenters.Common;
     using PressCenters.Data;
@@ -59,12 +57,7 @@
 
             // Application services
             services.AddTransient<IEmailSender>(
-                serviceProvider => new SendGridEmailSender(
-                    serviceProvider.GetRequiredService<ILoggerFactory>(),
-                    this.configuration["SendGrid:ApiKey"],
-                    this.configuration["SendGrid:SenderEmail"],
-                    GlobalConstants.SystemName));
-            services.AddTransient<ISmsSender, NullMessageSender>();
+                serviceProvider => new SendGridEmailSender(this.configuration["SendGrid:ApiKey"]));
             services.AddTransient<ISettingsService, SettingsService>();
             services.AddTransient<INewsService, NewsService>();
             services.AddTransient<ISourcesService, SourcesService>();

@@ -2,11 +2,12 @@
 {
     using System.Threading.Tasks;
 
-    using Microsoft.AspNetCore.Identity.UI.Services;
     using Microsoft.AspNetCore.Mvc;
 
+    using PressCenters.Common;
     using PressCenters.Data.Common.Repositories;
     using PressCenters.Data.Models;
+    using PressCenters.Services.Messaging;
     using PressCenters.Web.ViewModels.Contacts;
 
     public class ContactsController : BaseController
@@ -47,10 +48,19 @@
             await this.contactsRepository.AddAsync(contactFormEntry);
             await this.contactsRepository.SaveChangesAsync();
 
-            // TODO: Extract email address to appsettings.json
-            await this.emailSender.SendEmailAsync("presscenters@nikolay.it", model.Title, $"New message from {model.Name} ({model.Email}): {model.Content}");
+            await this.emailSender.SendEmailAsync(
+                model.Email,
+                model.Name,
+                GlobalConstants.SystemEmail,
+                model.Title,
+                model.Content);
 
-            return this.View("ThankYou");
+            return this.RedirectToAction("ThankYou");
+        }
+
+        public IActionResult ThankYou()
+        {
+            return this.View();
         }
     }
 }

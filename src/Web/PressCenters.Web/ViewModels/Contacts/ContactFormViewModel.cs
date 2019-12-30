@@ -2,6 +2,8 @@
 {
     using System.ComponentModel.DataAnnotations;
 
+    using PressCenters.Web.Infrastructure;
+
     public class ContactFormViewModel
     {
         [Required(AllowEmptyStrings = false, ErrorMessage = "Моля въведете вашите имена")]
@@ -22,5 +24,8 @@
         [StringLength(10000, ErrorMessage = "Съобщението трябва да е поне {2} символа.", MinimumLength = 20)]
         [Display(Name = "Съдържание на съобщението")]
         public string Content { get; set; }
+
+        [GoogleReCaptchaValidation]
+        public string RecaptchaValue { get; set; }
     }
 }

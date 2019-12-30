@@ -3,17 +3,14 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    public class NullMessageSender : IEmailSender
+    public interface IEmailSender
     {
-        public Task SendEmailAsync(
+        Task SendEmailAsync(
             string from,
             string fromName,
             string to,
             string subject,
             string htmlContent,
-            IEnumerable<EmailAttachment> attachments = null)
-        {
-            return Task.CompletedTask;
-        }
+            IEnumerable<EmailAttachment> attachments = null);
     }
 }

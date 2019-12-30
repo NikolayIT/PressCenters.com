@@ -1,4 +1,5 @@
-﻿@model PressCenters.Web.ViewModels.Contacts.ContactFormViewModel
+﻿@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@model PressCenters.Web.ViewModels.Contacts.ContactFormViewModel
 @{
     this.ViewData["Title"] = "Изпратете ни съобщение";
 }
@@ -29,5 +30,18 @@
         Натискайки бутона "Изпратете ни съобщение", вие потвърждавате, че сте запознати и съгласни с нашата
         <a asp-area="" asp-controller="Home" asp-action="Privacy">политика за опазване на личните данни</a>
     </p>
+    <input type="hidden" id="RecaptchaValue" name="RecaptchaValue" />
     <button type="submit" class="btn btn-primary">Изпратете ни съобщение</button>
 </form>
+
+@section Scripts
+{
+    <script src="https://www.google.com/recaptcha/api.js?render=@this.Configuration["GoogleReCaptcha:Key"]"></script>
+    <script>
+        grecaptcha.ready(function () {
+            grecaptcha.execute('@this.Configuration["GoogleReCaptcha:Key"]', { action: 'contact_form' }).then(function (token) {
+                document.getElementById("RecaptchaValue").value = token;
+            });
+        });
+    </script>
+}
