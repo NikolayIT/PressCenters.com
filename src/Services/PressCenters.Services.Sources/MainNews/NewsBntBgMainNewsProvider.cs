@@ -6,7 +6,7 @@
 
         public override RemoteMainNews GetMainNews()
         {
-            var document = this.GetDocument(this.BaseUrl);
+            var document = this.GetDocument(this.BaseUrl + "/bg");
 
             var titleElement = document.QuerySelector(".teaser-box h2");
             var title = titleElement.TextContent.Trim();
