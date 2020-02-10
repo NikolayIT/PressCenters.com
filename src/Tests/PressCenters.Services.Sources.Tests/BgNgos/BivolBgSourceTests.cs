@@ -30,7 +30,8 @@
             Assert.Contains("Консорциум между дъщерни дружества на канадския&nbsp; технологичен и машиностроителен гигант", news.Content);
             Assert.Contains("олигархичният модел #КОЙ печели при всички случаи.", news.Content);
             Assert.DoesNotContain("Благодарим Ви, че четете Биволъ", news.Content);
-            Assert.DoesNotContain("Данъкъ Биволъ", news.Content);
+            Assert.DoesNotContain("Избрахте да дарите", news.Content);
+            Assert.DoesNotContain("Екип на сайта за разследваща журналистика", news.Content);
             Assert.DoesNotContain("януари 29, 2019", news.Content);
             Assert.DoesNotContain("PDF", news.Content);
             Assert.DoesNotContain(news.ImageUrl, news.Content);
@@ -51,7 +52,8 @@
             Assert.Contains("Журналистите въоръжени със скрита камера обикалят министерства, кметства и архиви", news.Content);
             Assert.Contains("сами с властта за правото на информация, никога и нищо няма да получат от нея спонтанно.", news.Content);
             Assert.DoesNotContain("Благодарим Ви, че четете Биволъ", news.Content);
-            Assert.DoesNotContain("Данъкъ Биволъ", news.Content);
+            Assert.DoesNotContain("Избрахте да дарите", news.Content);
+            Assert.DoesNotContain("Екип на сайта за разследваща журналистика", news.Content);
             Assert.DoesNotContain("септември 7, 2005", news.Content);
             Assert.DoesNotContain("PDF", news.Content);
             Assert.DoesNotContain(news.ImageUrl, news.Content);

@@ -19,7 +19,7 @@
         internal override string ExtractIdFromUrl(string url)
         {
             var uri = new Uri(url.Trim().Trim('/'));
-            return uri.Segments[uri.Segments.Length - 2].Trim('/');
+            return uri.Segments[^2].Trim('/');
         }
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
@@ -32,6 +32,11 @@
             }
 
             var timeAsString = document.QuerySelector(".posted-on time.entry-date")?.Attributes["datetime"]?.Value;
+            if (timeAsString == null)
+            {
+                return null;
+            }
+
             var time = DateTime.Parse(timeAsString, CultureInfo.InvariantCulture);
 
             var contentElement = document.QuerySelector(".entry-content");

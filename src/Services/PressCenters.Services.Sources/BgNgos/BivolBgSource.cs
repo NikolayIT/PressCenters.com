@@ -62,6 +62,8 @@
             var imageUrl = imageElement?.GetAttribute("href") ?? "/images/sources/bivol.bg.jpg";
 
             var contentElement = document.QuerySelector("div[itemprop=articleBody]");
+            contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] div[role=tabpanel]"));
+            contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] div.abh_box_business"));
             contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] .dkpdf-button-container"));
             contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] div:has(figure.wp-block-pullquote)"));
             contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] div:has(figure.wp-block-pullquote)"));
