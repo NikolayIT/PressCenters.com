@@ -64,6 +64,28 @@
         }
 
         [Fact]
+        public void ParseRemoteNewsShouldWorkCorrectly2()
+        {
+            const string NewsUrl = "https://bivol.bg/eurofootball-gfo.html";
+            var provider = new BivolBgSource();
+            var news = provider.GetPublication(NewsUrl);
+            Assert.Equal(NewsUrl, news.OriginalUrl);
+            Assert.Equal("Хазартните фирми на Черепа подават нечетливи годишни отчети, а Агенцията по вписванията ги одобрява в нарушение на закона", news.Title);
+            Assert.Contains("От три години насам", news.Content);
+            Assert.Contains("Поддържа близки отношения с много официални лица", news.Content);
+            Assert.DoesNotContain("Благодарим Ви, че четете Биволъ", news.Content);
+            Assert.DoesNotContain("Избрахте да дарите", news.Content);
+            Assert.DoesNotContain("Екип на сайта за разследваща журналистика", news.Content);
+            Assert.DoesNotContain("18 януари 2020", news.Content);
+            Assert.DoesNotContain("PDF", news.Content);
+            Assert.DoesNotContain(news.ImageUrl, news.Content);
+            Assert.DoesNotContain(news.Title, news.Content);
+            Assert.Equal("https://bivol.bg/wp-content/uploads/2011/03/Bozhkov-Parvanov-Toshev.jpg", news.ImageUrl);
+            Assert.Equal(new DateTime(2020, 1, 18, 0, 3, 54), news.PostDate);
+            Assert.Equal("eurofootball-gfo", news.RemoteId);
+        }
+
+        [Fact]
         public void GetNewsShouldReturnResults()
         {
             var provider = new BivolBgSource();

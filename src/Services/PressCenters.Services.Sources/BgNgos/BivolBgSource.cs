@@ -48,7 +48,7 @@
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            var titleElement = document.QuerySelectorAll("h1.post-title").LastOrDefault();
+            var titleElement = document.QuerySelectorAll(".header-standard h1.post-title").LastOrDefault();
             var title = titleElement?.TextContent;
             if (string.IsNullOrWhiteSpace(title))
             {
@@ -64,6 +64,7 @@
             var contentElement = document.QuerySelector("div[itemprop=articleBody]");
             contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] div[role=tabpanel]"));
             contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] div.abh_box_business"));
+            contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] form"));
             contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] .dkpdf-button-container"));
             contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] div:has(figure.wp-block-pullquote)"));
             contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] div:has(figure.wp-block-pullquote)"));
