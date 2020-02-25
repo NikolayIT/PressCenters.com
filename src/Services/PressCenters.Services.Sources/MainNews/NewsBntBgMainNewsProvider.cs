@@ -8,14 +8,14 @@
         {
             var document = this.GetDocument(this.BaseUrl + "/bg");
 
-            var titleElement = document.QuerySelector(".teaser-box h2");
+            var titleElement = document.QuerySelector(".top-img h1.home-news-title");
             var title = titleElement.TextContent.Trim();
 
-            var urlElement = document.QuerySelector(".teaser-box a");
-            var url = this.BaseUrl + urlElement.Attributes["href"].Value.Trim();
+            var urlElement = document.QuerySelector(".top-img .img-wrap a");
+            var url = urlElement.Attributes["href"].Value.Trim();
 
-            var imageElement = document.QuerySelector(".teaser-box a img");
-            var imageUrl = imageElement?.Attributes["data-original"]?.Value?.Trim();
+            var imageElement = document.QuerySelector(".top-img .img-wrap img");
+            var imageUrl = imageElement?.Attributes["src"]?.Value?.Trim();
 
             return new RemoteMainNews(title, url, imageUrl);
         }
