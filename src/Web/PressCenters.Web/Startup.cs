@@ -124,6 +124,7 @@
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseHangfireServer(new BackgroundJobServerOptions { WorkerCount = 5 });
             app.UseHangfireDashboard(
                 "/hangfire",
                 new DashboardOptions { Authorization = new[] { new HangfireAuthorizationFilter() } });
@@ -153,7 +154,6 @@
             var sources = dbContext.Sources.Where(x => !x.IsDeleted).ToList();
             foreach (var source in sources)
             {
-                recurringJobManager.RemoveIfExists("GetLatestPublicationsJob_" + source.ShortName);
                 recurringJobManager.AddOrUpdate<GetLatestPublicationsJob>(
                     $"GetLatestPublicationsJob_{source.Id}_{source.ShortName}",
                     x => x.Work(source.TypeName),
