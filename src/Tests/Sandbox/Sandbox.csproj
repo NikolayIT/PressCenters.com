@@ -43,8 +43,6 @@
     <ProjectReference Include="..\..\Services\PressCenters.Services.Messaging\PressCenters.Services.Messaging.csproj" />
     <ProjectReference Include="..\..\Services\PressCenters.Services.Sources\PressCenters.Services.Sources.csproj" />
     <ProjectReference Include="..\..\Services\PressCenters.Services\PressCenters.Services.csproj" />
-    <ProjectReference Include="..\..\Worker\PressCenters.Worker.Common\PressCenters.Worker.Common.csproj" />
-    <ProjectReference Include="..\..\Worker\PressCenters.Worker.Tasks\PressCenters.Worker.Tasks.csproj" />
   </ItemGroup>
 
 </Project>

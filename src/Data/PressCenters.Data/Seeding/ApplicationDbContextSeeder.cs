@@ -27,7 +27,6 @@
                               new RolesSeeder(),
                               new SourcesSeeder(),
                               new MainNewsSourcesSeeder(),
-                              new WorkerTasksSeeder(),
                           };
 
             foreach (var seeder in seeders)

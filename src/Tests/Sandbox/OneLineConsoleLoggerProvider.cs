@@ -1,10 +1,10 @@
-﻿namespace PressCenters.Worker.Common
+﻿namespace Sandbox
 {
     using System;
 
     using Microsoft.Extensions.Logging;
 
-    public class OneLineConsoleLoggerProvider : ILoggerProvider
+    public sealed class OneLineConsoleLoggerProvider : ILoggerProvider
     {
         private readonly bool useConsole;
 
@@ -31,9 +31,7 @@
             public CustomConsoleLogger(string categoryName, bool useConsole)
             {
                 this.useConsole = useConsole;
-                this.categoryName = categoryName.Replace("PressCenters.Worker.Runner.", string.Empty)
-                    .Replace("PressCenters.Worker.Tasks.", string.Empty)
-                    .Replace("PressCenters.Worker.Common.", string.Empty);
+                this.categoryName = categoryName;
             }
 
             public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)

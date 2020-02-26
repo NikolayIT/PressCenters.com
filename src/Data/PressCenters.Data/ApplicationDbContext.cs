@@ -38,8 +38,6 @@
 
         public DbSet<MainNews> MainNews { get; set; }
 
-        public DbSet<WorkerTask> WorkerTasks { get; set; }
-
         public DbSet<ContactFormEntry> ContactFormEntries { get; set; }
 
         public DbSet<Payment> Payments { get; set; }

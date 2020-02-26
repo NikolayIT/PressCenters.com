@@ -13,13 +13,5 @@
         public int CountNullNewsOriginalUrl { get; set; }
 
         public int CountNullNewsRemoteId { get; set; }
-
-        public int NotProcessedTaskCount { get; set; }
-
-        public int ProcessedTaskCount { get; set; }
-
-        public IEnumerable<WorkerTask> LastWorkerTaskErrors { get; set; }
-
-        public IEnumerable<WorkerTask> ProcessingWorkerTasks { get; set; }
     }
 }

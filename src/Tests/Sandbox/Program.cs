@@ -8,7 +8,6 @@
 
     using CommandLine;
 
-    using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
@@ -24,8 +23,6 @@
     using PressCenters.Services.Data;
     using PressCenters.Services.Messaging;
     using PressCenters.Services.Sources;
-    using PressCenters.Worker.Common;
-    using PressCenters.Worker.Tasks;
 
     public static class Program
     {
@@ -49,9 +46,8 @@
             {
                 serviceProvider = serviceScope.ServiceProvider;
 
-                return Parser.Default.ParseArguments<SandboxOptions, RunTaskOptions>(args).MapResult(
+                return Parser.Default.ParseArguments<SandboxOptions>(args).MapResult(
                     (SandboxOptions opts) => SandboxCode(opts, serviceProvider),
-                    (RunTaskOptions opts) => RunTask(opts, serviceProvider),
                     _ => 255);
             }
         }
@@ -83,35 +79,6 @@
             }
 
             Console.WriteLine(sw.Elapsed);
-            return 0;
-        }
-
-        private static int RunTask(RunTaskOptions options, IServiceProvider serviceProvider)
-        {
-            try
-            {
-                var typeName = $"PressCenters.Worker.Tasks.{options.TaskName}";
-                var assembly = typeof(DbCleanupTask).Assembly;
-                var type = assembly.GetType(typeName);
-                var constructor = type.GetConstructors()[0];
-                var args = constructor.GetParameters().Select(p => serviceProvider.GetService(p.ParameterType)).ToArray();
-                if (!(Activator.CreateInstance(type, args) is ITask task))
-                {
-                    Console.WriteLine($"Unable to create instance of \"{typeName}\"!");
-                    return 1;
-                }
-
-                var sw = Stopwatch.StartNew();
-                var result = task.DoWork(options.Parameters).GetAwaiter().GetResult();
-                Console.WriteLine($"Result: {result}");
-                Console.WriteLine($"Time elapsed: {sw.Elapsed}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return 2;
-            }
-
             return 0;
         }
 
@@ -147,7 +114,6 @@
             services.AddTransient<ISettingsService, SettingsService>();
             services.AddTransient<INewsService, NewsService>();
             services.AddTransient<ITagsService, TagsService>();
-            services.AddTransient<IWorkerTasksDataService, WorkerTasksDataService>();
         }
     }
 }
