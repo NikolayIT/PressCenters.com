@@ -21,6 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.9" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.7.9" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.2" />
@@ -38,6 +40,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Data\PressCenters.Data.Models\PressCenters.Data.Models.csproj" />
     <ProjectReference Include="..\..\Data\PressCenters.Data\PressCenters.Data.csproj" />
+    <ProjectReference Include="..\..\Services\PressCenters.Services.CronJobs\PressCenters.Services.CronJobs.csproj" />
     <ProjectReference Include="..\..\Services\PressCenters.Services.Data\PressCenters.Services.Data.csproj" />
     <ProjectReference Include="..\..\Services\PressCenters.Services.Mapping\PressCenters.Services.Mapping.csproj" />
     <ProjectReference Include="..\..\Services\PressCenters.Services.Messaging\PressCenters.Services.Messaging.csproj" />

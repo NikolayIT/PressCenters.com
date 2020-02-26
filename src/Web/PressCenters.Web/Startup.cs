@@ -1,10 +1,18 @@
 ﻿namespace PressCenters.Web
 {
+    using System;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
+    using System.Security.Principal;
+
+    using Hangfire;
+    using Hangfire.Dashboard;
+    using Hangfire.SqlServer;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
@@ -18,10 +26,13 @@
     using PressCenters.Data.Repositories;
     using PressCenters.Data.Seeding;
     using PressCenters.Services;
+    using PressCenters.Services.CronJobs;
     using PressCenters.Services.Data;
     using PressCenters.Services.Mapping;
     using PressCenters.Services.Messaging;
     using PressCenters.Web.ViewModels;
+
+    using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
     public class Startup
     {
@@ -36,6 +47,21 @@
         {
             GlobalConstants.SystemVersion =
                 $"v2.0.{new FileInfo(Assembly.GetEntryAssembly().Location).LastWriteTime:yyyyMMdd}";
+
+            services.AddHangfire(
+                config => config.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                    .UseSimpleAssemblyNameTypeSerializer().UseRecommendedSerializerSettings().UseSqlServerStorage(
+                        this.configuration.GetConnectionString("DefaultConnection"),
+                        new SqlServerStorageOptions
+                            {
+                                CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                                SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                                QueuePollInterval = TimeSpan.Zero,
+                                UseRecommendedIsolationLevel = true,
+                                UsePageLocksOnDequeue = true,
+                                DisableGlobalLocks = true,
+                            }));
+            services.AddHangfireServer();
 
             services.AddDbContext<ApplicationDbContext>(
                 options => options.UseSqlServer(this.configuration.GetConnectionString("DefaultConnection")));
@@ -65,7 +91,7 @@
             services.AddTransient<ISlugGenerator, SlugGenerator>();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IRecurringJobManager recurringJobManager)
         {
             AutoMapperConfig.RegisterMappings(typeof(ErrorViewModel).GetTypeInfo().Assembly);
 
@@ -75,6 +101,7 @@
                 var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 dbContext.Database.Migrate();
                 ApplicationDbContextSeeder.Seed(dbContext, serviceScope.ServiceProvider);
+                this.SeedHangfireJobs(recurringJobManager, dbContext);
             }
 
             if (env.IsDevelopment())
@@ -97,6 +124,10 @@
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseHangfireDashboard(
+                "/hangfire",
+                new DashboardOptions { Authorization = new[] { new HangfireAuthorizationFilter() } });
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -113,6 +144,30 @@
                 endpoints.MapControllerRoute("default", "{controller=News}/{action=List}/{id?}");
                 endpoints.MapRazorPages();
             });
+        }
+
+        private void SeedHangfireJobs(IRecurringJobManager recurringJobManager, ApplicationDbContext dbContext)
+        {
+            recurringJobManager.AddOrUpdate<DbCleanupJob>("DbCleanupJob", x => x.Work(), Cron.Weekly);
+            recurringJobManager.AddOrUpdate<MainNewsGetterJob>("MainNewsGetterJob", x => x.Work(), "*/2 * * * *");
+            var sources = dbContext.Sources.Where(x => !x.IsDeleted).ToList();
+            foreach (var source in sources)
+            {
+                recurringJobManager.RemoveIfExists("GetLatestPublicationsJob_" + source.ShortName);
+                recurringJobManager.AddOrUpdate<GetLatestPublicationsJob>(
+                    $"GetLatestPublicationsJob_{source.Id}_{source.ShortName}",
+                    x => x.Work(source.TypeName),
+                    "*/5 * * * *");
+            }
+        }
+
+        public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
+        {
+            public bool Authorize(DashboardContext context)
+            {
+                var httpContext = context.GetHttpContext();
+                return httpContext.User.IsInRole(GlobalConstants.AdministratorRoleName);
+            }
         }
     }
 }

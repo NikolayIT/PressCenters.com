@@ -51,6 +51,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PressCenters.Web.Proxy", "W
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PressCenters.Services.Tests", "Tests\PressCenters.Services.Tests\PressCenters.Services.Tests.csproj", "{4DC4A0D7-8FCA-48A8-8019-425BFA975667}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PressCenters.Services.CronJobs", "Services\PressCenters.Services.CronJobs\PressCenters.Services.CronJobs.csproj", "{94C83690-DE37-49FF-A7F9-E94EF765338F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -133,6 +135,10 @@ Global
 		{4DC4A0D7-8FCA-48A8-8019-425BFA975667}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4DC4A0D7-8FCA-48A8-8019-425BFA975667}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4DC4A0D7-8FCA-48A8-8019-425BFA975667}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94C83690-DE37-49FF-A7F9-E94EF765338F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94C83690-DE37-49FF-A7F9-E94EF765338F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94C83690-DE37-49FF-A7F9-E94EF765338F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94C83690-DE37-49FF-A7F9-E94EF765338F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -156,6 +162,7 @@ Global
 		{443A3AA8-3BA8-477B-B744-592CFB151076} = {F1E14308-019E-43F9-AE91-86A7A42E7090}
 		{C1B5384A-22B1-438E-8604-A6241B2B334C} = {E389DEB6-5F90-444B-A054-12A10D39C76F}
 		{4DC4A0D7-8FCA-48A8-8019-425BFA975667} = {7A731632-6714-44E2-A9E4-069EBA9E666C}
+		{94C83690-DE37-49FF-A7F9-E94EF765338F} = {516E002B-9E6E-4456-B7F6-EAA353966DE6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {384484BE-4680-4529-9CC2-AD37BA4D12D1}

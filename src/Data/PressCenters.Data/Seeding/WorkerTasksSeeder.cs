@@ -20,12 +20,6 @@
                                   },
                                   new WorkerTask
                                   {
-                                      TypeName = "PressCenters.Worker.Tasks.NewsTagsTask",
-                                      Parameters = "{\"Recreate\":true,\"LastId\":0}",
-                                      Priority = 2000,
-                                  },
-                                  new WorkerTask
-                                  {
                                       TypeName = "PressCenters.Worker.Tasks.MainNewsGetterTask",
                                       Parameters = "{\"Recreate\":true}",
                                       Priority = 10000,
