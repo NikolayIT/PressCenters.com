@@ -26,7 +26,6 @@
 
         public async Task Work()
         {
-            var updated = 0;
             string errors = null;
             foreach (var source in this.mainNewsSourcesRepository.All().ToList())
             {
@@ -36,7 +35,7 @@
                         .FirstOrDefault();
                 var instance = ReflectionHelpers.GetInstance<BaseMainNewsProvider>(source.TypeName);
 
-                RemoteMainNews news = null;
+                RemoteMainNews news;
                 try
                 {
                     news = instance.GetMainNews();
@@ -44,6 +43,7 @@
                 catch (Exception e)
                 {
                     errors += $"Error in {source.TypeName}: {e.Message}; ";
+                    continue;
                 }
 
                 if (news == null)
@@ -58,7 +58,6 @@
                     continue;
                 }
 
-                updated++;
                 await this.mainNewsRepository.AddAsync(
                     new MainNews
                         {
@@ -69,9 +68,11 @@
                         });
             }
 
-            Console.WriteLine(updated);
-            Console.WriteLine(errors);
             await this.mainNewsRepository.SaveChangesAsync();
+            if (!string.IsNullOrWhiteSpace(errors))
+            {
+                throw new Exception(errors);
+            }
         }
     }
 }

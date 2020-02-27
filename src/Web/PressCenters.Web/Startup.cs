@@ -61,7 +61,6 @@
                                 UsePageLocksOnDequeue = true,
                                 DisableGlobalLocks = true,
                             }));
-            services.AddHangfireServer();
 
             services.AddDbContext<ApplicationDbContext>(
                 options => options.UseSqlServer(this.configuration.GetConnectionString("DefaultConnection")));
@@ -124,7 +123,7 @@
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseHangfireServer(new BackgroundJobServerOptions { WorkerCount = 5 });
+            app.UseHangfireServer(new BackgroundJobServerOptions { WorkerCount = 2 });
             app.UseHangfireDashboard(
                 "/hangfire",
                 new DashboardOptions { Authorization = new[] { new HangfireAuthorizationFilter() } });

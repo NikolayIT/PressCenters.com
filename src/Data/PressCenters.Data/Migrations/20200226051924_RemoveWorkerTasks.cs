@@ -30,7 +30,7 @@
                     ProcessingComment = table.Column<string>(nullable: true),
                     Result = table.Column<string>(nullable: true),
                     RunAfter = table.Column<DateTime>(nullable: true),
-                    TypeName = table.Column<string>(maxLength: 100, nullable: false)
+                    TypeName = table.Column<string>(maxLength: 100, nullable: false),
                 },
                 constraints: table =>
                 {

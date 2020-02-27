@@ -39,17 +39,10 @@
                 throw new Exception("GetLatestPublications() returned 0 results.");
             }
 
-            var added = 0;
             foreach (var remoteNews in publications)
             {
-                if (await this.newsService.AddAsync(remoteNews, source.Id))
-                {
-                    Console.WriteLine($"New news: {source.ShortName}: \"{remoteNews.Title}\"");
-                    added++;
-                }
+                await this.newsService.AddAsync(remoteNews, source.Id);
             }
-
-            Console.WriteLine(added);
         }
     }
 }
