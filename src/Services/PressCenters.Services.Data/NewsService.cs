@@ -82,11 +82,14 @@
 
             // Append title
             var text = news.Title + " " + document.Body.TextContent;
+            text = text.ToLower();
 
-            // Split by whitespace characters and remove duplicate values as well as non-alphanumeric characters
-            var regex = new Regex(@"[^\w\d ]", RegexOptions.Compiled);
-            var words = text.Split((char[])null, StringSplitOptions.RemoveEmptyEntries)
-                .Select(x => regex.Replace(x, string.Empty)).Where(x => x.Length > 1).Distinct();
+            // Remove all non-alphanumeric characters
+            var regex = new Regex(@"[^\w\d]", RegexOptions.Compiled);
+            text = regex.Replace(text, " ");
+
+            // Split words and remove duplicate values
+            var words = text.Split(' ', StringSplitOptions.RemoveEmptyEntries).Where(x => x.Length > 1).Distinct();
 
             // Combine all words
             return string.Join(" ", words);
