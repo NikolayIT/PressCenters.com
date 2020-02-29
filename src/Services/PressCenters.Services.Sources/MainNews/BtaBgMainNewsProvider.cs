@@ -9,7 +9,7 @@
             var document = this.GetDocument(this.BaseUrl);
 
             var titleElement = document.QuerySelector(".top-stories .bc h4 a");
-            var title = titleElement.TextContent.Trim().Trim('.').Trim();
+            var title = titleElement.TextContent.Trim().Trim('.').Trim() + "...";
 
             var url = this.BaseUrl + titleElement.Attributes["href"].Value.Trim();
 

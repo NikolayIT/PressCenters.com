@@ -4,7 +4,6 @@
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Security.Principal;
 
     using Hangfire;
     using Hangfire.Dashboard;
@@ -12,7 +11,6 @@
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
@@ -123,10 +121,13 @@
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseHangfireServer(new BackgroundJobServerOptions { WorkerCount = 2 });
-            app.UseHangfireDashboard(
-                "/hangfire",
-                new DashboardOptions { Authorization = new[] { new HangfireAuthorizationFilter() } });
+            if (env.IsProduction())
+            {
+                app.UseHangfireServer(new BackgroundJobServerOptions { WorkerCount = 2 });
+                app.UseHangfireDashboard(
+                    "/hangfire",
+                    new DashboardOptions { Authorization = new[] { new HangfireAuthorizationFilter() } });
+            }
 
             app.UseEndpoints(endpoints =>
             {
