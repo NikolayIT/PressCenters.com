@@ -22,8 +22,8 @@
                                           "PressCenters.Services.Sources.MainNews.NewsBgMainNewsProvider"),*/
                                       ("Dnes.bg", "https://www.dnes.bg",
                                           "PressCenters.Services.Sources.MainNews.DnesBgMainNewsProvider"),
-                                      ("Novini.bg", "https://novini.bg",
-                                          "PressCenters.Services.Sources.MainNews.NoviniBgMainNewsProvider"),
+                                      /*("Novini.bg", "https://novini.bg",
+                                          "PressCenters.Services.Sources.MainNews.NoviniBgMainNewsProvider"),*/
                                       /*("Vesti.bg", "https://www.vesti.bg",
                                           "PressCenters.Services.Sources.MainNews.VestiBgMainNewsProvider"),*/
                                       ("CNN", "https://edition.cnn.com",
