@@ -3,7 +3,6 @@
     using System;
     using System.Diagnostics;
     using System.IO;
-    using System.Linq;
     using System.Text;
 
     using CommandLine;
@@ -13,7 +12,6 @@
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
 
-    using PressCenters.Common;
     using PressCenters.Data;
     using PressCenters.Data.Common;
     using PressCenters.Data.Common.Repositories;
@@ -22,7 +20,8 @@
     using PressCenters.Data.Seeding;
     using PressCenters.Services.Data;
     using PressCenters.Services.Messaging;
-    using PressCenters.Services.Sources;
+
+    using Sandbox.Code;
 
     public static class Program
     {
@@ -56,27 +55,8 @@
         {
             var sw = Stopwatch.StartNew();
 
-            var newsService = serviceProvider.GetService<INewsService>();
-            var tagsService = serviceProvider.GetService<ITagsService>();
-            var sourcesRepository = serviceProvider.GetService<IDeletableEntityRepository<Source>>();
-            foreach (var source in sourcesRepository.All().ToList())
-            {
-                // Run only for selected sources
-                if (!new[] { "CiafGovernmentBgSource" }.Any(x => source.TypeName.Contains(x)))
-                {
-                    continue;
-                }
-
-                var sourceProvider = ReflectionHelpers.GetInstance<BaseSource>(source.TypeName);
-                Console.WriteLine($"Starting {source.TypeName}.GetAllPublications...");
-                var news = sourceProvider.GetAllPublications();
-                foreach (var remoteNews in news)
-                {
-                    newsService.AddAsync(remoteNews, source.Id).GetAwaiter().GetResult();
-                }
-
-                Console.WriteLine($"{source.TypeName}.GetAllPublications done.");
-            }
+            new UpdateSearchTextSandbox().Work(serviceProvider).GetAwaiter().GetResult();
+            //// new GetAllNewsSandbox().Work(serviceProvider).GetAwaiter().GetResult();
 
             Console.WriteLine(sw.Elapsed);
             return 0;
@@ -92,8 +72,11 @@
             services.AddSingleton<IConfiguration>(configuration);
             var loggerFactory = new LoggerFactory();
             services.AddDbContext<ApplicationDbContext>(
-                options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
-                    .EnableSensitiveDataLogging().UseLoggerFactory(loggerFactory));
+                options => options
+                    .UseSqlServer(
+                        configuration.GetConnectionString("DefaultConnection"),
+                        sqlServerOptions => sqlServerOptions.CommandTimeout(600)).EnableSensitiveDataLogging()
+                    .UseLoggerFactory(loggerFactory));
 
             services.AddDefaultIdentity<ApplicationUser>(IdentityOptionsProvider.GetIdentityOptions)
                 .AddRoles<ApplicationRole>().AddEntityFrameworkStores<ApplicationDbContext>();
