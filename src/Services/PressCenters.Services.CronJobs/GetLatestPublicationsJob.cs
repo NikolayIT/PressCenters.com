@@ -34,11 +34,6 @@
 
             var instance = ReflectionHelpers.GetInstance<BaseSource>(typeName);
             var publications = instance.GetLatestPublications().ToList();
-            if (!publications.Any())
-            {
-                throw new Exception("GetLatestPublications() returned 0 results.");
-            }
-
             foreach (var remoteNews in publications)
             {
                 await this.newsService.AddAsync(remoteNews, source.Id);

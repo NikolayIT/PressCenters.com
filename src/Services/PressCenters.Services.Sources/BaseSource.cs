@@ -110,16 +110,21 @@ namespace PressCenters.Services.Sources
 
         protected abstract RemoteNews ParseDocument(IDocument document, string url);
 
-        protected IList<RemoteNews> GetPublications(string address, string anchorSelector, string urlShouldContain = "", int count = 0)
+        protected IList<RemoteNews> GetPublications(string address, string anchorSelector, string urlShouldContain = "", int count = 0, bool throwOnEmpty = true)
         {
             var document = this.Parser.ParseDocument(this.ReadStringFromUrl($"{this.BaseUrl}{address}"));
             var links = document.QuerySelectorAll(anchorSelector)
                 .Select(x => this.NormalizeUrl(x?.Attributes["href"]?.Value))
-                .Where(x => x?.Contains(urlShouldContain) == true).Distinct();
+                .Where(x => x?.Contains(urlShouldContain) == true).Distinct().ToList();
 
             if (count > 0)
             {
-                links = links.Take(count);
+                links = links.Take(count).ToList();
+            }
+
+            if (!links.Any() && throwOnEmpty)
+            {
+                throw new Exception("No publications found.");
             }
 
             var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
