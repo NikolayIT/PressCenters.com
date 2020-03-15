@@ -5,6 +5,7 @@
     using System.Globalization;
     using System.Linq;
 
+    using AngleSharp;
     using AngleSharp.Dom;
     using AngleSharp.Html.Dom;
 
@@ -65,7 +66,12 @@
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            var titleElement = document.QuerySelector(".portlet-body h3.header-title");
+            var titleElement = document.QuerySelector("h3.header-title");
+            if (titleElement == null)
+            {
+                return null;
+            }
+
             var title = titleElement.TextContent.Trim();
 
             var time = DateTime.Now;

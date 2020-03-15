@@ -2,13 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
-    using System.Linq;
 
+    using AngleSharp;
     using AngleSharp.Dom;
-    using AngleSharp.Html.Parser;
 
     using Newtonsoft.Json;
+
+    using PressCenters.Common;
 
     /// <summary>
     /// Министерство на правосъдието.
@@ -21,105 +21,58 @@
 
         public override IEnumerable<RemoteNews> GetLatestPublications()
         {
-            var news = new List<RemoteNews>();
-
-            for (var i = 1; i <= 5; i++)
+            var newsData = this.ReadStringFromUrl("https://mjs.bg/api/content/GetNewsData?count=5&blockId=19&top=0");
+            var newsList = JsonConvert.DeserializeObject<NewsList>(newsData);
+            foreach (var news in newsList.Rows)
             {
-                var remoteNews = this.GetNthLastNews(i);
-                if (remoteNews == null)
-                {
-                    continue;
-                }
-
-                news.Add(remoteNews);
-            }
-
-            return news;
-        }
-
-        public override IEnumerable<RemoteNews> GetAllPublications()
-        {
-            for (var i = 1; i <= 60; i++)
-            {
-                var remoteNews = this.GetNthLastNews(i);
-                if (remoteNews == null)
-                {
-                    continue;
-                }
-
-                Console.WriteLine($"{i} => {remoteNews.Title}");
-                yield return remoteNews;
-            }
-
-            foreach (var remoteNews in this.GetPublications("117/", ".navlist2 li a"))
-            {
-                yield return remoteNews;
+                yield return this.GetPublication($"https://mjs.bg/home/index/{news.Url}");
             }
         }
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            var titleElement = document.QuerySelector("div.lBorder ~ div.lTitle");
-            if (titleElement == null)
-            {
-                return null;
-            }
+            var html = document.ToHtml();
 
-            var title = titleElement.TextContent;
+            var title = html.GetStringBetween("\"title\": {\n      \"bg\": \"", "\"");
 
-            var timeElement = document.QuerySelector("div.lBorder ~div.lDate");
-            var timeAsString = timeElement?.TextContent?.Trim();
-            var time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
+            var time = DateTime.Now;
 
-            var contentElement = document.QuerySelector("div.lBorder ~ div.lText");
-            this.NormalizeUrlsRecursively(contentElement);
-            var content = contentElement?.InnerHtml;
+            var imageId = html.GetStringBetween("\"imageId\": \"", "\"");
+            var imageUrl = string.IsNullOrWhiteSpace(imageId)
+                               ? "/images/sources/mjs.bg.jpg"
+                               : "https://mjs.bg/api/part/GetBlob?hash=" + imageId;
 
-            return new RemoteNews(title, content, time, "/images/sources/mjs.bg.jpg");
+            var content = html.Replace("\\\"", "__QUOTE__").GetStringBetween("\"body\": {\n      \"bg\": \"", "\"")
+                .Replace("__QUOTE__", "\"");
+
+            return new RemoteNews(title, content, time, imageUrl);
         }
 
-        private RemoteNews GetNthLastNews(int i)
+        public class NewsList
         {
-            var json = this.ReadStringFromUrl($"{this.BaseUrl}News/GetJsonNews/?news={i}");
-            if (string.IsNullOrWhiteSpace(json))
-            {
-                return null;
-            }
+            [JsonProperty("rows")]
+            public Row[] Rows { get; set; }
 
-            var newsAsJson = JsonConvert.DeserializeObject<IEnumerable<NewsAsJson>>(json).FirstOrDefault();
-            if (newsAsJson == null)
-            {
-                return null;
-            }
-
-            var parser = new HtmlParser();
-            var url = parser.ParseDocument(newsAsJson.Info)?.QuerySelector("a")?.Attributes["href"]?.Value?.TrimStart('/');
-            if (string.IsNullOrWhiteSpace(url))
-            {
-                return null;
-            }
-
-            url = this.NormalizeUrl(url);
-            var imageUrl = parser.ParseDocument(newsAsJson.Img)?.QuerySelector("img")?.Attributes["src"]?.Value;
-            var remoteNews = this.GetPublication(url);
-            if (remoteNews == null)
-            {
-                return null;
-            }
-
-            if (!string.IsNullOrWhiteSpace(imageUrl))
-            {
-                remoteNews.ImageUrl = this.NormalizeUrl(imageUrl);
-            }
-
-            return remoteNews;
+            [JsonProperty("count")]
+            public int Count { get; set; }
         }
 
-        private class NewsAsJson
+        public class Row
         {
-            public string Img { get; set; }
+            [JsonProperty("blockId")]
+            public int BlockId { get; set; }
 
-            public string Info { get; set; }
+            [JsonProperty("url")]
+            public string Url { get; set; }
+
+            [JsonProperty("date")]
+            public string Date { get; set; }
+
+            [JsonProperty("jsonContent")]
+            public string JsonContent { get; set; }
+
+            [JsonProperty("json")]
+            public object Json { get; set; }
         }
     }
 }

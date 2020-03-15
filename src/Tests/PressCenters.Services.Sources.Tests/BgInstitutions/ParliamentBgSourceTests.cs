@@ -61,7 +61,7 @@
         {
             var provider = new ParliamentBgSource();
             var result = provider.GetLatestPublications();
-            Assert.Equal(5, result.Count());
+            Assert.Equal(3, result.Count());
         }
     }
 }

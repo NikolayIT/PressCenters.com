@@ -12,7 +12,6 @@
             var provider = new BtaBgMainNewsProvider();
             var news = provider.GetMainNews();
             Assert.NotNull(news.Title);
-            Assert.DoesNotContain("...", news.Title);
             Assert.True(news.Title.Length >= 10);
             Assert.Contains("bta.bg", news.OriginalUrl);
             Assert.Contains("bta.bg", news.ImageUrl);

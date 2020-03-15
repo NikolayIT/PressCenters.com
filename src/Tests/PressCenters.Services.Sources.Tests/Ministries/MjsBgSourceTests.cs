@@ -1,6 +1,5 @@
 ﻿namespace PressCenters.Services.Sources.Tests.Ministries
 {
-    using System;
     using System.Linq;
 
     using PressCenters.Services.Sources.Ministries;
@@ -10,8 +9,8 @@
     public class MjsBgSourceTests
     {
         [Theory]
-        [InlineData("https://www.mjs.bg/117/4", "4")]
-        [InlineData("https://www.mjs.bg/117/14880/", "14880")]
+        [InlineData("https://mjs.bg/home/index/6136e040-2cfa-45be-84c1-fb4b8674c352", "6136e040-2cfa-45be-84c1-fb4b8674c352")]
+        [InlineData("https://mjs.bg/home/index/5cfdb35b-76b7-4848-9444-0ae4183ccd46/", "5cfdb35b-76b7-4848-9444-0ae4183ccd46")]
         public void ExtractIdFromPressUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new MjsBgSource();
@@ -22,24 +21,25 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://www.mjs.bg/117/14881/";
+            const string NewsUrl = "https://mjs.bg/home/index/1eac25bf-981b-4487-a505-593e11e56ed6";
             var provider = new MjsBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Новата концепция за наказателна политика ще се изработи на базата на задълбочен анализ на прилагането на НК", news.Title);
-            Assert.Contains("Необходимо е да се оцени прилагането на действащия Наказателен кодекс (НК),", news.Content);
-            Assert.Contains("Министерството на правосъдието, ще бъдат използвани в изготвянето на концепцията.", news.Content);
+            Assert.Equal("Министър Кирилов участва в Националната програма „Управленски умения”", news.Title);
+            Assert.Contains("Министър Данаил Кирилов запозна млади лидери от парламентарно представените партии,", news.Content);
+            Assert.Contains("изслушване на малолетни и непълнолетни по граждански и наказателни производства.", news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
-            Assert.DoesNotContain("18.12.2018", news.Content);
-            Assert.Equal(new DateTime(2018, 12, 18), news.PostDate);
-            Assert.Equal("14881", news.RemoteId);
+            Assert.DoesNotContain("2020-02-10", news.Content);
+            //// Assert.Equal(new DateTime(2020, 2, 10), news.PostDate);
+            Assert.Equal("https://mjs.bg/api/part/GetBlob?hash=AC9F6B976DF04C6B609471615B53F679", news.ImageUrl);
+            Assert.Equal("1eac25bf-981b-4487-a505-593e11e56ed6", news.RemoteId);
         }
 
         [Fact]
         public void GetNewsShouldReturnResults()
         {
             var provider = new MjsBgSource();
-            var result = provider.GetLatestPublications();
+            var result = provider.GetLatestPublications().ToList();
             Assert.Equal(5, result.Count());
         }
     }
