@@ -55,11 +55,20 @@
                 model.Title,
                 model.Content);
 
+            this.TempData[TempDataConstants.Redirected] = true;
+
             return this.RedirectToAction("ThankYou");
         }
 
         public IActionResult ThankYou()
         {
+            var redirected = this.TempData[TempDataConstants.Redirected];
+
+            if (redirected == null)
+            {
+                return this.NotFound();
+            }
+
             return this.View();
         }
     }
