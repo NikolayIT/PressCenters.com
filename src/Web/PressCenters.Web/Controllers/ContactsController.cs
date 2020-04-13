@@ -12,7 +12,7 @@
 
     public class ContactsController : BaseController
     {
-        private const string Redirected = "Redirected";
+        private const string RedirectedFromContactForm = "RedirectedFromContactForm";
 
         private readonly IRepository<ContactFormEntry> contactsRepository;
 
@@ -57,14 +57,14 @@
                 model.Title,
                 model.Content);
 
-            this.TempData[Redirected] = true;
+            this.TempData[RedirectedFromContactForm] = true;
 
             return this.RedirectToAction("ThankYou");
         }
 
         public IActionResult ThankYou()
         {
-            if (this.TempData[Redirected] == null)
+            if (this.TempData[RedirectedFromContactForm] == null)
             {
                 return this.NotFound();
             }
