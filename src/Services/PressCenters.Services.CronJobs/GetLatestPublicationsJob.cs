@@ -4,6 +4,9 @@
     using System.Linq;
     using System.Threading.Tasks;
 
+    using Hangfire;
+    using Hangfire.Server;
+
     using PressCenters.Common;
     using PressCenters.Data.Common.Repositories;
     using PressCenters.Data.Models;
@@ -24,6 +27,7 @@
             this.newsService = newsService;
         }
 
+        [AutomaticRetry(Attempts = 3)]
         public async Task Work(string typeName)
         {
             var source = this.sourcesRepository.AllWithDeleted().FirstOrDefault(x => x.TypeName == typeName);
