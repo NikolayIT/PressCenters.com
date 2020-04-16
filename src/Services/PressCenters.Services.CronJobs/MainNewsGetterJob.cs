@@ -4,6 +4,9 @@
     using System.Linq;
     using System.Threading.Tasks;
 
+    using Hangfire.Console;
+    using Hangfire.Server;
+
     using PressCenters.Common;
     using PressCenters.Data.Common.Repositories;
     using PressCenters.Data.Models;
@@ -24,7 +27,7 @@
             this.mainNewsRepository = mainNewsRepository;
         }
 
-        public async Task Work()
+        public async Task Work(PerformContext context)
         {
             string errors = null;
             foreach (var source in this.mainNewsSourcesRepository.All().ToList())
@@ -34,7 +37,7 @@
                         .OrderByDescending(x => x.Id)
                         .FirstOrDefault();
                 var instance = ReflectionHelpers.GetInstance<BaseMainNewsProvider>(source.TypeName);
-
+                context.WriteLine(source.TypeName);
                 RemoteMainNews news;
                 try
                 {

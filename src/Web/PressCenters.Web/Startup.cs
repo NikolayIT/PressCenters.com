@@ -6,6 +6,7 @@
     using System.Reflection;
 
     using Hangfire;
+    using Hangfire.Console;
     using Hangfire.Dashboard;
     using Hangfire.SqlServer;
 
@@ -58,7 +59,7 @@
                                 UseRecommendedIsolationLevel = true,
                                 UsePageLocksOnDequeue = true,
                                 DisableGlobalLocks = true,
-                            }));
+                            }).UseConsole());
 
             services.AddDbContext<ApplicationDbContext>(
                 options => options.UseSqlServer(this.configuration.GetConnectionString("DefaultConnection")));
@@ -150,13 +151,13 @@
         private void SeedHangfireJobs(IRecurringJobManager recurringJobManager, ApplicationDbContext dbContext)
         {
             recurringJobManager.AddOrUpdate<DbCleanupJob>("DbCleanupJob", x => x.Work(), Cron.Weekly);
-            recurringJobManager.AddOrUpdate<MainNewsGetterJob>("MainNewsGetterJob", x => x.Work(), "*/2 * * * *");
+            recurringJobManager.AddOrUpdate<MainNewsGetterJob>("MainNewsGetterJob", x => x.Work(null), "*/2 * * * *");
             var sources = dbContext.Sources.Where(x => !x.IsDeleted).ToList();
             foreach (var source in sources)
             {
                 recurringJobManager.AddOrUpdate<GetLatestPublicationsJob>(
                     $"GetLatestPublicationsJob_{source.Id}_{source.ShortName}",
-                    x => x.Work(source.TypeName),
+                    x => x.Work(source.TypeName, null),
                     "*/5 * * * *");
             }
         }
