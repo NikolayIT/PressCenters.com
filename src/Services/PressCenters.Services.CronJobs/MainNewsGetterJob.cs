@@ -1,11 +1,15 @@
 ﻿namespace PressCenters.Services.CronJobs
 {
     using System;
+    using System.IO;
     using System.Linq;
+    using System.Net.Http;
     using System.Threading.Tasks;
 
     using Hangfire.Console;
     using Hangfire.Server;
+
+    using Microsoft.AspNetCore.Hosting;
 
     using PressCenters.Common;
     using PressCenters.Data.Common.Repositories;
@@ -13,23 +17,30 @@
     using PressCenters.Services;
     using PressCenters.Services.Sources.MainNews;
 
+    using SixLabors.ImageSharp;
+    using SixLabors.ImageSharp.Processing;
+    using SixLabors.Primitives;
+
     public class MainNewsGetterJob
     {
         private readonly IDeletableEntityRepository<MainNewsSource> mainNewsSourcesRepository;
 
         private readonly IDeletableEntityRepository<MainNews> mainNewsRepository;
 
+        private readonly IWebHostEnvironment webHostEnvironment;
+
         public MainNewsGetterJob(
             IDeletableEntityRepository<MainNewsSource> mainNewsSourcesRepository,
-            IDeletableEntityRepository<MainNews> mainNewsRepository)
+            IDeletableEntityRepository<MainNews> mainNewsRepository,
+            IWebHostEnvironment webHostEnvironment)
         {
             this.mainNewsSourcesRepository = mainNewsSourcesRepository;
             this.mainNewsRepository = mainNewsRepository;
+            this.webHostEnvironment = webHostEnvironment;
         }
 
         public async Task Work(PerformContext context)
         {
-            string errors = null;
             foreach (var source in this.mainNewsSourcesRepository.All().ToList())
             {
                 var lastNews =
@@ -45,13 +56,13 @@
                 }
                 catch (Exception e)
                 {
-                    errors += $"Error in {source.TypeName}: {e.Message}; ";
+                    context.WriteLine($"Error in \"{source.TypeName}\": {e.Message}");
                     continue;
                 }
 
                 if (news == null)
                 {
-                    errors += $"Null news in {source.TypeName}; ";
+                    context.WriteLine($"Null news in \"{source.TypeName}\"");
                     continue;
                 }
 
@@ -61,6 +72,8 @@
                     continue;
                 }
 
+                await this.SaveImageLocally(news.ImageUrl, source.Id);
+
                 await this.mainNewsRepository.AddAsync(
                     new MainNews
                         {
@@ -69,13 +82,43 @@
                             ImageUrl = news.ImageUrl,
                             SourceId = source.Id,
                         });
+                await this.mainNewsRepository.SaveChangesAsync();
+            }
+        }
+
+        private async Task SaveImageLocally(string imageUrl, int sourceId)
+        {
+            var filePath = this.webHostEnvironment.WebRootPath + "/images/mainnews/" + sourceId + ".png";
+            var defaultFilePath = this.webHostEnvironment.WebRootPath + "/images/mainnews/default.png";
+            if (string.IsNullOrWhiteSpace(imageUrl))
+            {
+                File.Copy(defaultFilePath, filePath, true);
+                return;
             }
 
-            await this.mainNewsRepository.SaveChangesAsync();
-            if (!string.IsNullOrWhiteSpace(errors))
+            using var client = new HttpClient();
+            var result = await client.GetAsync(imageUrl);
+            if (!result.IsSuccessStatusCode)
             {
-                throw new Exception(errors);
+                File.Copy(defaultFilePath, filePath, true);
+                return;
             }
+
+            var imageBytes = await result.Content.ReadAsByteArrayAsync();
+            using var image = Image.Load(imageBytes);
+            image.Mutate(
+                x => x.Resize(
+                    new ResizeOptions
+                        {
+                            Mode = ResizeMode.Crop, Size = new Size(150, 110), Position = AnchorPositionMode.Center,
+                        }));
+            var tempPath = this.webHostEnvironment.WebRootPath + "/images/mainnews/" + Path.GetRandomFileName() + ".png";
+            await using (var stream = File.OpenWrite(tempPath))
+            {
+                image.SaveAsPng(stream);
+            }
+
+            File.Move(tempPath, filePath, true);
         }
     }
 }

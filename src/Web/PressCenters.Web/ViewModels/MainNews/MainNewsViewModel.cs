@@ -11,11 +11,11 @@
 
         public string Title { get; set; }
 
-        public string ImageUrl { get; set; }
-
-        public string ImageUrlOrDefault => this.ImageUrl ?? "/images/mainnews/default.png";
+        public string LocalImageUrl => $"/images/mainnews/{this.SourceId}.png";
 
         public string OriginalUrl { get; set; }
+
+        public int SourceId { get; set; }
 
         public string SourceName { get; set; }
 
