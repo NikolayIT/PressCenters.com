@@ -67,6 +67,12 @@
 
         public string ImageUrl { get; set; }
 
+        public string SmallImageUrl =>
+            this.ImageUrl == null ? this.SourceDefaultImageUrl : $"/images/news/{this.Id % 1000}/small_{this.Id}.png";
+
+        public string BigImageUrl =>
+            this.ImageUrl == null ? this.SourceDefaultImageUrl : $"/images/news/{this.Id % 1000}/big_{this.Id}.png";
+
         public string OriginalUrl { get; set; }
 
         public string RemoteId { get; set; }
@@ -74,6 +80,8 @@
         public string SourceName { get; set; }
 
         public string SourceShortName { get; set; }
+
+        public string SourceDefaultImageUrl { get; set; }
 
         public string SourceUrl { get; set; }
 
