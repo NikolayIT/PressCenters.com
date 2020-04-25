@@ -6,12 +6,14 @@
 
     public interface INewsService
     {
-        Task<bool> AddAsync(RemoteNews remoteNews, int sourceId);
+        Task<int?> AddAsync(RemoteNews remoteNews, int sourceId);
 
         Task UpdateAsync(int id, RemoteNews remoteNews);
 
         int Count();
 
         string GetSearchText(News news);
+
+        Task<bool> SaveImageLocallyAsync(string imageUrl, int newsId, string webRoot, bool useProxy = false);
     }
 }

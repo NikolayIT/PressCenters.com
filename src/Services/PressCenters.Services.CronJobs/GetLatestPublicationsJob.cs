@@ -8,6 +8,8 @@
     using Hangfire.Console;
     using Hangfire.Server;
 
+    using Microsoft.AspNetCore.Hosting;
+
     using PressCenters.Common;
     using PressCenters.Data.Common.Repositories;
     using PressCenters.Data.Models;
@@ -20,12 +22,16 @@
 
         private readonly INewsService newsService;
 
+        private readonly IWebHostEnvironment webHostEnvironment;
+
         public GetLatestPublicationsJob(
             IDeletableEntityRepository<Source> sourcesRepository,
-            INewsService newsService)
+            INewsService newsService,
+            IWebHostEnvironment webHostEnvironment)
         {
             this.sourcesRepository = sourcesRepository;
             this.newsService = newsService;
+            this.webHostEnvironment = webHostEnvironment;
         }
 
         [AutomaticRetry(Attempts = 3)]
@@ -41,9 +47,15 @@
             var publications = instance.GetLatestPublications().ToList();
             foreach (var remoteNews in publications)
             {
-                if (await this.newsService.AddAsync(remoteNews, source.Id))
+                var newsId = await this.newsService.AddAsync(remoteNews, source.Id);
+                if (newsId.HasValue && remoteNews != null)
                 {
-                    context.WriteLine($"NEW: {remoteNews?.Title}");
+                    context.WriteLine($"NEW: {remoteNews.Title}");
+                    await this.newsService.SaveImageLocallyAsync(
+                        remoteNews.ImageUrl,
+                        newsId.Value,
+                        this.webHostEnvironment.WebRootPath,
+                        instance.UseProxy);
                 }
             }
         }

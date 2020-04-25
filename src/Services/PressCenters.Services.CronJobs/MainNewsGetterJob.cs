@@ -6,6 +6,7 @@
     using System.Net.Http;
     using System.Threading.Tasks;
 
+    using Hangfire;
     using Hangfire.Console;
     using Hangfire.Server;
 
@@ -39,6 +40,7 @@
             this.webHostEnvironment = webHostEnvironment;
         }
 
+        [AutomaticRetry(Attempts = 3)]
         public async Task Work(PerformContext context)
         {
             foreach (var source in this.mainNewsSourcesRepository.All().ToList())
@@ -96,7 +98,10 @@
                 return;
             }
 
-            using var client = new HttpClient();
+            using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(120), };
+            client.DefaultRequestHeaders.Add(
+                "User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36");
             var result = await client.GetAsync(imageUrl);
             if (!result.IsSuccessStatusCode)
             {
