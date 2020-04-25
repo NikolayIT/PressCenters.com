@@ -21,6 +21,8 @@
 
         public string Url { get; set; }
 
+        public string DefaultImageUrl { get; set; }
+
         public virtual ICollection<News> News { get; set; }
     }
 }

@@ -4,7 +4,7 @@
 
     using PressCenters.Data.Common.Models;
 
-    public class Tag : BaseModel<int>
+    public class Tag : BaseDeletableModel<int>
     {
         public Tag()
         {

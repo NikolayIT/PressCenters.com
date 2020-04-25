@@ -2,7 +2,7 @@
 {
     using PressCenters.Data.Common.Models;
 
-    public class NewsTag : BaseDeletableModel<int>
+    public class NewsTag : BaseModel<int>
     {
         public int NewsId { get; set; }
 
