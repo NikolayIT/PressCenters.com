@@ -31,7 +31,7 @@
             Assert.Equal("Становище на пациентски организации „Заедно с теб“ относно ваксината „Пентаксим“", news.Title);
             Assert.Contains("Пациентски организации „Заедно с теб“", news.Content);
             Assert.Contains("Становище на пациентски организации „Заедно с теб“ относно ваксината „Пентаксим“", news.Content);
-            Assert.Equal("/images/sources/mh.government.bg.jpg", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal(new DateTime(2016, 1, 22, 9, 49, 2), news.PostDate);
             Assert.Equal("aktualno/stanovishe-na-pacientski-organizacii-zaedno-s-teb-", news.RemoteId);
         }
@@ -62,7 +62,7 @@
             Assert.Equal("Справка за епидемичната обстановка в страната за периода 04.12.2015 г. - 10.01.2016 г.", news.Title);
             Assert.Contains("През изминалата седмица са регистрирани общо 6", news.Content);
             Assert.Contains("През изминалата седмица не са регистрирани хранителни взривове и взривове от вътреболнични инфекции.", news.Content);
-            Assert.Equal("/images/sources/mh.government.bg.jpg", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal(new DateTime(2016, 1, 15, 15, 44, 0), news.PostDate);
             Assert.Equal("epidemichna-obstanovka/spravka-za-epidemichnata-obstanovka-v-st-2016-01", news.RemoteId);
         }

@@ -83,7 +83,7 @@
             }
 
             var imageElement = document.QuerySelector(".journal-content-article img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/sofia.bg.png";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             var contentElement = document.QuerySelector(".journal-content-article");
             contentElement.RemoveRecursively(imageElement);

@@ -59,7 +59,7 @@
             var time = DateTime.Parse(timeAsString, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal).AddHours(2); // TODO: Remove .AddHours when move to UTC
 
             var imageElement = document.QuerySelector(".post-image a");
-            var imageUrl = imageElement?.GetAttribute("href") ?? "/images/sources/bivol.bg.jpg";
+            var imageUrl = imageElement?.GetAttribute("href");
 
             var contentElement = document.QuerySelector("div[itemprop=articleBody]");
             contentElement.RemoveRecursively(document.QuerySelector("div[itemprop=articleBody] div[role=tabpanel]"));

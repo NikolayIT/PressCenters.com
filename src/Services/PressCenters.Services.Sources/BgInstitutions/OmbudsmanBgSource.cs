@@ -90,8 +90,7 @@
             }
 
             // Image
-            var imageUrl = document.QuerySelector(".news-content > .inline-image img")?.Attributes?["src"]?.Value
-                           ?? "/images/sources/ombudsman.bg.jpg";
+            var imageUrl = document.QuerySelector(".news-content > .inline-image img")?.Attributes?["src"]?.Value;
 
             // Content
             var contentElement = document.QuerySelector(".news-content .news-body");

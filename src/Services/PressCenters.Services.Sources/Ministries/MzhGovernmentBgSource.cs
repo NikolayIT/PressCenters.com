@@ -12,7 +12,7 @@
     {
         public override string BaseUrl { get; } = "http://www.mzh.government.bg/";
 
-        protected override bool UseProxy => true;
+        public override bool UseProxy => true;
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("bg/press-center/novini/", ".news h2 a", "bg/press-center/novini");
@@ -33,7 +33,7 @@
         internal override string ExtractIdFromUrl(string url)
         {
             var uri = new Uri(url.Trim().Trim('/'));
-            return uri.Segments[uri.Segments.Length - 2] + uri.Segments[uri.Segments.Length - 1];
+            return uri.Segments[^2] + uri.Segments[^1];
         }
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
@@ -49,7 +49,7 @@
             }
 
             var imageElement = document.QuerySelector(".col-md-8 img.img-responsive");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/mzh.government.bg.png";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             var contentElement = document.QuerySelector(".single_news");
             this.NormalizeUrlsRecursively(contentElement);

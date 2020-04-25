@@ -53,7 +53,7 @@
             contentElement.RemoveRecursively(document.QuerySelector("#social"));
 
             var imageElement = contentElement?.QuerySelector("#content img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/minfin.bg.jpg";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             contentElement.RemoveRecursively(timeElement);
             contentElement.RemoveRecursively(imageElement);

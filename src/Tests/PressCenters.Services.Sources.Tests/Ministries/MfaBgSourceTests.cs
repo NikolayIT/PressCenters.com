@@ -52,7 +52,7 @@
             Assert.DoesNotContain("Новини", news.Content);
             Assert.DoesNotContain("facebook.com", news.Content);
             Assert.DoesNotContain("04 Май 2010", news.Content);
-            Assert.Equal("/images/sources/mfa.bg.png", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal(new DateTime(2010, 5, 4), news.PostDate);
             Assert.Equal("52", news.RemoteId);
         }

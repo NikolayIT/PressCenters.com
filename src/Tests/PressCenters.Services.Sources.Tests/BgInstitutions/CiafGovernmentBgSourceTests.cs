@@ -52,7 +52,7 @@
             Assert.Contains("Писмо от 27.05.2019", news.Content);
             Assert.DoesNotContain("Връщане към списък", news.Content);
             Assert.DoesNotContain("Изпрати на e-mail", news.Content);
-            Assert.Equal("/images/sources/ciaf.government.bg.png", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
         }
 
         [Fact]

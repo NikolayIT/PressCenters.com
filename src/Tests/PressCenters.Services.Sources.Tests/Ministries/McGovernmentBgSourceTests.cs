@@ -51,7 +51,7 @@
             Assert.DoesNotContain(news.Title, news.Content);
             Assert.DoesNotContain("09.01.2006", news.Content);
             Assert.Equal(new DateTime(2006, 1, 9), news.PostDate);
-            Assert.Equal("/images/sources/mc.government.bg.jpg", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal("39", news.RemoteId);
         }
 

@@ -45,7 +45,7 @@
             Assert.Contains("За посочения период в бюрата по труда са заявени общо 10107 места", news.Content);
             Assert.Contains("трудовите правоотношения и здравословните и безопасни условия на труд.", news.Content);
             Assert.DoesNotContain("<img", news.Content);
-            Assert.Equal("https://www.mlsp.government.bg/server/php/files/mtsp_rsz (1).jpg", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal("87", news.RemoteId);
         }
 

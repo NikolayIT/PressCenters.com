@@ -53,7 +53,7 @@
             var title = titleElement.TextContent.Trim();
 
             var imageElement = document.QuerySelector(".main-content .small-12 a.fancybox");
-            var imageUrl = imageElement?.GetAttribute("href") ?? "/images/sources/pirogov.eu.png";
+            var imageUrl = imageElement?.GetAttribute("href");
 
             var contentElement = document.QuerySelector(".main-content .small-12");
             contentElement.RemoveRecursively(imageElement);

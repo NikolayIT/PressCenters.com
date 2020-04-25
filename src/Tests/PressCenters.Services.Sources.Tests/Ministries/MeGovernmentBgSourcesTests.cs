@@ -60,7 +60,7 @@
             Assert.DoesNotContain("отпечатай тази страница", news.Content);
             Assert.DoesNotContain("обратно в списъка", news.Content);
             Assert.Equal(new DateTime(2015, 4, 3), news.PostDate);
-            Assert.Equal("/images/sources/me.government.bg.png", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal("2000", news.RemoteId);
         }
 

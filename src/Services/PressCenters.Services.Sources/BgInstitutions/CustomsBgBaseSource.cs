@@ -20,7 +20,7 @@
 
         public abstract string SaId { get; }
 
-        protected override bool UseProxy => true;
+        public override bool UseProxy => true;
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetNews(DateTime.UtcNow.AddMonths(-2), DateTime.UtcNow.AddDays(1), 6);
@@ -41,7 +41,7 @@
         internal override string ExtractIdFromUrl(string url)
         {
             var uri = new Uri(url.Trim().Trim('/'));
-            return uri.Segments[uri.Segments.Length - 2] + uri.Segments[uri.Segments.Length - 1];
+            return uri.Segments[^2] + uri.Segments[^1];
         }
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
@@ -59,7 +59,7 @@
             var time = DateTime.ParseExact(timeAsString, "dd MMMM yyyy", CultureInfo.InvariantCulture);
 
             var imageElement = document.QuerySelector(".galleryList img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/customs.bg.jpg";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             var contentElement = document.QuerySelector("div.vp-news-text");
             this.NormalizeUrlsRecursively(contentElement);

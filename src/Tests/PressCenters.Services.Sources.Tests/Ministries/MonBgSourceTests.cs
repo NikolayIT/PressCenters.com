@@ -51,7 +51,7 @@
             Assert.DoesNotContain("soc-facebook", news.Content);
             Assert.DoesNotContain("facebook.com", news.Content);
             Assert.DoesNotContain("28.04.2014", news.Content);
-            Assert.Equal("/images/sources/mon.bg.png", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal(new DateTime(2014, 4, 28), news.PostDate);
             Assert.Equal("578", news.RemoteId);
         }

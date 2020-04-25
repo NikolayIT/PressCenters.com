@@ -32,10 +32,7 @@
         internal override string ExtractIdFromUrl(string url)
         {
             var uri = new Uri(url.Trim().Trim('/'));
-            return WebUtility.UrlDecode(
-                uri.Segments[uri.Segments.Length - 4] + uri.Segments[uri.Segments.Length - 3]
-                                                      + uri.Segments[uri.Segments.Length - 2]
-                                                      + uri.Segments[uri.Segments.Length - 1]);
+            return WebUtility.UrlDecode(uri.Segments[^4] + uri.Segments[^3] + uri.Segments[^2] + uri.Segments[^1]);
         }
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
@@ -58,7 +55,7 @@
             var time = DateTime.ParseExact(timeAsString, "dddd, d MMMM yyyy", new CultureInfo("bg-BG"));
 
             var imageElement = document.QuerySelector(".post-content img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/bas.bg.png";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             var contentElement = document.QuerySelector(".post-content");
             contentElement.RemoveRecursively(imageElement);

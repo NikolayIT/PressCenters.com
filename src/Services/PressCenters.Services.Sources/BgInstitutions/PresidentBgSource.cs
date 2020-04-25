@@ -44,7 +44,7 @@
             var content = contentElement.InnerHtml.Trim();
 
             var imageElement = document.QuerySelector(".print-content img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/president.bg.jpg";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             return new RemoteNews(title, content, time, imageUrl);
         }

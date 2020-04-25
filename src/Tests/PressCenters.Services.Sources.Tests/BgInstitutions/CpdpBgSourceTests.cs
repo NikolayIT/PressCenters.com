@@ -53,7 +53,7 @@
             Assert.DoesNotContain("29.08.2019", news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
             Assert.DoesNotContain("принт", news.Content);
-            Assert.Equal("/images/sources/cpdp.bg.jpg", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
         }
 
         [Fact]

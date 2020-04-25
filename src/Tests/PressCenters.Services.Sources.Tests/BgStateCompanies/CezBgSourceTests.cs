@@ -47,7 +47,7 @@
             Assert.Contains("Пресцентър на \"ЧЕЗ Електро България\" АД", news.Content);
             Assert.DoesNotContain("Новини", news.Content);
             Assert.DoesNotContain("Електронна фактура", news.Content);
-            Assert.Equal("/images/sources/cez.bg.png", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             //// Not supported: Assert.Equal(new DateTime(2019, 1, 17), news.PostDate);
             Assert.Equal("1799", news.RemoteId);
         }

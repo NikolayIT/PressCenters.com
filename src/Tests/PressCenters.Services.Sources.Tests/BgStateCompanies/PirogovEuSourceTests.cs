@@ -49,9 +49,8 @@
             Assert.Contains("микрохирургичните дейности като присажадане на тъкани и органи.", news.Content);
             Assert.DoesNotContain("facebook", news.Content);
             Assert.DoesNotContain("fancybox", news.Content);
-            Assert.DoesNotContain(news.ImageUrl, news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
-            Assert.Equal("/images/sources/pirogov.eu.png", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             //// Not supported: Assert.Equal(new DateTime(2012, 9, 29), news.PostDate);
             Assert.Equal("1102", news.RemoteId);
         }

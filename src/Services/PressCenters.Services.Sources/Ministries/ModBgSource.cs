@@ -16,7 +16,7 @@
     {
         public override string BaseUrl => "https://mod.bg/";
 
-        protected override bool UseProxy => true;
+        public override bool UseProxy => true;
 
         public override IEnumerable<RemoteNews> GetLatestPublications() => this.GetNews($"{this.BaseUrl}bg/news.php", 5);
 
@@ -52,11 +52,7 @@
             // Image
             var imageElement = document.QuerySelector(".tablelist2 div p a[rel^='lightbox'] img");
             var imageUrl = imageElement?.GetAttribute("src");
-            if (imageUrl == null)
-            {
-                imageUrl = "/images/sources/mod.bg.jpg";
-            }
-            else if (!imageUrl.Contains("/bg/"))
+            if (imageUrl != null && !imageUrl.Contains("/bg/"))
             {
                 imageUrl = "/bg/" + imageUrl;
             }

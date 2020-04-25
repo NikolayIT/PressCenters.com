@@ -44,7 +44,7 @@
             Assert.Equal("На 26.09.2003 г. Главна Дирекция “Гражданска регистрация и административно обслужване”  към МРРБ осигури Web достъп до избирателните списъци за Местни избори - 2003 за всички български граждани", news.Title);
             Assert.Contains("Гражданите ще могат да проверят своите лични данни", news.Content);
             Assert.Contains("От 1990 г. всички избирателни списъци се отпечатват от ГРАО.", news.Content);
-            Assert.Equal("/images/sources/mrrb.bg.jpg", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal(new DateTime(2007, 11, 4, 23, 12, 0), news.PostDate);
             Assert.Equal("na-26-09-2003-g-glavna-direkciya-grajdanska-registraciya-i-administrativno-obslujvane-kum-mrrb-osiguri-web-dostup-do-izbiratelnite-spisuci-za-mestni-izbori-2003-za-vsichki-bulgarski-grajdani", news.RemoteId);
         }

@@ -13,7 +13,7 @@
     {
         public override string BaseUrl { get; } = "http://www.mpes.government.bg/";
 
-        protected override bool UseProxy => true;
+        public override bool UseProxy => true;
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications(
@@ -32,7 +32,7 @@
                 }
 
                 var remoteNews = this.GetPublication($"{this.BaseUrl}Pages/Press/News/Default.aspx?evntid={i}");
-                if (remoteNews == null || remoteNews.ImageUrl.StartsWith("/images/sources/"))
+                if (remoteNews?.ImageUrl == null)
                 {
                     continue;
                 }
@@ -59,7 +59,7 @@
             }
 
             var imageElement = document.QuerySelector(".PanelFullText .event_text table img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/mpes.government.bg.jpg";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             var contentElement = document.QuerySelector(".PanelFullText .event_text");
             contentElement.RemoveRecursively(document.QuerySelector(".PanelFullText .event_text table:has(img)"));

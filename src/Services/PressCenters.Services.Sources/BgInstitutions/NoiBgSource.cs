@@ -84,7 +84,7 @@
             }
 
             var imageElement = document.QuerySelector(".nssi-article img[src*='News']");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/noi.bg.jpg";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             var contentElement = document.QuerySelector(".nssi-article");
             contentElement.RemoveRecursively(imageElement);

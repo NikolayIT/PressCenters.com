@@ -13,7 +13,7 @@
     {
         public override string BaseUrl { get; } = "https://www.mlsp.government.bg/";
 
-        protected override bool UseProxy => true;
+        public override bool UseProxy => true;
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("index.php?section=PRESS", "#rub_co span a");
@@ -45,7 +45,7 @@
             var time = DateTime.Now;
 
             var imageElement = document.QuerySelector("#statiata img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "https://www.mlsp.government.bg/server/php/files/mtsp_rsz%20(1).jpg";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             var contentElement = document.QuerySelector("#statiata");
             contentElement.RemoveRecursively(imageElement);

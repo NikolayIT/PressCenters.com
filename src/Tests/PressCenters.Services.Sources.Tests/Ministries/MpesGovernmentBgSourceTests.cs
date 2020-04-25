@@ -58,7 +58,7 @@
             Assert.DoesNotContain("Версия за печат", news.Content);
             Assert.DoesNotContain("facebook", news.Content);
             Assert.Equal(new DateTime(2012, 2, 24), news.PostDate);
-            Assert.Equal("/images/sources/mpes.government.bg.jpg", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal("600", news.RemoteId);
         }
 

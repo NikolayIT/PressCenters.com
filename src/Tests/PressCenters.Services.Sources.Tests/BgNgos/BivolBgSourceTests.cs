@@ -56,9 +56,8 @@
             Assert.DoesNotContain("Екип на сайта за разследваща журналистика", news.Content);
             Assert.DoesNotContain("септември 7, 2005", news.Content);
             Assert.DoesNotContain("PDF", news.Content);
-            Assert.DoesNotContain(news.ImageUrl, news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
-            Assert.Equal("/images/sources/bivol.bg.jpg", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal(new DateTime(2005, 9, 7, 11, 9, 0), news.PostDate);
             Assert.Equal("2010-10-30-22-28-29-17", news.RemoteId);
         }

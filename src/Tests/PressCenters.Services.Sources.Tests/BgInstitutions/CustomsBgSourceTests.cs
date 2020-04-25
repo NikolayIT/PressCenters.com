@@ -55,7 +55,7 @@
             Assert.DoesNotContain(news.Title, news.Content);
             Assert.DoesNotContain("<img", news.Content);
             Assert.DoesNotContain("25 октомври 2016", news.Content);
-            Assert.Equal("/images/sources/customs.bg.jpg", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal(new DateTime(2016, 10, 25), news.PostDate);
             Assert.Equal("news-details/2016-10-25", news.RemoteId);
         }
@@ -73,7 +73,7 @@
             Assert.DoesNotContain(news.Title, news.Content);
             Assert.DoesNotContain("<img", news.Content);
             Assert.DoesNotContain("04 януари 2019", news.Content);
-            Assert.Equal("/images/sources/customs.bg.jpg", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal(new DateTime(2019, 1, 4), news.PostDate);
             Assert.Equal("on-focus/04-01-new-structura", news.RemoteId);
         }

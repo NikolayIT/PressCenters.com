@@ -46,7 +46,7 @@
             }
 
             var imageElement = contentElement?.QuerySelector("#content img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/gallup-international.bg.png";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             contentElement.RemoveRecursively(imageElement);
             this.NormalizeUrlsRecursively(contentElement);

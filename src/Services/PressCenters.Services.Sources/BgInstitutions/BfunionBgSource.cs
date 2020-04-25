@@ -62,7 +62,7 @@
             var time = DateTime.ParseExact(timeAsString, "dd MMMM yyyy HH:mm", new CultureInfo("bg-BG"));
 
             var imageElement = document.QuerySelector(".entry-thumbnail img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/bfunion.bg.png";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             var contentElement = document.QuerySelector(".tr-details");
             this.NormalizeUrlsRecursively(contentElement);

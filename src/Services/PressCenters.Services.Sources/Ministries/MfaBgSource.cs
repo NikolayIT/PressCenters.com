@@ -44,7 +44,7 @@
             var time = DateTime.ParseExact(timeAsString, "dd MMMM yyyy", new CultureInfo("bg-BG"));
 
             var imageElement = document.QuerySelector(".news-item img.main-pic");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/mfa.bg.png";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             var contentElement = document.QuerySelector(".news-item .content");
             this.NormalizeUrlsRecursively(contentElement);

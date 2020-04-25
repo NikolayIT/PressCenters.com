@@ -10,7 +10,7 @@
     {
         public override string BaseUrl { get; } = "https://www.moew.government.bg/";
 
-        protected override bool UseProxy => true;
+        public override bool UseProxy => true;
 
         protected abstract string NewsListUrl { get; }
 
@@ -42,7 +42,7 @@
             var time = DateTime.ParseExact(timeAsString, "dd MMMM yyyy | HH:mm", CultureInfo.GetCultureInfo("bg-BG"));
 
             var imageElement = document.QuerySelector(".content-box .image-container img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/moew.government.bg.png";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             var contentElement = document.QuerySelector(".description_holder_div");
             this.NormalizeUrlsRecursively(contentElement);

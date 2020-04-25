@@ -53,7 +53,7 @@
             Assert.DoesNotContain("28 ноември 2014", news.Content);
             Assert.DoesNotContain("facebook.com", news.Content);
             Assert.DoesNotContain("print", news.Content);
-            Assert.Equal("/images/sources/tourism.government.bg.jpg", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal(new DateTime(2014, 11, 28, 10, 31, 0), news.PostDate);
             Assert.Equal("novini/ministur-angelkova-s-registur-na-zabelezhitelnostite-shte-privlichame-poveche", news.RemoteId);
         }

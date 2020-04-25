@@ -61,7 +61,7 @@
             Assert.Equal("72-годишен е отведен в столичното Първо районно управление", news.Title);
             Assert.Contains("В късния следобед днес 72-годишен мъж дошъл на входа на Президентството и поискал среща.", news.Content);
             Assert.Contains("Образувано е досъдебно производство, изясняват се всички обстоятелства по случая.", news.Content);
-            Assert.NotNull(news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal(new DateTime(2018, 12, 3), news.PostDate);
             Assert.Equal("актуално/72-годишен-е-отведен-в-столичното-първо-районно-управление", news.RemoteId);
         }
@@ -76,7 +76,7 @@
             Assert.Equal("Информационен бюлетин", news.Title);
             Assert.Contains("Двама пияни шофьори са заловени", news.Content);
             Assert.Contains("ЦИТИРАТЕ КОРЕКТНО ИНФОРМАЦИИТЕ НА ПРЕСЦЕНТЪРА!", news.Content);
-            Assert.NotNull(news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal(new DateTime(2010, 1, 2), news.PostDate);
             Assert.Equal("информационен-бюлетин/bl100102_01", news.RemoteId);
         }
@@ -91,7 +91,7 @@
             Assert.Equal("Пътните инциденти през изминалото денонощие; обстановката по пътищата", news.Title);
             Assert.Contains("Динамичните данни са на база текущи съобщения, получени от ОДМВР до 24:00 часа на 31 януари 2019", news.Content);
             Assert.Contains("Шофьорите да се движат с повишено внимание по тези участъци.", news.Content);
-            Assert.NotNull(news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal(new DateTime(2019, 2, 1, 9, 5, 0), news.PostDate);
             Assert.Equal("пътна-обстановка/пътните-инциденти-през-изминалото-денонощие-обстановката-по-пътищата02012019", news.RemoteId);
         }

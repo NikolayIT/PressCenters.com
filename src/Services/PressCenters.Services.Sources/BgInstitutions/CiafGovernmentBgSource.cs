@@ -6,8 +6,6 @@
 
     using AngleSharp.Dom;
 
-    using PressCenters.Common;
-
     /// <summary>
     /// Комисия за противодействие на корупцията и за отнемане на незаконно придобитото имущество.
     /// </summary>
@@ -15,7 +13,7 @@
     {
         public override string BaseUrl { get; } = "http://www.ciaf.government.bg/";
 
-        protected override bool UseProxy => true;
+        public override bool UseProxy => true;
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("news/", "ul.listNews li h2 a", count: 5);
@@ -57,7 +55,7 @@
             var content = contentElement.InnerHtml.Trim();
 
             var imageElement = document.QuerySelector(".detailNews .imgNews img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/ciaf.government.bg.png";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             return new RemoteNews(title, content, time, imageUrl);
         }

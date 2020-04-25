@@ -49,7 +49,7 @@
             Assert.Contains("представители на специализираните архитектурните среди и на Министерството на регионалното развитие и благоустройството.", news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
             Assert.DoesNotContain("<img", news.Content);
-            Assert.Equal("/images/sources/ombudsman.bg.jpg", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal(new DateTime(2006, 10, 4), news.PostDate);
             Assert.Equal("9", news.RemoteId);
         }

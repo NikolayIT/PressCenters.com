@@ -71,7 +71,7 @@
             Assert.DoesNotContain("21 Декември 2010", news.Content);
             Assert.DoesNotContain("facebook", news.Content);
             Assert.Equal(new DateTime(2010, 12, 21, 14, 19, 42), news.PostDate);
-            Assert.Equal("/images/sources/mzh.government.bg.png", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal("novini/70bb-ministr-naidenov-poseti-sizp-tsentra-vv-vrats", news.RemoteId);
         }
 

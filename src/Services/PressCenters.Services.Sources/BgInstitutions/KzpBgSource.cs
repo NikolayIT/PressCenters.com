@@ -13,7 +13,7 @@
     {
         public override string BaseUrl { get; } = "https://kzp.bg/";
 
-        protected override bool UseProxy => true;
+        public override bool UseProxy => true;
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("novini/1", ".blog-list li h3 a", count: 5);
@@ -51,7 +51,7 @@
             var time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
 
             var imageElement = document.QuerySelector(".blog-post img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/kzp.bg.jpg";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             var contentElement = document.QuerySelector(".blog-post article");
             this.NormalizeUrlsRecursively(contentElement);

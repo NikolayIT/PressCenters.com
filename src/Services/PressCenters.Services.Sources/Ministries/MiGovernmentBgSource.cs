@@ -50,7 +50,7 @@
             var time = DateTime.ParseExact(timeAsString, "dd MMMM yyyy", CultureInfo.GetCultureInfo("bg-BG"));
 
             var imageElement = document.QuerySelector(".col2 div.left img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/mi.government.bg.png";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             var contentElement = document.QuerySelector(".col2");
             contentElement.RemoveRecursively(titleElement);

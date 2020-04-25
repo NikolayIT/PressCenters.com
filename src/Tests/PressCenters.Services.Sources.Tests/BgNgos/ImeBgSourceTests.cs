@@ -31,7 +31,7 @@
             Assert.Contains("където всеки ще може да изчисли своята лична данъчна тежест.", news.Content);
             Assert.DoesNotContain("Оцени тази статия", news.Content);
             Assert.DoesNotContain("04.01.2019", news.Content);
-            Assert.Equal("/images/sources/ime.bg.jpg", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal(new DateTime(2019, 1, 4), news.PostDate);
             Assert.Equal("2019-denyat-na-danyna-svoboda-idva-na-18-mai", news.RemoteId);
         }
@@ -49,7 +49,7 @@
             Assert.DoesNotContain("Оцени тази статия", news.Content);
             Assert.DoesNotContain("Десислава Николова", news.Content);
             Assert.DoesNotContain("04.01.2019", news.Content);
-            Assert.Equal("/images/sources/ime.bg.jpg", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal(new DateTime(2019, 1, 4), news.PostDate);
             Assert.Equal("surva-surva-godina-silna-ikonomika-dogodina", news.RemoteId);
         }

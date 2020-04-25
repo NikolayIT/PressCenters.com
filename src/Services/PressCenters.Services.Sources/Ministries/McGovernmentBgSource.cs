@@ -14,7 +14,7 @@
     {
         public override string BaseUrl { get; } = "http://www.mc.government.bg/";
 
-        protected override bool UseProxy => true;
+        public override bool UseProxy => true;
 
         protected override Encoding Encoding
         {
@@ -59,7 +59,7 @@
             var time = DateTime.ParseExact(timeAsString, "(dd.MM.yyyy)", CultureInfo.InvariantCulture);
 
             var imageElement = document.QuerySelector(".conNews").QuerySelector("img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/mc.government.bg.jpg";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             var contentElement = document.QuerySelector(".conNews");
             contentElement.RemoveRecursively(timeElement);

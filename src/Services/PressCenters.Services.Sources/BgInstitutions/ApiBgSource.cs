@@ -51,7 +51,7 @@
             if (string.IsNullOrWhiteSpace(imageUrl))
             {
                 imageElement = document.QuerySelector(".news-article img");
-                imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/api.bg.jpg";
+                imageUrl = imageElement?.GetAttribute("src");
             }
 
             contentElement.RemoveChild(timeNode);

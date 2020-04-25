@@ -73,7 +73,7 @@
             Assert.Equal("Дейност на местата за настаняване през ноември 2015 година", news.Title);
             Assert.Contains("През ноември 2015 г. в страната са функционирали", news.Content);
             Assert.Contains("или с 0.8% повече в сравнение с ноември 2014 година.", news.Content);
-            Assert.Equal("https://www.nsi.bg/sites/default/files/styles/medium/public/files/events/images/___NSILogo_117.jpg", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal(new DateTime(2016, 1, 14, 11, 0, 0), news.PostDate);
             Assert.Equal("13839", news.RemoteId);
         }
@@ -87,7 +87,7 @@
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Ключови показатели за България (към 30.12.2015 г.)", news.Title);
             Assert.Contains("https://www.nsi.bg/sites/default/files/files/pressreleases/KeyInd2015-12_2U0QR4H.pdf", news.Content);
-            Assert.Equal("https://www.nsi.bg/sites/default/files/styles/medium/public/files/events/images/___NSILogo_117.jpg", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal(new DateTime(2015, 12, 30, 11, 0, 0), news.PostDate);
             Assert.Equal("13808", news.RemoteId);
         }

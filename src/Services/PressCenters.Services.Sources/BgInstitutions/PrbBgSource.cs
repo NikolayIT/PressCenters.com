@@ -31,7 +31,7 @@
         internal override string ExtractIdFromUrl(string url)
         {
             var uri = new Uri(url.Trim());
-            return uri.Segments[uri.Segments.Length - 2] + uri.Segments[uri.Segments.Length - 1].Trim('/');
+            return uri.Segments[^2] + uri.Segments[^1].Trim('/');
         }
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
@@ -62,7 +62,7 @@
             var content = contentElement.InnerHtml.Trim();
 
             var imageElement = document.QuerySelector(".slide img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/prb.bg.jpg";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             return new RemoteNews(title, content, time, imageUrl);
         }

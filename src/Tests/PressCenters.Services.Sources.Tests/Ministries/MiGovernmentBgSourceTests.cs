@@ -58,7 +58,7 @@
             Assert.DoesNotContain("отпечатай тази страница", news.Content);
             Assert.DoesNotContain("обратно в списъка", news.Content);
             Assert.Equal(new DateTime(2018, 9, 12), news.PostDate);
-            Assert.Equal("/images/sources/mi.government.bg.png", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal("3545", news.RemoteId);
         }
 

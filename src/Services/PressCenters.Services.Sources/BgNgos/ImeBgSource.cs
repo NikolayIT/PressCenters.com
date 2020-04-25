@@ -56,7 +56,7 @@
                 return null;
             }
 
-            return new RemoteNews(title, content, time, "/images/sources/ime.bg.jpg");
+            return new RemoteNews(title, content, time, null);
         }
     }
 }

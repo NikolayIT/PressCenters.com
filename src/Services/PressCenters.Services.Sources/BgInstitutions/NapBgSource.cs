@@ -71,7 +71,7 @@
                 return null;
             }
 
-            return new RemoteNews(title, content, time, "/images/sources/nap.bg.jpg");
+            return new RemoteNews(title, content, time, null);
         }
     }
 }

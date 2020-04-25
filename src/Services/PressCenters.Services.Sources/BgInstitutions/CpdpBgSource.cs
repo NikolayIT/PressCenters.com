@@ -13,7 +13,7 @@
     {
         public override string BaseUrl { get; } = "https://www.cpdp.bg/";
 
-        protected override bool UseProxy => true;
+        public override bool UseProxy => true;
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("/", ".center-part h6 a.news-title");
@@ -57,7 +57,7 @@
             var time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
 
             var imageElement = document.QuerySelector(".center-part .titleImage img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/cpdp.bg.jpg";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             var contentElement = document.QuerySelector(".center-part");
             contentElement.RemoveRecursively(document.QuerySelector(".center-part .path"));

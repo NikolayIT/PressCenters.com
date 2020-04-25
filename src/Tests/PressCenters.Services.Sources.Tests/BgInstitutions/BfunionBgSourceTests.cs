@@ -48,7 +48,7 @@
             Assert.Contains("БЪЛГАРСКИ ФУТБОЛЕН СЪЮЗ", news.Content);
             Assert.Contains("БФС си запазва правото на промени в програмата в зависимост от представянето на участниците в европейските турнири.", news.Content);
             Assert.DoesNotContain("1312-pm-timermans.jpg", news.Content);
-            Assert.Equal("/images/sources/bfunion.bg.png", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
         }
 
         [Fact]

@@ -13,7 +13,7 @@
     {
         public override string BaseUrl { get; } = "https://www.parliament.bg/";
 
-        protected override bool UseProxy => true;
+        public override bool UseProxy => true;
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("bg/news", ".frontList li.padding1 a", count: 3);
@@ -54,7 +54,7 @@
             var title = titleElement.TextContent;
 
             var imageElement = document.QuerySelector(".markframe .markcontent img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/parliament.bg.jpg";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             var contentElement = document.QuerySelector(".markframe .markcontent");
             contentElement.RemoveRecursively(imageElement);

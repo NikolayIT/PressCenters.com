@@ -17,7 +17,7 @@
     {
         public override string BaseUrl { get; } = "http://www.mjs.bg/";
 
-        protected override bool UseProxy => true;
+        public override bool UseProxy => true;
 
         public override IEnumerable<RemoteNews> GetLatestPublications()
         {
@@ -38,9 +38,9 @@
             var time = DateTime.Now;
 
             var imageId = html.GetStringBetween("\"imageId\": \"", "\"");
-            var imageUrl = string.IsNullOrWhiteSpace(imageId)
-                               ? "/images/sources/mjs.bg.jpg"
-                               : "https://mjs.bg/api/part/GetBlob?hash=" + imageId;
+            var imageUrl = !string.IsNullOrWhiteSpace(imageId)
+                               ? "https://mjs.bg/api/part/GetBlob?hash=" + imageId
+                               : null;
 
             var content = html.Replace("\\\"", "__QUOTE__").GetStringBetween("\"body\": {\n      \"bg\": \"", "\"")
                 .Replace("__QUOTE__", "\"");

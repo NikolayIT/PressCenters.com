@@ -56,7 +56,7 @@
         {
             // Get last 2 url segments
             var uri = new Uri(url.Trim().Trim('/'));
-            return WebUtility.UrlDecode(uri.Segments[uri.Segments.Length - 2] + uri.Segments[uri.Segments.Length - 1]);
+            return WebUtility.UrlDecode(uri.Segments[^2] + uri.Segments[^1]);
         }
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
@@ -79,7 +79,7 @@
             }
 
             var imageElement = document.QuerySelector("#image_source");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/mvr.bg.jpg";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             // Try to get exact time
             var modifiedTimeElement = document.QuerySelector(".article__container .timestamp");

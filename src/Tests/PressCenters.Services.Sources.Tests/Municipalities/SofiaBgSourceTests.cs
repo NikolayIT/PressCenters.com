@@ -50,7 +50,7 @@
             Assert.Contains("да изведем част от трафика чрез вътрешен градски ринг и околовръстен път.", news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
             Assert.DoesNotContain("21.04.2016", news.Content);
-            Assert.Equal("/images/sources/sofia.bg.png", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
         }
 
         [Fact]

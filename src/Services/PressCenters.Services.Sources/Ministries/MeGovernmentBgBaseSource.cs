@@ -58,7 +58,7 @@
             var time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
 
             var imageElement = document.QuerySelector("div.article-image-container a.article-image");
-            var imageUrl = imageElement?.GetAttribute("href") ?? "/images/sources/me.government.bg.png";
+            var imageUrl = imageElement?.GetAttribute("href");
 
             var contentElement = document.QuerySelector("article.item-article");
             contentElement.RemoveRecursively(document.QuerySelector("article.item-article .article-header"));

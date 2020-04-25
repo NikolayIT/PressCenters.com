@@ -45,7 +45,7 @@
             var time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
 
             var imageElement = document.QuerySelector(".col-md-9.content-center img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/mon.bg.png";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             var socialMediaShareElement = document.QuerySelector(".col-md-9.content-center div");
             var contentElement = document.QuerySelector(".col-md-9.content-center");

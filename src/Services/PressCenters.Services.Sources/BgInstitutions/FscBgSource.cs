@@ -12,7 +12,7 @@
     {
         public override string BaseUrl { get; } = "http://www.fsc.bg/";
 
-        protected override bool UseProxy => true;
+        public override bool UseProxy => true;
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("bg/novini/", ".news-box-listing a");
@@ -41,8 +41,7 @@
             var time = DateTime.ParseExact(timeElement.TextContent, "dd/MM/yyyy", CultureInfo.InvariantCulture);
             time = time.Date == DateTime.UtcNow.Date ? DateTime.Now : time;
 
-            var imageUrl = document.QuerySelector("#content-right img")?.Attributes?["src"]?.Value
-                           ?? "http://www.fsc.bg/_assets/img/banner.jpg";
+            var imageUrl = document.QuerySelector("#content-right img")?.Attributes?["src"]?.Value;
 
             var contentElement = document.QuerySelector("#content-left-inner");
             contentElement.RemoveElement(titleElement);

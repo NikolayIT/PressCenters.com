@@ -55,7 +55,7 @@
             var title = titleElement.TextContent.Trim();
 
             var imageElement = document.QuerySelector(".p-content div.padding-30 img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/cez.bg.png";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             var contentElement = document.QuerySelector(".p-content div.padding-30");
             contentElement.RemoveRecursively(imageElement);

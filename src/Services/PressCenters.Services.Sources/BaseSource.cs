@@ -24,7 +24,7 @@ namespace PressCenters.Services.Sources
 
         public abstract string BaseUrl { get; }
 
-        protected virtual bool UseProxy => false;
+        public virtual bool UseProxy => false;
 
         protected virtual Encoding Encoding => null;
 
@@ -89,9 +89,9 @@ namespace PressCenters.Services.Sources
             publication.OriginalUrl = url.Trim();
 
             // Image URL
-            publication.ImageUrl = publication.ImageUrl?.Trim();
-            if (publication.ImageUrl?.StartsWith("/images/sources/") == false)
+            if (publication.ImageUrl != null)
             {
+                publication.ImageUrl = publication.ImageUrl.Trim();
                 publication.ImageUrl = this.NormalizeUrl(publication.ImageUrl)?.Trim();
             }
 

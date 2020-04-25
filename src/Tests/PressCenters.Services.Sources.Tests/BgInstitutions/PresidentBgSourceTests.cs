@@ -52,7 +52,7 @@
             Assert.Contains("допълни държавният глава.", news.Content);
             Assert.DoesNotContain("Държавният глава Румен Радев: Министър-председателят и ресорният министър трябва", news.Content);
             Assert.DoesNotContain("17 Септември 2018 | 18:00", news.Content);
-            Assert.Equal("/images/sources/president.bg.jpg", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
         }
 
         [Fact]

@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
 
     using AngleSharp.Dom;
 
@@ -10,7 +9,7 @@
     {
         public override string BaseUrl { get; } = "http://www.government.bg/";
 
-        protected override bool UseProxy => true;
+        public override bool UseProxy => true;
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("bg/prestsentar/novini", ".articles .item a", count: 8);
@@ -38,7 +37,7 @@
             var time = DateTime.Now;
 
             var imageElement = document.QuerySelector(".view .gallery img");
-            var imageUrl = imageElement?.GetAttribute("src") ?? "/images/sources/government.bg.png";
+            var imageUrl = imageElement?.GetAttribute("src");
 
             var contentElement = document.QuerySelector(".view");
             contentElement.RemoveRecursively(titleElement);

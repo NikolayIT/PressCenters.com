@@ -53,7 +53,7 @@
             Assert.DoesNotContain("27 Ноември 2011", news.Content);
             Assert.DoesNotContain("Предишна", news.Content);
             Assert.DoesNotContain("Посещения", news.Content);
-            Assert.Equal("/images/sources/noi.bg.jpg", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal(new DateTime(2011, 11, 27, 19, 18, 0), news.PostDate);
             Assert.Equal("2", news.RemoteId);
         }

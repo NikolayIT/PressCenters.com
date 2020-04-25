@@ -17,9 +17,9 @@
 
         private readonly IRepository<Tag> tagsRepository;
 
-        private readonly IDeletableEntityRepository<NewsTag> newsTagsRepository;
+        private readonly IRepository<NewsTag> newsTagsRepository;
 
-        public TagsService(IRepository<Tag> tagsRepository, IDeletableEntityRepository<NewsTag> newsTagsRepository)
+        public TagsService(IRepository<Tag> tagsRepository, IRepository<NewsTag> newsTagsRepository)
         {
             this.tagsRepository = tagsRepository;
             this.newsTagsRepository = newsTagsRepository;
@@ -32,7 +32,7 @@
                 if (content.Contains(commonTag))
                 {
                     var tagId = await this.GetTagId(commonTag);
-                    if (!this.newsTagsRepository.AllWithDeleted().Any(x => x.NewsId == id && x.TagId == tagId))
+                    if (!this.newsTagsRepository.All().Any(x => x.NewsId == id && x.TagId == tagId))
                     {
                         var newsTag = new NewsTag { NewsId = id, TagId = tagId };
                         await this.newsTagsRepository.AddAsync(newsTag);

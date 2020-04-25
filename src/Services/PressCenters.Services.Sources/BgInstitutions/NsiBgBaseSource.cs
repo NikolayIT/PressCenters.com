@@ -32,8 +32,7 @@
             var imageAndContent = document.QuerySelectorAll("article .field-items .field-item");
 
             var imageElement = document.QuerySelector(".field-name-field-event-image img");
-            var imageUrl = imageElement?.Attributes["src"]?.Value
-                           ?? $"{this.BaseUrl}sites/default/files/styles/medium/public/files/events/images/___NSILogo_117.jpg";
+            var imageUrl = imageElement?.Attributes["src"]?.Value;
             var content = this.GetContent(imageAndContent);
 
             var timeElement = document.QuerySelector(".submitted span");

@@ -49,7 +49,7 @@
             Assert.Contains("на интернет страницата на Министерството на финансите в края на месец януари 2019 година.", news.Content);
             Assert.DoesNotContain("facebook", news.Content);
             Assert.DoesNotContain("date", news.Content);
-            Assert.Equal("/images/sources/minfin.bg.jpg", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
             Assert.Equal(new DateTime(2018, 12, 31), news.PostDate);
             Assert.Equal("10538", news.RemoteId);
         }
