@@ -120,9 +120,14 @@
                     {
                         OnPrepareResponse = ctx =>
                             {
-                                // Cache static files for 90 days
-                                ctx.Context.Response.Headers.Add("Cache-Control", "public,max-age=31536000");
-                                ctx.Context.Response.Headers.Add("Expires", DateTime.UtcNow.AddYears(1).ToString("R", CultureInfo.InvariantCulture));
+                                if (ctx.Context.Request.Path.ToString().Contains("/news/"))
+                                {
+                                    // Cache static files for 90 days
+                                    ctx.Context.Response.Headers.Add("Cache-Control", "public,max-age=31536000");
+                                    ctx.Context.Response.Headers.Add(
+                                        "Expires",
+                                        DateTime.UtcNow.AddYears(1).ToString("R", CultureInfo.InvariantCulture));
+                                }
                             },
                     });
 
