@@ -15,7 +15,6 @@
     using SixLabors.ImageSharp;
     using SixLabors.ImageSharp.Formats.Png;
     using SixLabors.ImageSharp.Processing;
-    using SixLabors.Primitives;
 
     public class NewsService : INewsService
     {
@@ -166,7 +165,7 @@
                         new PngEncoder
                         {
                             FilterMethod = PngFilterMethod.Adaptive,
-                            CompressionLevel = 9,
+                            CompressionLevel = PngCompressionLevel.BestCompression,
                             ColorType = PngColorType.Palette,
                         });
                 }

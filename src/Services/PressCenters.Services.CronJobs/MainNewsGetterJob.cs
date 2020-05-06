@@ -20,7 +20,6 @@
 
     using SixLabors.ImageSharp;
     using SixLabors.ImageSharp.Processing;
-    using SixLabors.Primitives;
 
     public class MainNewsGetterJob
     {
