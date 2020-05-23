@@ -41,7 +41,7 @@
             var provider = new MrrbBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("На 26.09.2003 г. Главна Дирекция “Гражданска регистрация и административно обслужване”  към МРРБ осигури Web достъп до избирателните списъци за Местни избори - 2003 за всички български граждани", news.Title);
+            Assert.Equal("На 26.09.2003 г. Главна Дирекция “Гражданска регистрация и административно обслужване” към МРРБ осигури Web достъп до избирателните списъци за Местни избори - 2003 за всички български граждани", news.Title);
             Assert.Contains("Гражданите ще могат да проверят своите лични данни", news.Content);
             Assert.Contains("От 1990 г. всички избирателни списъци се отпечатват от ГРАО.", news.Content);
             Assert.Null(news.ImageUrl);

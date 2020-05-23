@@ -44,7 +44,7 @@
             var provider = new PresidentBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Държавният глава Румен Радев:  Министър-председателят и ресорният министър трябва да организират съгласуването на предложението за освобождаване на главния секретар на МВР", news.Title);
+            Assert.Equal("Държавният глава Румен Радев: Министър-председателят и ресорният министър трябва да организират съгласуването на предложението за освобождаване на главния секретар на МВР", news.Title);
             Assert.Equal("4597", news.RemoteId);
             Assert.Equal(new DateTime(2018, 9, 17, 18, 0, 0), news.PostDate);
             Assert.Contains("„Поканен съм на среща", news.Content);

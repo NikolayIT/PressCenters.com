@@ -45,7 +45,7 @@
             var provider = new ParliamentBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Проф.  Герджиков се срещна с представители на Медийната обсерватория", news.Title);
+            Assert.Equal("Проф. Герджиков се срещна с представители на Медийната обсерватория", news.Title);
             Assert.Contains("Председателят на Народното събрание проф. Огнян Герджиков се срещна представители на Медийната обсерватория – България.", news.Content);
             Assert.Contains("Предложенията ще бъдат разпределени в парламентарната медийна комисия.", news.Content);
             Assert.DoesNotContain(news.Title, news.Content);

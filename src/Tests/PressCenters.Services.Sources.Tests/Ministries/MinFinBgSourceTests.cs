@@ -44,7 +44,7 @@
             var provider = new MinFinBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Мф Очаква Излишък В Размер На 163,5 Млн. Лв.  По Консолидираната Фискална Програма За 2018 Г.", news.Title);
+            Assert.Equal("Мф Очаква Излишък В Размер На 163,5 Млн. Лв. По Консолидираната Фискална Програма За 2018 Г.", news.Title);
             Assert.Contains("На база на предварителни данни и оценки се очаква", news.Content);
             Assert.Contains("на интернет страницата на Министерството на финансите в края на месец януари 2019 година.", news.Content);
             Assert.DoesNotContain("facebook", news.Content);

@@ -68,7 +68,7 @@ namespace PressCenters.Services.Sources
             }
 
             // Title
-            publication.Title = publication.Title?.Trim();
+            publication.Title = publication.Title?.Trim().Replace("  ", " ");
 
             // Content
             publication.Content = publication.Content?.Trim();
