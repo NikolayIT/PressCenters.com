@@ -73,7 +73,7 @@
                     continue;
                 }
 
-                await this.SaveImageLocally(news.ImageUrl, source.Id);
+                await this.SaveImageLocally(news.ImageUrl, source.Id, context);
 
                 await this.mainNewsRepository.AddAsync(
                     new MainNews
@@ -87,7 +87,7 @@
             }
         }
 
-        private async Task SaveImageLocally(string imageUrl, int sourceId)
+        private async Task SaveImageLocally(string imageUrl, int sourceId, PerformContext context)
         {
             var filePath = this.webHostEnvironment.WebRootPath + "/images/mainnews/" + sourceId + ".png";
             var defaultFilePath = this.webHostEnvironment.WebRootPath + "/images/mainnews/default.png";
@@ -108,21 +108,31 @@
                 return;
             }
 
-            var imageBytes = await result.Content.ReadAsByteArrayAsync();
-            using var image = Image.Load(imageBytes);
-            image.Mutate(
-                x => x.Resize(
-                    new ResizeOptions
-                        {
-                            Mode = ResizeMode.Crop, Size = new Size(150, 110), Position = AnchorPositionMode.Center,
-                        }));
-            var tempPath = this.webHostEnvironment.WebRootPath + "/images/mainnews/" + Path.GetRandomFileName() + ".png";
-            await using (var stream = File.OpenWrite(tempPath))
+            try
             {
-                image.SaveAsPng(stream);
-            }
+                var imageBytes = await result.Content.ReadAsByteArrayAsync();
+                using var image = Image.Load(imageBytes);
+                image.Mutate(
+                    x => x.Resize(
+                        new ResizeOptions
+                            {
+                                Mode = ResizeMode.Crop,
+                                Size = new Size(150, 110),
+                                Position = AnchorPositionMode.Center,
+                            }));
+                var tempPath = this.webHostEnvironment.WebRootPath + "/images/mainnews/" + Path.GetRandomFileName() + ".png";
+                await using (var stream = File.OpenWrite(tempPath))
+                {
+                    image.SaveAsPng(stream);
+                }
 
-            File.Move(tempPath, filePath, true);
+                File.Move(tempPath, filePath, true);
+            }
+            catch (Exception e)
+            {
+                context.WriteLine($"Download image ({imageUrl}) failed: \"{e}\"");
+                File.Copy(defaultFilePath, filePath, true);
+            }
         }
     }
 }
