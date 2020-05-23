@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
 
     using AngleSharp.Dom;
 
@@ -16,38 +17,34 @@
         public override bool UseProxy => true;
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("index.php?section=PRESS", "#rub_co span a");
+            this.GetPublications("novini", ".post__widget .post__title a");
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            for (var date = DateTime.UtcNow; date >= new DateTime(2014, 11, 1); date = date.AddDays(-1))
+            for (var page = 1; page <= 10; page++)
             {
-                var news = this.GetPublications(
-                    $"index.php?section=PRESS2&vs=2&pr=3&lang=&dtT={date:dd}.{date:MM}.{date:yyyy}",
-                    "#statiata span a");
-                Console.WriteLine($"Date {date.ToShortDateString()} => {news.Count} news");
+                var news = this.GetPublications($"novini?page={page}", ".page-content .post__title a");
+                Console.WriteLine($"Page {page} => {news.Count} news");
                 foreach (var remoteNews in news)
                 {
-                    remoteNews.PostDate = date.Date;
                     yield return remoteNews;
                 }
             }
         }
 
-        internal override string ExtractIdFromUrl(string url) => this.GetUrlParameterValue(url, "prid");
-
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            var titleElement = document.QuerySelector(".grid_2_3_long_bless h3");
-            var title = titleElement?.TextContent;
+            var titleElement = document.QuerySelector("h3.post__title");
+            var title = new CultureInfo("bg-BG", false).TextInfo.ToTitleCase(
+                titleElement?.TextContent.ToLower() ?? string.Empty);
 
-            // No time provided in the news page
-            var time = DateTime.Now;
+            var timeAsString = document.QuerySelector(".post__created-at")?.TextContent.Trim();
+            var time = DateTime.Parse(timeAsString, CultureInfo.InvariantCulture);
 
-            var imageElement = document.QuerySelector("#statiata img");
+            var imageElement = document.QuerySelector(".post__content img");
             var imageUrl = imageElement?.GetAttribute("src");
 
-            var contentElement = document.QuerySelector("#statiata");
+            var contentElement = document.QuerySelector(".post__content");
             contentElement.RemoveRecursively(imageElement);
             this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement?.InnerHtml;
