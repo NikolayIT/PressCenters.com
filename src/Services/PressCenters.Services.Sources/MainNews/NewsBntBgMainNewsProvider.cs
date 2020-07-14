@@ -2,7 +2,7 @@
 {
     public class NewsBntBgMainNewsProvider : BaseMainNewsProvider
     {
-        public override string BaseUrl { get; } = "https://news.bnt.bg";
+        public override string BaseUrl { get; } = "https://bntnews.bg";
 
         public override RemoteMainNews GetMainNews()
         {

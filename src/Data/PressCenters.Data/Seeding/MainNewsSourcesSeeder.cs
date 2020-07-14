@@ -12,7 +12,7 @@
         {
             var mainNewsSources = new List<(string Name, string Url, string TypeName)>
                                   {
-                                      ("БНТ", "https://news.bnt.bg",
+                                      ("БНТ", "https://bntnews.bg",
                                           "PressCenters.Services.Sources.MainNews.NewsBntBgMainNewsProvider"),
                                       ("bTV", "https://btvnovinite.bg",
                                           "PressCenters.Services.Sources.MainNews.BtvNoviniteMainNewsProvider"),
