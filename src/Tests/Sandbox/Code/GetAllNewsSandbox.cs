@@ -21,7 +21,7 @@
             foreach (var source in sourcesRepository.All().ToList())
             {
                 // Run only for selected sources
-                if (!new[] { "SofiaBgSource" }.Any(x => source.TypeName.Contains(x)))
+                if (!new[] { "PrbBgSource" }.Any(x => source.TypeName.Contains(x)))
                 {
                     continue;
                 }
@@ -31,7 +31,15 @@
                 var news = sourceProvider.GetAllPublications();
                 foreach (var remoteNews in news)
                 {
-                    await newsService.AddAsync(remoteNews, source.Id);
+                    var newsId = await newsService.AddAsync(remoteNews, source.Id);
+                    if (newsId.HasValue)
+                    {
+                        await newsService.SaveImageLocallyAsync(
+                            remoteNews.ImageUrl,
+                            newsId.Value,
+                            @"C:\Web\presscenters.com\wwwroot",
+                            sourceProvider.UseProxy);
+                    }
                 }
 
                 Console.WriteLine($"{source.TypeName}.GetAllPublications done.");

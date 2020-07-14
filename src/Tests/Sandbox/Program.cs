@@ -56,8 +56,8 @@
             var sw = Stopwatch.StartNew();
 
             //// new UpdateSearchTextSandbox().Work(serviceProvider).GetAwaiter().GetResult();
-            //// new GetAllNewsSandbox().Work(serviceProvider).GetAwaiter().GetResult();
-            new DownloadImagesSandbox().Work(serviceProvider).GetAwaiter().GetResult();
+            new GetAllNewsSandbox().Work(serviceProvider).GetAwaiter().GetResult();
+            //// new DownloadImagesSandbox().Work(serviceProvider).GetAwaiter().GetResult();
 
             Console.WriteLine(sw.Elapsed);
             return 0;
