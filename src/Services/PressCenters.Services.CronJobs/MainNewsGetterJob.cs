@@ -39,7 +39,7 @@
             this.webHostEnvironment = webHostEnvironment;
         }
 
-        [AutomaticRetry(Attempts = 3)]
+        [AutomaticRetry(Attempts = 2)]
         public async Task Work(PerformContext context)
         {
             foreach (var source in this.mainNewsSourcesRepository.All().ToList())

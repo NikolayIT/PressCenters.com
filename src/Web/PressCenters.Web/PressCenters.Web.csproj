@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <CodeAnalysisRuleSet>..\..\Rules.ruleset</CodeAnalysisRuleSet>
     <ApplicationInsightsResourceId>/subscriptions/9c5540eb-59c5-47d8-9812-00f7249e9502/resourcegroups/PressCenters/providers/microsoft.insights/components/PressCenters.ApplicationInsights</ApplicationInsightsResourceId>
     <ApplicationInsightsAnnotationResourceId>/subscriptions/9c5540eb-59c5-47d8-9812-00f7249e9502/resourcegroups/PressCenters/providers/microsoft.insights/components/PressCenters.ApplicationInsights</ApplicationInsightsAnnotationResourceId>
