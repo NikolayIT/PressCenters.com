@@ -10,8 +10,8 @@
     public class TourismGovernmentBgSourceTests
     {
         [Theory]
-        [InlineData("http://www.tourism.government.bg/bg/kategorii/novini/ministur-angelkova-vsichki-uslugi-na-ministerstvoto-veche-sa-dostupni-s-edin-klik", "novini/ministur-angelkova-vsichki-uslugi-na-ministerstvoto-veche-sa-dostupni-s-edin-klik")]
-        [InlineData("http://www.tourism.government.bg/bg/kategorii/novini/nad-8423-mln-sa-vizitite-ot-chuzhdenci-v-bulgariya-za-10-te-meseca-na-2018-g/", "novini/nad-8423-mln-sa-vizitite-ot-chuzhdenci-v-bulgariya-za-10-te-meseca-na-2018-g")]
+        [InlineData("https://www.tourism.government.bg/bg/kategorii/novini/ministur-angelkova-vsichki-uslugi-na-ministerstvoto-veche-sa-dostupni-s-edin-klik", "novini/ministur-angelkova-vsichki-uslugi-na-ministerstvoto-veche-sa-dostupni-s-edin-klik")]
+        [InlineData("https://www.tourism.government.bg/bg/kategorii/novini/nad-8423-mln-sa-vizitite-ot-chuzhdenci-v-bulgariya-za-10-te-meseca-na-2018-g/", "novini/nad-8423-mln-sa-vizitite-ot-chuzhdenci-v-bulgariya-za-10-te-meseca-na-2018-g")]
         public void ExtractIdFromPressUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new TourismGovernmentBgSource();
@@ -22,7 +22,7 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "http://www.tourism.government.bg/bg/kategorii/novini/ministur-angelkova-osnoven-akcent-v-rabotata-ni-prez-2019-g-shte-e-nasurchavane-na";
+            const string NewsUrl = "https://www.tourism.government.bg/bg/kategorii/novini/ministur-angelkova-osnoven-akcent-v-rabotata-ni-prez-2019-g-shte-e-nasurchavane-na";
             var provider = new TourismGovernmentBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
@@ -34,7 +34,7 @@
             Assert.DoesNotContain("15 декември 2018", news.Content);
             Assert.DoesNotContain("facebook.com", news.Content);
             Assert.DoesNotContain("print", news.Content);
-            Assert.Equal("http://www.tourism.government.bg/sites/tourism.government.bg/files/15-12-18-darik_radio.jpeg", news.ImageUrl);
+            Assert.Equal("https://www.tourism.government.bg/sites/tourism.government.bg/files/15-12-18-darik_radio.jpeg", news.ImageUrl);
             Assert.Equal(new DateTime(2018, 12, 15, 13, 51, 0), news.PostDate);
             Assert.Equal("novini/ministur-angelkova-osnoven-akcent-v-rabotata-ni-prez-2019-g-shte-e-nasurchavane-na", news.RemoteId);
         }
@@ -42,7 +42,7 @@
         [Fact]
         public void ParseRemoteNewsWithoutImageShouldWorkCorrectly()
         {
-            const string NewsUrl = "http://www.tourism.government.bg/bg/kategorii/novini/ministur-angelkova-s-registur-na-zabelezhitelnostite-shte-privlichame-poveche";
+            const string NewsUrl = "https://www.tourism.government.bg/bg/kategorii/novini/ministur-angelkova-s-registur-na-zabelezhitelnostite-shte-privlichame-poveche";
             var provider = new TourismGovernmentBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);

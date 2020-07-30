@@ -37,7 +37,7 @@
             Assert.DoesNotContain("<img", news.Content);
             Assert.DoesNotContain("01.jpg", news.Content);
             Assert.DoesNotContain("11 януари 2019", news.Content);
-            Assert.Equal("https://customs.bg/wps/wcm/myconnect/customs.bg28892/6a1fa44b-6fe1-48b5-97ab-a1a87bef4908/01.jpg?MOD=AJPERES&CACHEID=ROOTWORKSPACE.Z18_HQ8A1O82K0SMA0APG8OOL53SH1-6a1fa44b-6fe1-48b5-97ab-a1a87bef4908-mwYuEzt", news.ImageUrl);
+            Assert.StartsWith("https://customs.bg/wps/wcm/myconnect/customs.bg28892/6a1fa44b-6fe1-48b5-97ab-a1a87bef4908/01.jpg", news.ImageUrl);
             Assert.Equal(new DateTime(2019, 1, 11), news.PostDate);
             Assert.Equal("news-details/11-01-cigarettes-elin-pelin", news.RemoteId);
         }

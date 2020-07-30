@@ -11,7 +11,7 @@
     /// </summary>
     public class TourismGovernmentBgSource : BaseSource
     {
-        public override string BaseUrl { get; } = "http://www.tourism.government.bg/";
+        public override string BaseUrl { get; } = "https://www.tourism.government.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("bg/kategorii/novini", "#main .node-article h2 a", "bg/kategorii/novini", 5);

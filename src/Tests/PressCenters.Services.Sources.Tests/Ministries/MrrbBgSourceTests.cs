@@ -37,16 +37,16 @@
         [Fact]
         public void ParseRemoteNewsWithoutImageShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://www.mrrb.bg/bg/na-26-09-2003-g-glavna-direkciya-grajdanska-registraciya-i-administrativno-obslujvane-kum-mrrb-osiguri-web-dostup-do-izbiratelnite-spisuci-za-mestni-izbori-2003-za-vsichki-bulgarski-grajdani/";
+            const string NewsUrl = "https://www.mrrb.bg/bg/kadasturut-v-bulgariya-premina-prez-redica-promeni-sled-1990-g-no-vse-oste-ne-e-priel-formata-pozvolyavasta-da-predostavya-uslugi-v-cyalata-strana/";
             var provider = new MrrbBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("На 26.09.2003 г. Главна Дирекция “Гражданска регистрация и административно обслужване” към МРРБ осигури Web достъп до избирателните списъци за Местни избори - 2003 за всички български граждани", news.Title);
-            Assert.Contains("Гражданите ще могат да проверят своите лични данни", news.Content);
-            Assert.Contains("От 1990 г. всички избирателни списъци се отпечатват от ГРАО.", news.Content);
+            Assert.Equal("Кадастърът в България премина през редица промени след 1990 г., но все още не е приел формата, позволяваща да предоставя услуги в цялата страна", news.Title);
+            Assert.Contains("Кадастърът в България премина през редица промени след 1990", news.Content);
+            Assert.Contains("септември 2004 г. Дирекция “Връзки с обществеността и международна дейност”", news.Content);
             Assert.Null(news.ImageUrl);
-            Assert.Equal(new DateTime(2007, 11, 4, 23, 12, 0), news.PostDate);
-            Assert.Equal("na-26-09-2003-g-glavna-direkciya-grajdanska-registraciya-i-administrativno-obslujvane-kum-mrrb-osiguri-web-dostup-do-izbiratelnite-spisuci-za-mestni-izbori-2003-za-vsichki-bulgarski-grajdani", news.RemoteId);
+            Assert.Equal(new DateTime(2004, 6, 17, 23, 12, 0), news.PostDate);
+            Assert.Equal("kadasturut-v-bulgariya-premina-prez-redica-promeni-sled-1990-g-no-vse-oste-ne-e-priel-formata-pozvolyavasta-da-predostavya-uslugi-v-cyalata-strana", news.RemoteId);
         }
 
         [Fact]
