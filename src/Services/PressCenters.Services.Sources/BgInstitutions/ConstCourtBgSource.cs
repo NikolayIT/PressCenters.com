@@ -7,11 +7,11 @@
 
     using AngleSharp.Dom;
 
-    using PressCenters.Common;
-
     public class ConstCourtBgSource : BaseSource
     {
         public override string BaseUrl { get; } = "http://www.constcourt.bg/";
+
+        public override bool UseProxy => true;
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("bg/Blog/AllMessages?page=1&pageSize=5", ".row-title a", "/bg/Blog/Display/", 5);
@@ -28,7 +28,7 @@
                 foreach (var remoteNews in news)
                 {
                     yield return remoteNews;
-                    Thread.Sleep(2000);
+                    Thread.Sleep(2500);
                 }
             }
         }
