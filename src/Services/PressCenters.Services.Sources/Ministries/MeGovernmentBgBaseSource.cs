@@ -55,7 +55,7 @@
             }
 
             var timeAsString = timeElement?.TextContent?.Trim();
-            var time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
+            var time = DateTime.ParseExact(timeAsString, "dd MMMM yyyy", new CultureInfo("bg-BG"));
 
             var imageElement = document.QuerySelector("div.article-image-container a.article-image");
             var imageUrl = imageElement?.GetAttribute("href");

@@ -40,14 +40,14 @@
             Assert.DoesNotContain("отпечатай тази страница", news.Content);
             Assert.DoesNotContain("обратно в списъка", news.Content);
             Assert.Equal(new DateTime(2019, 1, 10), news.PostDate);
-            Assert.Equal("https://www.me.government.bg/files/news/image/news-2687-4345.jpg", news.ImageUrl);
+            Assert.Equal("https://www.me.government.bg/uploads/files/News_News/a12e50f49bd3ef86de781fe40de95debd4ebba98.jpg", news.ImageUrl);
             Assert.Equal("2687", news.RemoteId);
         }
 
         [Fact]
         public void ParseRemoteNewsWithoutImageShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://www.me.government.bg/bg/news/ministerstvoto-na-energetikata-vze-merki-za-plashtane-na-vsichki-zabaveni-koncesionni-vaznagrajdeniya-2000.html?p=eyJ0eXBlIjoiaG90IiwicGFnZSI6OX0=";
+            const string NewsUrl = "https://www.me.government.bg/bg/news/ministerstvoto-na-energetikata-vze-merki-za-plashtane-na-vsichki-zabaveni-koncesionni-vaznagrajdeniya-2000.html";
             var provider = new MeGovernmentBgHotNewsSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
