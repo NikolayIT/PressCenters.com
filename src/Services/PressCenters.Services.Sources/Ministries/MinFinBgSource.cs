@@ -59,6 +59,7 @@
             contentElement.RemoveRecursively(imageElement);
             contentElement.RemoveRecursively(document.QuerySelector("#content .news_images")); // All images
             contentElement.RemoveRecursively(contentElement?.QuerySelector("script")); // All scripts
+            contentElement.RemoveRecursively(contentElement?.QuerySelector(".page-share")); // Share links
             this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement?.InnerHtml;
             if (string.IsNullOrWhiteSpace(content) || content == "<p></p>")
