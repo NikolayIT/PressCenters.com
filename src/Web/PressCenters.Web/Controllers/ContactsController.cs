@@ -50,12 +50,14 @@
             await this.contactsRepository.AddAsync(contactFormEntry);
             await this.contactsRepository.SaveChangesAsync();
 
-            await this.emailSender.SendEmailAsync(
-                model.Email,
-                model.Name,
-                GlobalConstants.SystemEmail,
-                model.Title,
-                model.Content);
+            var email = this.emailSender.EmailBuilder()
+                .AddFromAddress(model.Email)
+                .AddFromName(model.Name)
+                .AddToAddress(GlobalConstants.SystemEmail)
+                .AddSubject(model.Title)
+                .AddHtmlContent(model.Content)
+                .BuildEmail();
+            await this.emailSender.SendEmailAsync(email);
 
             this.TempData[RedirectedFromContactForm] = true;
 
