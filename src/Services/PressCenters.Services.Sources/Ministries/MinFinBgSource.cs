@@ -46,7 +46,7 @@
 
             var timeElement = document.QuerySelector("#content .single-news-date");
             var timeAsString = timeElement?.TextContent?.Trim();
-            timeAsString = timeAsString.Replace(".-0001", ".1999");
+            timeAsString = timeAsString?.Replace(".-0001", ".1999");
             var time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy г.", CultureInfo.InvariantCulture);
 
             var contentElement = document.QuerySelector("#content .inner-content");

@@ -70,6 +70,7 @@
 
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddApplicationInsightsTelemetry();
 
@@ -106,7 +107,7 @@
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
+                app.UseMigrationsEndPoint();
             }
             else
             {
