@@ -75,7 +75,11 @@
             {
                 timeElement = document.QuerySelector(".article__description .timestamp");
                 timeAsString = timeElement?.TextContent?.Trim();
-                time = DateTime.ParseExact(timeAsString, "dd MMMM yyyy", CultureInfo.GetCultureInfo("bg-BG"));
+
+                if (!DateTime.TryParseExact(timeAsString, "dd MMMM yyyy | HH:mm", CultureInfo.GetCultureInfo("bg-BG"), DateTimeStyles.None, out time))
+                {
+                    time = DateTime.ParseExact(timeAsString, "dd MMMM yyyy", CultureInfo.GetCultureInfo("bg-BG"));
+                }
             }
 
             var imageElement = document.QuerySelector("#image_source");

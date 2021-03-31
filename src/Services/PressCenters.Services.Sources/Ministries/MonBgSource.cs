@@ -14,7 +14,7 @@
         public override string BaseUrl { get; } = "https://www.mon.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("bg/news", ".col-md-9 .news-description a", "bg/news");
+            this.GetPublications("bg/news", ".col-md-9 .news-description a", "bg/news", 5);
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {

@@ -14,8 +14,8 @@
             Assert.NotNull(news.Title);
             Assert.True(news.Title.Length >= 10);
             Assert.Contains("novini.bg", news.OriginalUrl);
-            Assert.StartsWith("http", news.OriginalUrl);
-            Assert.StartsWith("http", news.ImageUrl);
+            Assert.StartsWith("https", news.OriginalUrl);
+            Assert.StartsWith("https", news.ImageUrl);
         }
     }
 }

@@ -10,8 +10,8 @@
     public class NapBgSourceTests
     {
         [Theory]
-        [InlineData("http://www.nap.bg/news?id=3843", "3843")]
-        [InlineData("http://www.nap.bg/news?id=337", "337")]
+        [InlineData("https://nra.bg/news?id=3843", "3843")]
+        [InlineData("https://nra.bg/news?id=337", "337")]
         public void ExtractIdFromPressUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new NapBgSource();
@@ -22,7 +22,7 @@
         [Fact]
         public void ParseRemoteNewsWithoutImageShouldWorkCorrectly()
         {
-            const string NewsUrl = "http://www.nap.bg/news?id=3829";
+            const string NewsUrl = "https://nra.bg/news?id=3829";
             var provider = new NapBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
