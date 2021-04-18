@@ -1,5 +1,11 @@
 ﻿namespace PressCenters.Services.Sources.MainNews
 {
+    using System.Linq;
+
+    using AngleSharp;
+
+    using PressCenters.Common;
+
     public class ReutersMainNewsProvider : BaseMainNewsProvider
     {
         public override string BaseUrl { get; } = "https://www.reuters.com";
@@ -8,16 +14,15 @@
         {
             var document = this.GetDocument(this.BaseUrl);
 
-            var titleElement = document.QuerySelector("#topStory .story-title a");
-            var title = titleElement.TextContent.Trim();
+            var titleElement = document.GetElementsByTagName("span").FirstOrDefault(x => x.ClassName.StartsWith("MediaStoryCard__title___"));
+            var title = titleElement?.TextContent.Trim();
 
-            var url = this.BaseUrl + titleElement.Attributes["href"].Value.Trim();
+            var url = this.BaseUrl + document.GetElementsByTagName("a").FirstOrDefault(x => x.ClassName.Contains("MediaStoryCard__basic_hero___"))?.Attributes["href"].Value.Trim();
 
-            var imageElement = document.QuerySelector("#topStory .story-photo img");
-            var imageUrl = imageElement?.Attributes["src"]?.Value?.Trim();
-            if (imageUrl != null && !imageUrl.StartsWith("http"))
+            var imageUrl = document.ToHtml().GetStringBetween("\",\"url\":\"", "\"");
+            if (!imageUrl.StartsWith("http"))
             {
-                imageUrl = "https:" + imageUrl;
+                imageUrl = null;
             }
 
             return new RemoteMainNews(title, url, imageUrl);

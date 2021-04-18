@@ -14,7 +14,7 @@
     /// </summary>
     public class NapBgSource : BaseSource
     {
-        public override string BaseUrl { get; } = "https://nra.bg/";
+        public override string BaseUrl => "https://old.nra.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications()
         {

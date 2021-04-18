@@ -15,7 +15,7 @@
             var url = this.BaseUrl + urlElement.Attributes["href"].Value.Trim();
 
             var imageElement = document.QuerySelector(".leading-articles .item .image img");
-            var imageUrl = "https:" + imageElement?.Attributes["src"]?.Value?.Trim();
+            var imageUrl = imageElement?.Attributes["src"]?.Value?.Trim();
 
             return new RemoteMainNews(title, url, imageUrl);
         }

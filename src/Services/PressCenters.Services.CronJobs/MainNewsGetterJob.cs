@@ -123,7 +123,7 @@
                 var tempPath = this.webHostEnvironment.WebRootPath + "/images/mainnews/" + Path.GetRandomFileName() + ".png";
                 await using (var stream = File.OpenWrite(tempPath))
                 {
-                    image.SaveAsPng(stream);
+                    await image.SaveAsPngAsync(stream);
                 }
 
                 File.Move(tempPath, filePath, true);
