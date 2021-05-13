@@ -21,7 +21,7 @@
         {
             var json = this.ReadStringFromUrl($"{this.BaseUrl}api/v1/front-news/bg/5");
             var newsAsJson = JsonConvert.DeserializeObject<IEnumerable<NewsResponse>>(json);
-            var links = newsAsJson.Select(x => $"{this.BaseUrl}bg/news/ID/{x.M_News_id}").ToList();
+            var links = newsAsJson.Select(x => $"{this.BaseUrl}bg/news/ID/{x.Id}").ToList();
             if (!links.Any())
             {
                 throw new Exception("No publications found.");
@@ -57,30 +57,34 @@
             }
 
             return new RemoteNews(
-                newsAsJson.M_NewsL_title,
-                newsAsJson.M_NewsL_body,
-                newsAsJson.M_News_date,
-                newsAsJson.media?.M_NewsMG_file);
+                newsAsJson.Title,
+                newsAsJson.Body,
+                newsAsJson.Date,
+                newsAsJson.Media?.File);
         }
 
         public class NewsResponse
         {
-            public DateTime M_News_date { get; set; }
+            [JsonProperty("M_News_id")]
+            public int Id { get; set; }
 
-            public int M_News_id { get; set; }
+            [JsonProperty("M_News_date")]
+            public DateTime Date { get; set; }
 
-            public string M_NewsL_title { get; set; }
+            [JsonProperty("M_NewsL_title")]
+            public string Title { get; set; }
 
-            public string M_NewsL_body { get; set; }
+            [JsonProperty("M_NewsL_body")]
+            public string Body { get; set; }
 
-            public Media media { get; set; }
+            [JsonProperty("media")]
+            public Media Media { get; set; }
         }
 
         public class Media
         {
-            public int M_NewsMG_id { get; set; }
-
-            public string M_NewsMG_file { get; set; }
+            [JsonProperty("M_NewsMG_file")]
+            public string File { get; set; }
         }
     }
 }
