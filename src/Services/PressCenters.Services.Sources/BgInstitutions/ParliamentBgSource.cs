@@ -2,21 +2,34 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
+    using System.Linq;
 
     using AngleSharp.Dom;
+
+    using Newtonsoft.Json;
 
     /// <summary>
     /// Народно събрание на Република България.
     /// </summary>
     public class ParliamentBgSource : BaseSource
     {
-        public override string BaseUrl { get; } = "https://www.parliament.bg/";
+        public override string BaseUrl => "https://www.parliament.bg/";
 
         public override bool UseProxy => true;
 
-        public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("bg/news", ".frontList li.padding1 a", count: 3);
+        public override IEnumerable<RemoteNews> GetLatestPublications()
+        {
+            var json = this.ReadStringFromUrl($"{this.BaseUrl}api/v1/front-news/bg/5");
+            var newsAsJson = JsonConvert.DeserializeObject<IEnumerable<NewsResponse>>(json);
+            var links = newsAsJson.Select(x => $"{this.BaseUrl}bg/news/ID/{x.M_News_id}").ToList();
+            if (!links.Any())
+            {
+                throw new Exception("No publications found.");
+            }
+
+            var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
+            return news;
+        }
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
@@ -35,33 +48,39 @@
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            var timeElement = document.QuerySelector(".markframe .marktitle .dateclass");
-            var timeAsString = timeElement?.TextContent?.Trim();
-            if (string.IsNullOrWhiteSpace(timeAsString))
+            var id = this.ExtractIdFromUrl(url);
+            var json = this.ReadStringFromUrl($"{this.BaseUrl}api/v1/news/bg/{id}");
+            var newsAsJson = JsonConvert.DeserializeObject<NewsResponse>(json);
+            if (newsAsJson == null)
             {
                 return null;
             }
 
-            var time = DateTime.ParseExact(timeAsString, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+            return new RemoteNews(
+                newsAsJson.M_NewsL_title,
+                newsAsJson.M_NewsL_body,
+                newsAsJson.M_News_date,
+                newsAsJson.media?.M_NewsMG_file);
+        }
 
-            var titleElement = document.QuerySelector(".markframe .marktitle");
-            if (titleElement == null)
-            {
-                return null;
-            }
+        public class NewsResponse
+        {
+            public DateTime M_News_date { get; set; }
 
-            titleElement.RemoveRecursively(timeElement);
-            var title = titleElement.TextContent;
+            public int M_News_id { get; set; }
 
-            var imageElement = document.QuerySelector(".markframe .markcontent img");
-            var imageUrl = imageElement?.GetAttribute("src");
+            public string M_NewsL_title { get; set; }
 
-            var contentElement = document.QuerySelector(".markframe .markcontent");
-            contentElement.RemoveRecursively(imageElement);
-            this.NormalizeUrlsRecursively(contentElement);
-            var content = contentElement?.InnerHtml;
+            public string M_NewsL_body { get; set; }
 
-            return new RemoteNews(title, content, time, imageUrl);
+            public Media media { get; set; }
+        }
+
+        public class Media
+        {
+            public int M_NewsMG_id { get; set; }
+
+            public string M_NewsMG_file { get; set; }
         }
     }
 }
