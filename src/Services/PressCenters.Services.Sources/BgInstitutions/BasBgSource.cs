@@ -9,10 +9,10 @@
 
     public class BasBgSource : BaseSource
     {
-        public override string BaseUrl { get; } = "http://www.bas.bg/";
+        public override string BaseUrl => "https://www.bas.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("академични-новини", ".fusion-recent-posts article.post h4 a", count: 5);
+            this.GetPublications(string.Empty, ".fusion-recent-posts article.post h4 a", count: 5);
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
@@ -29,11 +29,7 @@
             }
         }
 
-        internal override string ExtractIdFromUrl(string url)
-        {
-            var uri = new Uri(url.Trim().Trim('/'));
-            return WebUtility.UrlDecode(uri.Segments[^4] + uri.Segments[^3] + uri.Segments[^2] + uri.Segments[^1]);
-        }
+        internal override string ExtractIdFromUrl(string url) => this.GetUrlParameterValue(url, "p");
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
