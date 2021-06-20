@@ -1,5 +1,6 @@
 ﻿namespace PressCenters.Web.Components
 {
+    using System.Collections.Generic;
     using System.Linq;
 
     using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,11 @@
 
         public IViewComponentResult Invoke()
         {
+            if (this.mainNewsRepository.All().Count() == 0)
+            {
+                return this.View(new MainNewsComponentViewModel { MainNews = new List<MainNewsViewModel>() });
+            }
+
             var news = this.mainNewsSourcesRepository.All()
                 .Select(x => x.MainNews.OrderByDescending(x => x.Id).FirstOrDefault())
                 .OrderByDescending(x => x.CreatedOn).To<MainNewsViewModel>().ToList();
