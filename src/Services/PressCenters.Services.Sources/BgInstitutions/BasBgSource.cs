@@ -29,7 +29,11 @@
             }
         }
 
-        internal override string ExtractIdFromUrl(string url) => this.GetUrlParameterValue(url, "p");
+        internal override string ExtractIdFromUrl(string url)
+        {
+            var uri = new Uri(url.Trim().Trim('/'));
+            return WebUtility.UrlDecode(uri.Segments[^3] + uri.Segments[^2] + uri.Segments[^1]);
+        }
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
