@@ -10,8 +10,8 @@
     public class BasBgSourceTests
     {
         [Theory]
-        [InlineData("https://www.bas.bg/2021/06/%d1%81%d0%bf%d0%b8%d1%81%d1%8a%d0%ba-%d0%bd%d0%b0-%d0%b4%d0%be%d0%bf%d1%83%d1%81%d0%bd%d0%b0%d1%82%d0%b8%d1%82%d0%b5-%d0%ba%d0%b0%d0%bd%d0%b4%d0%b8%d0%b4%d0%b0%d1%82%d0%b8/", "2021/06/списък-на-допуснатите-кандидати")]
-        [InlineData("https://www.bas.bg/2021/06/първата-по-рода-си-енциклопедия-за-бъл/", "2021/06/първата-по-рода-си-енциклопедия-за-бъл")]
+        [InlineData("https://www.bas.bg/?p=34369", "34369")]
+        [InlineData("https://www.bas.bg?p=34381", "34381")]
         public void ExtractIdFromUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new BasBgSource();
@@ -22,12 +22,12 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://www.bas.bg/2021/06/%d0%b1%d1%80%d0%be%d0%b4%d0%b8%d1%80%d0%b0%d0%bd%d0%b8%d1%8f%d1%82-%d0%b0%d0%bd%d0%b8%d0%bc%d0%b0%d1%86%d0%b8%d0%be%d0%bd%d0%b5%d0%bd-%d1%84%d0%b8%d0%bb%d0%bc-%d0%bc%d0%b0%d1%80%d0%bc%d0%b0/";
+            const string NewsUrl = "https://www.bas.bg/?p=34438";
             var provider = new BasBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Бродираният анимационен филм „Мармалад“ е селектиран за два международни фестивала", news.Title);
-            Assert.Equal("2021/06/бродираният-анимационен-филм-марма", news.RemoteId);
+            Assert.Equal("34438", news.RemoteId);
             Assert.Equal(new DateTime(2021, 6, 2), news.PostDate);
             Assert.Contains("Бродираният анимационен филм „Мармалад“ с режисьор доц. д-р Радостина Нейкова от Института за изследване на изкуствата на БАН", news.Content);
             Assert.Contains("а композитор е Петко Манчев. Реализиран е с подкрепата на Национален филмов център.", news.Content);
@@ -39,12 +39,12 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly2017News()
         {
-            const string NewsUrl = "https://www.bas.bg/2017/05/%d0%b1%d1%8a%d0%bb%d0%b3%d0%b0%d1%80%d1%81%d0%ba%d0%b8%d1%8f%d1%82-%d0%be%d1%82%d0%b1%d0%be%d1%80-%d0%bf%d0%be-%d0%bc%d0%b0%d1%82%d0%b5%d0%bc%d0%b0%d1%82%d0%b8%d0%ba%d0%b0-%d0%b7%d0%b0%d0%b2%d0%be/";
+            const string NewsUrl = "https://www.bas.bg/?p=1227";
             var provider = new BasBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Българският отбор по математика завоюва първото място на Балканската олимпиада по математика", news.Title);
-            Assert.Equal("2017/05/българският-отбор-по-математика-заво", news.RemoteId);
+            Assert.Equal("1227", news.RemoteId);
             Assert.Equal(new DateTime(2017, 5, 9), news.PostDate.Date);
             Assert.Contains("Четири златни и два сребърни медала спечелиха българските участници в 34-тата Балканска олимпиада по математика, която се проведе от 2 до 7 май 2017 в Охрид, Македония.", news.Content);
             Assert.Contains("Забележителният успех на българския отбор е резултат от неуморните усилия на състезателите, техните ръководители и учители.", news.Content);

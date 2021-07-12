@@ -13,6 +13,8 @@
     {
         public override string BaseUrl { get; } = "https://www.mtitc.government.bg/";
 
+        public override bool UseProxy => true;
+
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("bg/category/1", "#main .views-field-title a", "bg/category/1", 5);
 

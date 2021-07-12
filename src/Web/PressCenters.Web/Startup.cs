@@ -56,14 +56,14 @@
                     .UseSimpleAssemblyNameTypeSerializer().UseRecommendedSerializerSettings().UseSqlServerStorage(
                         this.configuration.GetConnectionString("DefaultConnection"),
                         new SqlServerStorageOptions
-                            {
-                                CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-                                SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-                                QueuePollInterval = TimeSpan.Zero,
-                                UseRecommendedIsolationLevel = true,
-                                UsePageLocksOnDequeue = true,
-                                DisableGlobalLocks = true,
-                            }).UseConsole());
+                        {
+                            CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                            SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                            QueuePollInterval = TimeSpan.Zero,
+                            UseRecommendedIsolationLevel = true,
+                            UsePageLocksOnDequeue = true,
+                            DisableGlobalLocks = true,
+                        }).UseConsole());
 
             services.AddDefaultIdentity<ApplicationUser>(IdentityOptionsProvider.GetIdentityOptions)
                 .AddRoles<ApplicationRole>().AddEntityFrameworkStores<ApplicationDbContext>();
@@ -118,19 +118,19 @@
             app.UseHttpsRedirection();
             app.UseStaticFiles(
                 new StaticFileOptions
-                    {
-                        OnPrepareResponse = ctx =>
+                {
+                    OnPrepareResponse = ctx =>
+                        {
+                            if (ctx.Context.Request.Path.ToString().Contains("/news/"))
                             {
-                                if (ctx.Context.Request.Path.ToString().Contains("/news/"))
-                                {
-                                    // Cache static files for 90 days
-                                    ctx.Context.Response.Headers.Add("Cache-Control", "public,max-age=31536000");
-                                    ctx.Context.Response.Headers.Add(
-                                        "Expires",
-                                        DateTime.UtcNow.AddYears(1).ToString("R", CultureInfo.InvariantCulture));
-                                }
-                            },
-                    });
+                                // Cache static files for 90 days
+                                ctx.Context.Response.Headers.Add("Cache-Control", "public,max-age=31536000");
+                                ctx.Context.Response.Headers.Add(
+                                    "Expires",
+                                    DateTime.UtcNow.AddYears(1).ToString("R", CultureInfo.InvariantCulture));
+                            }
+                        },
+                });
 
             app.UseRouting();
 
