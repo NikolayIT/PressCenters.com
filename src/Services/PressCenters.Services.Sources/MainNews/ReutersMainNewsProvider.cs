@@ -14,7 +14,7 @@
         {
             var document = this.GetDocument(this.BaseUrl);
 
-            var titleElement = document.GetElementsByTagName("span").FirstOrDefault(x => x.ClassName.StartsWith("MediaStoryCard__title___"));
+            var titleElement = document.GetElementsByTagName("h3").FirstOrDefault(x => x.ClassName.Contains("MediaStoryCard__heading__"));
             var title = titleElement?.TextContent.Trim();
 
             var url = this.BaseUrl + document.GetElementsByTagName("a").FirstOrDefault(x => x.ClassName.Contains("MediaStoryCard__basic_hero___"))?.Attributes["href"].Value.Trim();
