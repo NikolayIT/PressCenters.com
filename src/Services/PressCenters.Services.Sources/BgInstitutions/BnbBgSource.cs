@@ -16,9 +16,9 @@
 
         public override IEnumerable<RemoteNews> GetLatestPublications()
         {
-            var document = this.Parser.ParseDocument(this.ReadStringFromUrl($"{this.BaseUrl}PressOffice/POPressReleases/POPRDate/index.htm"));
+            var document = this.Parser.ParseDocument(this.ReadStringFromUrl($"{this.BaseUrl}AboutUs/PressOffice/POPressReleases/POPRDate/index.htm"));
             var links = document.QuerySelectorAll("#main h3 a")
-                .Select(x => $"{this.BaseUrl}PressOffice/POPressReleases/POPRDate/{x?.Attributes["href"]?.Value}").Take(5).ToList();
+                .Select(x => $"{this.BaseUrl}AboutUs/PressOffice/POPressReleases/POPRDate/{x?.Attributes["href"]?.Value}").Take(5).ToList();
             var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
             return news;
         }
@@ -27,9 +27,9 @@
         {
             for (var year = 1998; year <= DateTime.UtcNow.Year; year++)
             {
-                var document = this.Parser.ParseDocument(this.ReadStringFromUrl($"{this.BaseUrl}PressOffice/POPressReleases/POPRDate/index.htm?forYear={year}"));
+                var document = this.Parser.ParseDocument(this.ReadStringFromUrl($"{this.BaseUrl}AboutUs/PressOffice/POPressReleases/POPRDate/index.htm?forYear={year}"));
                 var links = document.QuerySelectorAll("#main h3 a")
-                    .Select(x => $"{this.BaseUrl}PressOffice/POPressReleases/POPRDate/{x?.Attributes["href"]?.Value}").ToList();
+                    .Select(x => $"{this.BaseUrl}AboutUs/PressOffice/POPressReleases/POPRDate/{x?.Attributes["href"]?.Value}").ToList();
                 var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
 
                 Console.WriteLine($"Page {year} => {news.Count} news");

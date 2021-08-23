@@ -10,8 +10,8 @@
     public class BnbBgSourceTests
     {
         [Theory]
-        [InlineData("https://bnb.bg/PressOffice/POPressReleases/POPRDate/PR_20210611_BG", "PR_20210611_BG")]
-        [InlineData("https://bnb.bg/PressOffice/POPressReleases/POPRDate/PR_20121218_BG/", "PR_20121218_BG")]
+        [InlineData("https://bnb.bg/AboutUs/PressOffice/POPressReleases/POPRDate/PR_20210611_BG", "PR_20210611_BG")]
+        [InlineData("https://bnb.bg/AboutUs/PressOffice/POPressReleases/POPRDate/PR_20121218_BG/", "PR_20121218_BG")]
         public void ExtractIdFromUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new BnbBgSource();
@@ -22,7 +22,7 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://bnb.bg/PressOffice/POPressReleases/POPRDate/PR_20210615_BG";
+            const string NewsUrl = "https://bnb.bg/AboutUs/PressOffice/POPressReleases/POPRDate/PR_20210615_BG";
             var provider = new BnbBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
@@ -39,7 +39,7 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectlyWithAdditionalInfo()
         {
-            const string NewsUrl = "https://bnb.bg/PressOffice/POPressReleases/POPRDate/PR_20210618_10LV_BG";
+            const string NewsUrl = "https://bnb.bg/AboutUs/PressOffice/POPressReleases/POPRDate/PR_20210618_10LV_BG";
             var provider = new BnbBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
