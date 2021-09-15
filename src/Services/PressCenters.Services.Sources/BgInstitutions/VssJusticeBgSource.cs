@@ -15,7 +15,7 @@
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            for (var i = 88; i <= 365; i++)
+            for (var i = 1; i <= 365; i++)
             {
                 var document = this.Parser.ParseDocument(this.ReadStringFromUrl($"{this.BaseUrl}page/view/2574?p={i}"));
                 var newsElements = document.QuerySelectorAll(".right_info .row");
