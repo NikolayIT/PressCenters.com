@@ -23,7 +23,6 @@
                 foreach (var newsElement in newsElements)
                 {
                     var url = this.NormalizeUrl(newsElement.QuerySelector("a").Attributes["href"].Value);
-                    Console.WriteLine(url);
                     var dateAsString = newsElement.QuerySelector(".new_date").TextContent.Trim();
                     var date = DateTime.ParseExact(dateAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
                     var remoteNews = this.GetPublication(url);
