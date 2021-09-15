@@ -190,6 +190,10 @@
                             "Българска народна банка",
                             "Българската народна банка (БНБ) е централната банка на Република България. Българска народна банка е основана на 25 януари 1879 г. Основна цел на Българската народна банка е да поддържа ценовата стабилност чрез осигуряване стабилността на националната парична единица и провеждане на парична политика в съответствие с изискванията на закона.",
                             "https://bnb.bg/", "/images/sources/bnb.bg.jpg"),
+                        ("PressCenters.Services.Sources.BgInstitutions.VssJusticeBgSource", "ВСС",
+                            "Висш съдебен съвет",
+                            "Висшият съдебен съвет (ВСС) е върховен кадрови и административен орган на съдебната власт. Той я представлява, осигурява и отстоява нейната независимост, определя състава и организацията на работата на съдилищата, прокуратурите и следствените органи и обезпечава финансово и технически тяхната дейност, без да се намесва в нейното осъществяване.",
+                            "http://www.vss.justice.bg/", "/images/sources/vss.justice.bg.jpg"),
                         ("PressCenters.Services.Sources.BgStateCompanies.ToploBgSource", "Топлофикация",
                             "Топлофикация София ЕАД",
                             "„Топлофикация София” EАД е най-старата топлофикационна система в България. По мащабите на производство и периметъра на обслужване „Топлофикация София” EАД е най-голямото дружество в страната и на Балканския полуостров.",
@@ -221,7 +225,8 @@
 
             foreach (var source in sources)
             {
-                if (!dbContext.Sources.Any(x => x.TypeName == source.TypeName))
+                var dbSource = dbContext.Sources.FirstOrDefault(x => x.TypeName == source.TypeName);
+                if (dbSource == null)
                 {
                     dbContext.Sources.Add(
                         new Source
@@ -233,6 +238,14 @@
                             Url = source.Url,
                             DefaultImageUrl = source.DefaultImageUrl,
                         });
+                }
+                else
+                {
+                    dbSource.ShortName = source.ShortName;
+                    dbSource.Name = source.Name;
+                    dbSource.Description = source.Description;
+                    dbSource.Url = source.Url;
+                    dbSource.DefaultImageUrl = source.DefaultImageUrl;
                 }
             }
         }
