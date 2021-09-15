@@ -13,6 +13,8 @@
     {
         public override string BaseUrl { get; } = "https://nsi.bg/";
 
+        public override bool UseProxy => true;
+
         public IEnumerable<RemoteNews> GetLatestPublicationsFromXml(string xmlUrl)
         {
             var parser = new XmlParser();
