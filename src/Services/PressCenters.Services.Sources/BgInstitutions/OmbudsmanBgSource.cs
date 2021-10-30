@@ -14,6 +14,8 @@
     {
         public override string BaseUrl { get; } = "https://www.ombudsman.bg/";
 
+        public override bool UseProxy => true;
+
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications(string.Empty, "#leftColumn ul li a", count: 5);
 

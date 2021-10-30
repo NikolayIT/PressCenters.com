@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Globalization;
     using System.Threading;
+
     using AngleSharp.Dom;
 
     public class VssJusticeBgSource : BaseSource
