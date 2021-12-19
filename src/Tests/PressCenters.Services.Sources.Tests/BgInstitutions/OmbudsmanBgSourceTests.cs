@@ -26,6 +26,7 @@
             const string NewsUrl = "https://www.ombudsman.bg/news/4979#middleWrapper";
             var provider = new OmbudsmanBgSource();
             var news = provider.GetPublication(NewsUrl);
+            Assert.NotNull(news);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Омбудсманът Мая Манолова представи законопроект за ограничаване на привилегиите на банки и монополисти", news.Title);
             Assert.Contains("Омбудсманът Мая Манолова представи днес на обществена дискусия в институцията законопроект за изменения в Гражданския процесуален кодекс", news.Content);
@@ -43,6 +44,7 @@
             const string NewsUrl = "https://www.ombudsman.bg/news/9";
             var provider = new OmbudsmanBgSource();
             var news = provider.GetPublication(NewsUrl);
+            Assert.NotNull(news);
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("Омбудсманът на Република България предлага промени в законопроекта за Общ устройствен план на София", news.Title);
             Assert.Contains("Гиньо Ганев представи на председателя на Народното събрание Георги Пирински предложение", news.Content);

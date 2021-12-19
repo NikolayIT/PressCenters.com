@@ -37,10 +37,12 @@
     public class Startup
     {
         private readonly IConfiguration configuration;
+        private readonly IWebHostEnvironment env;
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             this.configuration = configuration;
+            this.env = env;
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -64,6 +66,11 @@
                             UsePageLocksOnDequeue = true,
                             DisableGlobalLocks = true,
                         }).UseConsole());
+
+            if (this.env.IsProduction())
+            {
+                services.AddHangfireServer(options => options.WorkerCount = 2);
+            }
 
             services.AddDefaultIdentity<ApplicationUser>(IdentityOptionsProvider.GetIdentityOptions)
                 .AddRoles<ApplicationRole>().AddEntityFrameworkStores<ApplicationDbContext>();
@@ -101,7 +108,7 @@
                 var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 dbContext.Database.Migrate();
                 ApplicationDbContextSeeder.Seed(dbContext, serviceScope.ServiceProvider);
-                this.SeedHangfireJobs(recurringJobManager, dbContext);
+                SeedHangfireJobs(recurringJobManager, dbContext);
             }
 
             if (env.IsDevelopment())
@@ -140,7 +147,6 @@
 
             if (env.IsProduction())
             {
-                app.UseHangfireServer(new BackgroundJobServerOptions { WorkerCount = 2 });
                 app.UseHangfireDashboard(
                     "/hangfire",
                     new DashboardOptions { Authorization = new[] { new HangfireAuthorizationFilter() } });
@@ -164,7 +170,7 @@
             });
         }
 
-        private void SeedHangfireJobs(IRecurringJobManager recurringJobManager, ApplicationDbContext dbContext)
+        private static void SeedHangfireJobs(IRecurringJobManager recurringJobManager, ApplicationDbContext dbContext)
         {
             recurringJobManager.AddOrUpdate<DbCleanupJob>("DbCleanupJob", x => x.Work(), Cron.Weekly);
             recurringJobManager.AddOrUpdate<MainNewsGetterJob>("MainNewsGetterJob", x => x.Work(null), "*/2 * * * *");
