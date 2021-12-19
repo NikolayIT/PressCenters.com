@@ -8,7 +8,7 @@
     using System.Threading.Tasks;
 
     using AngleSharp.Html.Parser;
-
+    using PressCenters.Common;
     using PressCenters.Data.Common.Repositories;
     using PressCenters.Data.Models;
 
@@ -119,9 +119,7 @@
             }
 
             using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(120), };
-            client.DefaultRequestHeaders.Add(
-                "User-Agent",
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36");
+            client.DefaultRequestHeaders.Add("User-Agent", GlobalConstants.DefaultUserAgent);
             var result = await client.GetAsync(imageUrl);
             if (!result.IsSuccessStatusCode)
             {

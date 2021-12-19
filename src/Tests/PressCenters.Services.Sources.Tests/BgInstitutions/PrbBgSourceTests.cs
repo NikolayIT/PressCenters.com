@@ -72,6 +72,22 @@
         }
 
         [Fact]
+        public void ParseRemoteNewsFrom2021ShouldWorkCorrectly()
+        {
+            const string NewsUrl = "https://prb.bg/bg/news/aktualno/54173-okrazhna-prokuratura-razgrad-rakovodi-dosadebno-proizvodstvo-vav-vrazka-s-tezhak";
+            var provider = new PrbBgSource();
+            var news = provider.GetPublication(NewsUrl);
+            Assert.Equal(NewsUrl, news.OriginalUrl);
+            Assert.Equal("Окръжна прокуратура-Разград ръководи досъдебно производство във връзка с тежък пътен инцидент със загинал пешеходец", news.Title);
+            Assert.Equal("aktualno/54173-okrazhna-prokuratura-razgrad-rakovodi-dosadebno-proizvodstvo-vav-vrazka-s-tezhak", news.RemoteId);
+            Assert.Equal(new DateTime(2021, 11, 2), news.PostDate.Date);
+            Assert.Contains("Окръжна прокуратура-Разград ръководи досъдебно производство", news.Content);
+            Assert.Contains("управлявал МПС след употреба на алкохол или наркотични вещества.", news.Content);
+            Assert.DoesNotContain("Актуално", news.Content);
+            Assert.Equal("https://prb.bg/upload/55510/Района+прокуратура+Разград.JPG", news.ImageUrl);
+        }
+
+        [Fact]
         public void GetLatestPublicationsShouldReturnResults()
         {
             var provider = new PrbBgSource();

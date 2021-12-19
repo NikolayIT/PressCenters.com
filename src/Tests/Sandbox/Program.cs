@@ -55,6 +55,7 @@
         {
             var sw = Stopwatch.StartNew();
 
+            //// serviceProvider.GetService<INewsService>().SaveImageLocallyAsync("https://prb.bg/upload/55508/%D0%93%D0%B5%D1%80%D0%B1+%D0%92%D0%B8%D1%82%D1%80%D0%B0%D0%B6.JPG", 191333, @"C:\Temp\wwwroot", false).GetAwaiter().GetResult();
             //// new UpdateSearchTextSandbox().Work(serviceProvider).GetAwaiter().GetResult();
             new GetAllNewsSandbox().Work(serviceProvider).GetAwaiter().GetResult();
             //// new DownloadImagesSandbox().Work(serviceProvider).GetAwaiter().GetResult();

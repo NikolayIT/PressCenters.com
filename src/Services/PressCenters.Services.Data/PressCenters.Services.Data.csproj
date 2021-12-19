@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Data\PressCenters.Data.Common\PressCenters.Data.Common.csproj" />
     <ProjectReference Include="..\..\Data\PressCenters.Data.Models\PressCenters.Data.Models.csproj" />
+    <ProjectReference Include="..\..\PressCenters.Common\PressCenters.Common.csproj" />
     <ProjectReference Include="..\PressCenters.Services\PressCenters.Services.csproj" />
   </ItemGroup>
 
