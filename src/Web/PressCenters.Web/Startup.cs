@@ -180,7 +180,7 @@
                 recurringJobManager.AddOrUpdate<GetLatestPublicationsJob>(
                     $"GetLatestPublicationsJob_{source.Id}_{source.ShortName}",
                     x => x.Work(source.TypeName, null),
-                    "*/5 * * * *");
+                    "*/6 * * * *");
             }
         }
 
