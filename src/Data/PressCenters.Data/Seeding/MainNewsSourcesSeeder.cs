@@ -38,8 +38,8 @@
                                           "PressCenters.Services.Sources.MainNews.MediapoolBgMainNewsProvider"),
                                       ("AP", "https://www.apnews.com",
                                           "PressCenters.Services.Sources.MainNews.ApMainNewsProvider"),
-                                      ("Reuters", "https://www.reuters.com",
-                                          "PressCenters.Services.Sources.MainNews.ReutersMainNewsProvider"),
+                                      /*("Reuters", "https://www.reuters.com",
+                                          "PressCenters.Services.Sources.MainNews.ReutersMainNewsProvider"),*/
                                   };
 
             foreach (var mainNewsSource in mainNewsSources)

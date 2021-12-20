@@ -34,7 +34,7 @@
             this.webHostEnvironment = webHostEnvironment;
         }
 
-        [AutomaticRetry(Attempts = 2)]
+        [AutomaticRetry(Attempts = 1)]
         public async Task Work(string typeName, PerformContext context)
         {
             var source = this.sourcesRepository.AllWithDeleted().FirstOrDefault(x => x.TypeName == typeName);
