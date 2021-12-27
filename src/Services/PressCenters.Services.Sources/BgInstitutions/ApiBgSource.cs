@@ -3,59 +3,40 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Net;
 
     using AngleSharp.Dom;
+    using PressCenters.Common;
 
     public class ApiBgSource : BaseSource
     {
-        public override string BaseUrl { get; } = "http://www.api.bg/";
+        public override string BaseUrl { get; } = "https://api.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications(
-                "index.php/bg/prescentar/novini",
-                ".ccm-page-list .news-item a.news_more_link",
-                "bg/prescentar/novini",
-                5);
+            this.GetPublications("bg/novini", ".news-panel a", count: 5);
 
-        public override IEnumerable<RemoteNews> GetAllPublications()
-        {
-            for (var i = 1; i <= 650; i++)
-            {
-                var news = this.GetPublications(
-                    $"index.php/bg/prescentar/novini?ccm_paging_p_b606={i}",
-                    ".ccm-page-list .news-item a.news_more_link",
-                    "bg/prescentar/novini");
-                Console.WriteLine($"Page {i} => {news.Count} news");
-                foreach (var remoteNews in news)
-                {
-                    yield return remoteNews;
-                }
-            }
-        }
+        internal override string ExtractIdFromUrl(string url) =>
+            WebUtility.UrlDecode(url.GetLastStringBetween("/", ".html"));
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            var title = document.QuerySelector(".box h1")?.TextContent?.Trim();
+            var contentElement = document.QuerySelector("#single-news");
+            var titleElement = contentElement.QuerySelector("h1");
+            var title = titleElement?.TextContent?.Trim();
             if (title == null)
             {
                 return null;
             }
 
-            var contentElement = document.QuerySelector(".news-article");
+            var timeElement = contentElement.QuerySelector(".date");
+            var time = DateTime.ParseExact(timeElement?.TextContent?.Trim(), "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
 
-            var timeNode = contentElement.ChildNodes[0];
-            var time = DateTime.ParseExact(timeNode?.TextContent?.Trim(), "dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
+            var imageElement = contentElement.QuerySelector("img");
+            var imageUrl = imageElement?.GetAttribute("src");
 
-            var imageElement = document.QuerySelector(".news-article .zoomimage");
-            var imageUrl = imageElement?.GetAttribute("href");
-            if (string.IsNullOrWhiteSpace(imageUrl))
-            {
-                imageElement = document.QuerySelector(".news-article img");
-                imageUrl = imageElement?.GetAttribute("src");
-            }
-
-            contentElement.RemoveChild(timeNode);
-            contentElement.RemoveRecursively(imageElement);
+            contentElement.RemoveRecursively(contentElement.QuerySelector(".news-main-image"));
+            contentElement.RemoveRecursively(titleElement);
+            contentElement.RemoveRecursively(timeElement);
             this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement.InnerHtml;
 
