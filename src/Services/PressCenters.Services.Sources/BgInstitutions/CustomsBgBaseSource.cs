@@ -60,6 +60,7 @@
 
             var imageElement = document.QuerySelector(".galleryList img");
             var imageUrl = imageElement?.GetAttribute("src");
+            imageUrl = imageUrl?.Replace("/myconnect/", "/connect/");
 
             var contentElement = document.QuerySelector("div.vp-news-text");
             this.NormalizeUrlsRecursively(contentElement);

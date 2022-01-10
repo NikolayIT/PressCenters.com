@@ -37,9 +37,28 @@
             Assert.DoesNotContain("<img", news.Content);
             Assert.DoesNotContain("01.jpg", news.Content);
             Assert.DoesNotContain("11 януари 2019", news.Content);
-            Assert.StartsWith("https://customs.bg/wps/wcm/myconnect/customs.bg28892/6a1fa44b-6fe1-48b5-97ab-a1a87bef4908/01.jpg", news.ImageUrl);
+            Assert.StartsWith("https://customs.bg/wps/wcm/connect/customs.bg28892/6a1fa44b-6fe1-48b5-97ab-a1a87bef4908/01.jpg", news.ImageUrl);
             Assert.Equal(new DateTime(2019, 1, 11), news.PostDate);
             Assert.Equal("news-details/11-01-cigarettes-elin-pelin", news.RemoteId);
+        }
+
+        [Fact]
+        public void ParseRemoteNewsShouldWorkCorrectlyWithNewNews()
+        {
+            const string NewsUrl = "https://customs.bg/wps/portal/agency/media-center/news-details/11-01-22-Heroin_BG";
+            var provider = new CustomsBgNewsSource();
+            var news = provider.GetPublication(NewsUrl);
+            Assert.Equal(NewsUrl, news.OriginalUrl);
+            Assert.Equal("Митнически служители откриха близо 14,7 кг. хероин в тайник в лек автомобил при проверка в района на Дунав мост 2", news.Title);
+            Assert.Contains("При проверка на кола с българска регистрация на ГКПП Дунав мост - Видин", news.Content);
+            Assert.Contains("„задържане под стража“ спрямо обвиняемия И.П.", news.Content);
+            Assert.DoesNotContain(news.Title, news.Content);
+            Assert.DoesNotContain("<img", news.Content);
+            Assert.DoesNotContain("01.JPG", news.Content);
+            Assert.DoesNotContain("11 януари 2022", news.Content);
+            Assert.StartsWith("https://customs.bg/wps/wcm/connect/customs.bg28892/c91f897a-c64a-4557-9c32-54ddcd082c24/01.JPG?MOD=AJPERES", news.ImageUrl);
+            Assert.Equal(new DateTime(2022, 1, 11), news.PostDate);
+            Assert.Equal("news-details/11-01-22-Heroin_BG", news.RemoteId);
         }
 
         [Fact]
