@@ -10,3 +10,12 @@ button.accept-policy {
     font-size: 1rem;
     line-height: inherit;
 }
+
+
+html.dark-mode {
+    filter: invert(100%);
+}
+
+    html.dark-mode img {
+        filter: invert(100%);
+    }

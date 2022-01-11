@@ -49,6 +49,10 @@
                         <vc:main-news></vc:main-news>
                     </cache>
                 </div>
+                <div class="dark-mode-switch">
+                  <input id="dark-mode" type="checkbox" onclick="toggleDarkMode()"> 
+                  <label for="dark-mode">Dark mode</label>
+                </div>
                 <div class="g-mb-20">
                     @if (!this.User.IsInRole(GlobalConstants.ProUserRoleName))
                     {

@@ -26,6 +26,7 @@
         <link href="~/css/site.min.css" rel="stylesheet" asp-append-version="true" />
         <link href="~/css/unify.min.css" rel="stylesheet" asp-append-version="true" />
     </environment>
+    <script>if (document.cookie.includes('darkMode=true')) { document.documentElement.classList.toggle('dark-mode'); }</script>
     @this.Html.Raw(this.JavaScriptSnippet.FullScript)
 </head>
 <body>
