@@ -15,7 +15,7 @@
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="0.16.1" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.333" PrivateAssets="all">
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.376" PrivateAssets="all">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
   </ItemGroup>

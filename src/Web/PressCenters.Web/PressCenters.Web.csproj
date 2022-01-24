@@ -25,11 +25,11 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.1" />
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
-    <PackageReference Include="HtmlSanitizer" Version="6.0.453" />
+    <PackageReference Include="HtmlSanitizer" Version="7.0.473" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.20.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.1" />
-    <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.113" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.333" PrivateAssets="all">
+    <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.161" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.376" PrivateAssets="all">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
   </ItemGroup>
