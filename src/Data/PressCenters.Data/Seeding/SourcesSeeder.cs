@@ -199,6 +199,10 @@
                             "Върховен касационен съд",
                             "Върховният касационен съд (ВКС) е висшата съдебна инстанция по наказателни и граждански дела. Неговата юрисдикция се разпростира върху цялата територия на Република България.",
                             "http://www.vks.bg/", "/images/sources/vks.bg.jpg"),
+                        ("PressCenters.Services.Sources.BgInstitutions.SacGovernmentBgSource", "ВАС",
+                            "Върховен административен съд",
+                            "Върховен административен съд (ВАС) осъществява върховен съдебен надзор за точното и еднакво прилагане на законите в административното правораздаване.",
+                            "http://www.sac.government.bg/", "/images/sources/sac.government.bg.jpg"),
 
                         ("PressCenters.Services.Sources.BgStateCompanies.ToploBgSource", "Топлофикация",
                             "Топлофикация София ЕАД",
