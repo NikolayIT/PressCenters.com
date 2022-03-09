@@ -12,6 +12,8 @@
     {
         public override string BaseUrl { get; } = "https://prb.bg/";
 
+        public override bool UseProxy => true;
+
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("bg/news/aktualno", ".news-box .news-group a", "bg/news/aktualno", 10);
 

@@ -111,11 +111,13 @@
                 return false;
             }
 
+            string alternativeImageUrl = imageUrl;
             if (useProxy)
             {
                 imageUrl = new Uri(imageUrl).GetLeftPart(UriPartial.Query); // Remove hash fragment
                 imageUrl = imageUrl.Replace("https://", "https://proxy.presscenters.com/https/")
                         .Replace("http://", "https://proxy.presscenters.com/http/");
+                imageUrl = imageUrl.Replace("+", "%20");
             }
 
             using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(120), };
@@ -123,7 +125,11 @@
             var result = await client.GetAsync(imageUrl);
             if (!result.IsSuccessStatusCode)
             {
-                return false;
+                result = await client.GetAsync(alternativeImageUrl);
+                if (!result.IsSuccessStatusCode)
+                {
+                    return false;
+                }
             }
 
             var imageBytes = await result.Content.ReadAsByteArrayAsync();

@@ -10,8 +10,8 @@
     public class MtitcGovernmentBgSourceTests
     {
         [Theory]
-        [InlineData("https://www.mtitc.government.bg/bg/category/1/ministur-rosen-zhelyazkov-zasilvame-kontrola-po-vreme-na-praznicite", "1/ministur-rosen-zhelyazkov-zasilvame-kontrola-po-vreme-na-praznicite")]
-        [InlineData("https://www.mtitc.government.bg/bg/category/1/otkrivane-na-noviya-trenazhoren-kompleks-za-podgotovka-na-rukovoditeli-na-poleti-na-dp-rukovodstvo-na-vuzdushnoto-dvizhenie/", "1/otkrivane-na-noviya-trenazhoren-kompleks-za-podgotovka-na-rukovoditeli-na-poleti-na-dp-rukovodstvo-na-vuzdushnoto-dvizhenie")]
+        [InlineData("https://www.mtc.government.bg/bg/category/1/ministur-rosen-zhelyazkov-zasilvame-kontrola-po-vreme-na-praznicite", "1/ministur-rosen-zhelyazkov-zasilvame-kontrola-po-vreme-na-praznicite")]
+        [InlineData("https://www.mtc.government.bg/bg/category/1/otkrivane-na-noviya-trenazhoren-kompleks-za-podgotovka-na-rukovoditeli-na-poleti-na-dp-rukovodstvo-na-vuzdushnoto-dvizhenie/", "1/otkrivane-na-noviya-trenazhoren-kompleks-za-podgotovka-na-rukovoditeli-na-poleti-na-dp-rukovodstvo-na-vuzdushnoto-dvizhenie")]
         public void ExtractIdFromPressUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new MtitcGovernmentBgSource();
@@ -22,7 +22,7 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://www.mtitc.government.bg/bg/category/1/rosen-zhelyazkov-shte-zashtitim-nacionalnite-interesi-s-vsichki-vuzmozhni-pohvati-pri-glasuvaneto-na-paketa-za-mobilnost-i";
+            const string NewsUrl = "https://www.mtc.government.bg/bg/category/1/rosen-zhelyazkov-shte-zashtitim-nacionalnite-interesi-s-vsichki-vuzmozhni-pohvati-pri-glasuvaneto-na-paketa-za-mobilnost-i";
             var provider = new MtitcGovernmentBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
@@ -34,7 +34,7 @@
             Assert.DoesNotContain("04.01.2019", news.Content);
             Assert.DoesNotContain("facebook.com", news.Content);
             Assert.DoesNotContain("gallery", news.Content);
-            Assert.Equal("https://www.mtitc.government.bg/sites/default/files/1-1_130.jpg", news.ImageUrl);
+            Assert.Equal("https://www.mtc.government.bg/sites/default/files/1-1_130.jpg", news.ImageUrl);
             Assert.Equal(new DateTime(2019, 1, 4, 17, 44, 0), news.PostDate);
             Assert.Equal("1/rosen-zhelyazkov-shte-zashtitim-nacionalnite-interesi-s-vsichki-vuzmozhni-pohvati-pri-glasuvaneto-na-paketa-za-mobilnost-i", news.RemoteId);
         }

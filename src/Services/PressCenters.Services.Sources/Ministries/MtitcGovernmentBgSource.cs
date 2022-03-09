@@ -11,7 +11,7 @@
     /// </summary>
     public class MtitcGovernmentBgSource : BaseSource
     {
-        public override string BaseUrl { get; } = "https://www.mtitc.government.bg/";
+        public override string BaseUrl { get; } = "https://www.mtc.government.bg/";
 
         public override bool UseProxy => true;
 

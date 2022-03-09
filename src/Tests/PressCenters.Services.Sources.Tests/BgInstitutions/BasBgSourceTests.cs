@@ -33,7 +33,7 @@
             Assert.Contains("а композитор е Петко Манчев. Реализиран е с подкрепата на Национален филмов център.", news.Content);
             Assert.DoesNotContain("1-2-300x200.jpg", news.Content);
             Assert.DoesNotContain("2 юни 2021", news.Content);
-            Assert.Equal("http://www.bas.bg/wp-content/uploads/2021/06/1-2-300x200.jpg", news.ImageUrl);
+            Assert.Equal("https://www.bas.bg/wp-content/uploads/2021/06/1-2-300x200.jpg", news.ImageUrl);
         }
 
         [Fact]
