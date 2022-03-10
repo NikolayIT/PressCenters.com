@@ -1,5 +1,6 @@
 ﻿namespace PressCenters.Services.Sources.Tests.BgStateCompanies
 {
+    using System;
     using System.Linq;
 
     using PressCenters.Services.Sources.BgStateCompanies;
@@ -9,8 +10,8 @@
     public class CezBgSourceTests
     {
         [Theory]
-        [InlineData("http://www.cez.bg/bg/novini/38.html", "38")]
-        [InlineData("http://www.cez.bg/bg/novini/1798.html", "1798")]
+        [InlineData("https://cez.bg/bg/mediya-centr-group/novini/chez-elektro-s-nov-internet-adres-cezelectrobg/", "chez-elektro-s-nov-internet-adres-cezelectrobg")]
+        [InlineData("https://cez.bg/bg/mediya-centr-group/novini/stroitelna-firma-ostavi-bez-tok-800-klienti-na-chez-razpredelenie-v-studentski-grad/", "stroitelna-firma-ostavi-bez-tok-800-klienti-na-chez-razpredelenie-v-studentski-grad")]
         public void ExtractIdFromUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new CezBgSource();
@@ -21,35 +22,35 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "http://www.cez.bg/bg/novini/851.html";
+            const string NewsUrl = "https://cez.bg/bg/mediya-centr-group/novini/elektrohold-she-e-novoto-ime-na-chez-v-blgariya/";
             var provider = new CezBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("ЧЕЗ подари още 996,77 лева на свои лоялни клиенти", news.Title);
-            Assert.Contains("Вече 550 клиенти на компанията получиха безплатни сметки за електричество", news.Content);
-            Assert.Contains("zaklienta@cez.bg", news.Content);
-            Assert.DoesNotContain("Новини", news.Content);
-            Assert.DoesNotContain("Електронна фактура", news.Content);
-            Assert.Equal("http://www.cez.bg/edee/content/img-other/bulgaria/cok-2.jpg", news.ImageUrl);
-            //// Not supported: Assert.Equal(new DateTime(2019, 1, 17), news.PostDate);
-            Assert.Equal("851", news.RemoteId);
+            Assert.Equal("Електрохолд ще е новото име на ЧЕЗ в България", news.Title);
+            Assert.Contains("Електрохолд ще е новото име на дружествата на ЧЕЗ в България от края на април 2022 г.", news.Content);
+            Assert.Contains("Смяната на имената и логата не налага клиентите да предприемат никакви допълнителни действия.", news.Content);
+            Assert.DoesNotContain("10 март 2022", news.Content);
+            Assert.DoesNotContain(news.Title, news.Content);
+            Assert.Equal("https://cez.bg/media/images/vision_CEZ_Eurohold.0977fca4.fill-1358x420-c100.png", news.ImageUrl);
+            Assert.Equal(new DateTime(2022, 3, 10), news.PostDate);
+            Assert.Equal("elektrohold-she-e-novoto-ime-na-chez-v-blgariya", news.RemoteId);
         }
 
         [Fact]
-        public void ParseRemoteNewsWithoutImageShouldWorkCorrectly()
+        public void ParseRemoteNewsWithDefaultImageShouldWorkCorrectly()
         {
-            const string NewsUrl = "http://www.cez.bg/bg/novini/1799.html";
+            const string NewsUrl = "https://cez.bg/bg/mediya-centr-group/novini/chez-vazstanovi-zahranvaneto-na-vsichki-selishta-v-obshtina-lovech/";
             var provider = new CezBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Блокиран е източникът на фалшиви имейли от името на ЧЕЗ Електро България", news.Title);
-            Assert.Contains("Както информирахме по-рано днес, екипът на \"ЧЕЗ Електро България\" АД, ангажиран с киберсигурност", news.Content);
-            Assert.Contains("Пресцентър на \"ЧЕЗ Електро България\" АД", news.Content);
-            Assert.DoesNotContain("Новини", news.Content);
-            Assert.DoesNotContain("Електронна фактура", news.Content);
-            Assert.Null(news.ImageUrl);
-            //// Not supported: Assert.Equal(new DateTime(2019, 1, 17), news.PostDate);
-            Assert.Equal("1799", news.RemoteId);
+            Assert.Equal("ЧЕЗ възстанови захранването на всички селища в община Ловеч", news.Title);
+            Assert.Contains("Възстановено е захранването на всички селища от община Ловеч", news.Content);
+            Assert.Contains("адрес за по-бързо локализиране на засегнатите участъци в населените места.", news.Content);
+            Assert.DoesNotContain("08 февруари 2020", news.Content);
+            Assert.DoesNotContain(news.Title, news.Content);
+            Assert.Equal("https://cez.bg/media/images/Building_CEZ_2021_2.2e16d0ba.fill-1358x420-c100.jpg", news.ImageUrl);
+            Assert.Equal(new DateTime(2020, 2, 8), news.PostDate);
+            Assert.Equal("chez-vazstanovi-zahranvaneto-na-vsichki-selishta-v-obshtina-lovech", news.RemoteId);
         }
 
         [Fact]

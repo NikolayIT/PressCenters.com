@@ -18,7 +18,7 @@
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            for (var page = 43; page <= 139; page++)
+            for (var page = 1; page <= 139; page++)
             {
                 var news = this.GetPublications($"bg/novini?page={page}", ".blog-post .title a");
                 Console.WriteLine($"Page {page} => {news.Count} news");

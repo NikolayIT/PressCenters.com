@@ -13,56 +13,41 @@
     /// </summary>
     public class CezBgSource : BaseSource
     {
-        public override string BaseUrl { get; } = "http://www.cez.bg/";
+        public override string BaseUrl { get; } = "https://cez.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("bg/novini/", "h2.margin-top-5 a", count: 5);
+            this.GetPublications("bg/mediya-centr-group/novini/", "a.card-content__button", count: 5);
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            for (var page = 1; page <= 105; page++)
+            for (var page = 1; page <= 19; page++)
             {
-                var document = this.Parser.ParseDocument(this.ReadStringFromUrl($"{this.BaseUrl}bg/novini/?pg={page}"));
-                var newsElements = document.QuerySelectorAll(".first-child-no-margin-top .margin-bottom-20");
-                var newsCount = 0;
-                foreach (var newsElement in newsElements)
+                var news = this.GetPublications($"bg/mediya-centr-group/novini/?page={page}", "a.card-content__button");
+                Console.WriteLine($"Page {page} => {news.Count} news");
+                foreach (var remoteNews in news)
                 {
-                    var url = this.NormalizeUrl(newsElement.QuerySelector("a").Attributes["href"].Value);
-                    var dateAsString = newsElement.QuerySelector(".day").TextContent.Trim() + " " +
-                                       newsElement.QuerySelector(".month").TextContent.Trim() + " " +
-                                       newsElement.QuerySelector(".year").TextContent.Trim();
-                    var date = DateTime.ParseExact(dateAsString, "d MMMM yyyy", new CultureInfo("bg-BG"));
-                    var remoteNews = this.GetPublication(url);
-                    if (remoteNews == null)
-                    {
-                        continue;
-                    }
-
-                    newsCount++;
-                    remoteNews.PostDate = date;
                     yield return remoteNews;
                 }
-
-                Console.WriteLine($"Page {page} => {newsCount} news");
             }
         }
 
-        internal override string ExtractIdFromUrl(string url) => url.GetLastStringBetween("/", ".html");
-
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            var titleElement = document.QuerySelector(".p-content h1.white-background");
+            var titleElement = document.QuerySelector(".detail-header__title");
             var title = titleElement.TextContent.Trim();
 
-            var imageElement = document.QuerySelector(".p-content div.padding-30 img");
-            var imageUrl = imageElement?.GetAttribute("src");
+            var timeElement = document.QuerySelector(".detail-header__date");
+            var timeAsString = timeElement?.TextContent?.Trim();
+            var time = DateTime.ParseExact(timeAsString, "dd MMMM yyyy", new CultureInfo("bg-BG"));
 
-            var contentElement = document.QuerySelector(".p-content div.padding-30");
-            contentElement.RemoveRecursively(imageElement);
+            var imageElement = document.QuerySelector("source.present-header__image");
+            var imageUrl = imageElement?.GetAttribute("srcset");
+
+            var contentElement = document.QuerySelector(".richtext");
             this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement.InnerHtml.Trim();
 
-            return new RemoteNews(title, content, DateTime.Now, imageUrl);
+            return new RemoteNews(title, content, time, imageUrl);
         }
     }
 }
