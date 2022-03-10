@@ -14,7 +14,7 @@
             var url = this.BaseUrl + titleElement.Attributes["href"].Value.Trim();
 
             var imageElement = document.QuerySelector(".leading-section .news-card__image img");
-            var imageUrl = this.BaseUrl + imageElement?.Attributes["src"]?.Value?.Trim();
+            var imageUrl = this.BaseUrl + imageElement?.Attributes["data-src"]?.Value?.Trim();
 
             return new RemoteMainNews(title, url, imageUrl);
         }

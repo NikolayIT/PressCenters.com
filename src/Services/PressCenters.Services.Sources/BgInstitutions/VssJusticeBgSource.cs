@@ -7,6 +7,9 @@
 
     using AngleSharp.Dom;
 
+    /// <summary>
+    /// Висш съдебен съвет.
+    /// </summary>
     public class VssJusticeBgSource : BaseSource
     {
         public override string BaseUrl => "http://www.vss.justice.bg/";

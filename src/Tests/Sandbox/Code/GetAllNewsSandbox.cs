@@ -21,7 +21,7 @@
             foreach (var source in sourcesRepository.All().ToList())
             {
                 // Run only for selected sources
-                if (!new[] { "VasBgSource" }.Any(x => source.TypeName.Contains(x)))
+                if (!new[] { "CrcBgSource" }.Any(x => source.TypeName.Contains(x)))
                 {
                     continue;
                 }

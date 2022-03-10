@@ -7,6 +7,9 @@
     using AngleSharp.Dom;
     using PressCenters.Common;
 
+    /// <summary>
+    /// Върховен касационен съд.
+    /// </summary>
     public class VksBgSource : BaseSource
     {
         public override string BaseUrl => "http://www.vks.bg/";
