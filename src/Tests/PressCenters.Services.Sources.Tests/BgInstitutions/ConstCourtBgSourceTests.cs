@@ -10,8 +10,8 @@
     public class ConstCourtBgSourceTests
     {
         [Theory]
-        [InlineData("http://www.constcourt.bg/bg/Blog/Display/888?type=1", "888")]
-        [InlineData("http://www.constcourt.bg/bg/Blog/Display/369", "369")]
+        [InlineData("https://www.constcourt.bg/bg/Blog/Display/888?type=1", "888")]
+        [InlineData("https://www.constcourt.bg/bg/Blog/Display/369", "369")]
         public void ExtractIdFromUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new ConstCourtBgSource();
@@ -22,7 +22,7 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "http://www.constcourt.bg/bg/Blog/Display/889?type=1";
+            const string NewsUrl = "https://www.constcourt.bg/bg/Blog/Display/889?type=1";
             var provider = new ConstCourtBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);

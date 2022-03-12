@@ -9,7 +9,7 @@
 
     public class ConstCourtBgSource : BaseSource
     {
-        public override string BaseUrl { get; } = "http://www.constcourt.bg/";
+        public override string BaseUrl { get; } = "https://www.constcourt.bg/";
 
         public override bool UseProxy => true;
 
