@@ -9,7 +9,7 @@
 
     public class SacGovernmentBgSource : BaseSource
     {
-        public override string BaseUrl { get; } = "http://www.sac.government.bg/";
+        public override string BaseUrl => "http://www.sac.government.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("pages/bg/newsreel", "p a", "/news/", count: 5);

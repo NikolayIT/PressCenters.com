@@ -11,7 +11,7 @@
     /// </summary>
     public class CiafGovernmentBgSource : BaseSource
     {
-        public override string BaseUrl { get; } = "https://www.caciaf.bg/";
+        public override string BaseUrl => "https://www.caciaf.bg/";
 
         public override bool UseProxy => true;
 
