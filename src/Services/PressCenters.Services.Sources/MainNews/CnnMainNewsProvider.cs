@@ -8,7 +8,7 @@
 
     public class CnnMainNewsProvider : BaseMainNewsProvider
     {
-        public override string BaseUrl { get; } = "https://edition.cnn.com";
+        public override string BaseUrl => "https://edition.cnn.com";
 
         public override RemoteMainNews GetMainNews()
         {
@@ -23,15 +23,16 @@
             var parser = new HtmlParser();
             var document = parser.ParseDocument(dataObject.Html);
 
-            var titleElement = document.QuerySelector("#intl_homepage1-zone-1 .cd--article h2");
+            var titleElement = document.QuerySelector("h2");
             var subTitleElement = document.QuerySelector("#intl_homepage1-zone-1 .cd--article .cd__headline-text strong");
-            var title = $"{titleElement?.TextContent?.Trim()} ({subTitleElement?.TextContent?.Trim()})";
+            var subTitle = subTitleElement?.TextContent?.Trim();
+            var title = string.IsNullOrWhiteSpace(subTitle) ? $"{titleElement?.TextContent.Trim()}" : $"{titleElement?.TextContent.Trim()} ({subTitle})";
 
-            var urlElement = document.QuerySelector("#intl_homepage1-zone-1 .cd--article a");
-            var url = this.BaseUrl + urlElement.Attributes["href"].Value.Trim();
+            var urlElement = document.QuerySelector("h2")?.ParentElement;
+            var url = this.BaseUrl + urlElement?.Attributes["href"]?.Value.Trim();
 
-            var imageElement = document.QuerySelector("#intl_homepage1-zone-1 .cd--article .cd__wrapper .media noscript img");
-            var imageUrl = "https:" + imageElement?.Attributes["src"]?.Value?.Trim();
+            var imageElement = document.QuerySelector("h2")?.ParentElement?.ParentElement?.QuerySelector("noscript img");
+            var imageUrl = "https:" + imageElement?.Attributes["src"]?.Value.Trim();
 
             return new RemoteMainNews(title, url, imageUrl);
         }
