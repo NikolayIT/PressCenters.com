@@ -15,7 +15,7 @@
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            for (var page = 1; page <= 34; page++)
+            for (var page = 0; page <= 34; page++)
             {
                 var news = this.GetPublications($"newsbg/page-{page}", ".boxNews a", urlShouldContain: "displaynewsbg");
                 Console.WriteLine($"Page {page} => {news.Count} news");
