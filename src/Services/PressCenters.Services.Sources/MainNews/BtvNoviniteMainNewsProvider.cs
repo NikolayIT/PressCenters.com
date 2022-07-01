@@ -8,13 +8,13 @@
         {
             var document = this.GetDocument(this.BaseUrl);
 
-            var titleElement = document.QuerySelector(".leading-articles .item .title");
+            var titleElement = document.QuerySelector(".news-article h3");
             var title = titleElement.TextContent.Trim();
 
-            var urlElement = document.QuerySelector(".leading-articles .item .link");
+            var urlElement = document.QuerySelector(".news-article a");
             var url = this.BaseUrl + urlElement.Attributes["href"].Value.Trim();
 
-            var imageElement = document.QuerySelector(".leading-articles .item .image img");
+            var imageElement = document.QuerySelector(".news-article img");
             var imageUrl = imageElement?.Attributes["src"]?.Value?.Trim();
 
             return new RemoteMainNews(title, url, imageUrl);
