@@ -10,8 +10,8 @@
     public class FscBgSourceTests
     {
         [Theory]
-        [InlineData("http://www.fsc.bg/bg/novini/saobshtenie-za-klientite-na-tsitadela-kepital-menidzhmant-ood-7992.html", "7992")]
-        [InlineData("http://www.fsc.bg/bg/novini/spisatsite-na-zastrahovatelite-i-zastrahovatelnite-posrednitsi-ot-darzhavi-chlenki-na-es-notifitsirali-kfn-sa-aktualizirani-7980.html", "7980")]
+        [InlineData("https://www.fsc.bg/?p=42621", "42621")]
+        [InlineData("https://www.fsc.bg/?p=30839", "30839")]
         public void ExtractIdFromUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new FscBgSource();
@@ -22,19 +22,36 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "http://www.fsc.bg/bg/novini/resheniya-ot-zasedanie-na-kfn-na-21-01-2016-g--7988.html";
+            const string NewsUrl = "https://www.fsc.bg/?p=42318";
             var provider = new FscBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Решения от заседание на КФН на 21.01.2016 г.", news.Title);
-            Assert.Equal("7988", news.RemoteId);
-            Assert.Equal(new DateTime(2016, 1, 22).Date, news.PostDate.Date);
-            Assert.Contains("На заседанието си на 21.01.2016 г. КФН реши", news.Content);
-            Assert.Contains("Република Италия и Република Португалия.", news.Content);
-            Assert.True(!news.Content.Contains("_assets/img/banner.jpg"));
-            Assert.True(!news.Content.Contains("Решения от заседание на КФН на 21.01.2016"));
-            Assert.True(!news.Content.Contains("22/01/2016"));
-            Assert.Equal("http://www.fsc.bg/_assets/img/banner.jpg", news.ImageUrl);
+            Assert.Equal("Окончателни резултати от дейността по допълнително пенсионно осигуряване за 2021 г.", news.Title);
+            Assert.Equal("42318", news.RemoteId);
+            Assert.Equal(new DateTime(2022, 5, 3).Date, news.PostDate.Date);
+            Assert.Contains("Управление “Осигурителен надзор” на КФН обяви", news.Content);
+            Assert.Contains("в раздел: Пазари / Осигурителен пазар / Статистика / Статистика и анализи / 2021.", news.Content);
+            Assert.True(!news.Content.Contains(news.Title));
+            Assert.True(!news.Content.Contains("03.05.2022"));
+            Assert.Null(news.ImageUrl);
+        }
+
+        [Fact]
+        public void ParseRemoteNewsWithImageShouldWorkCorrectly()
+        {
+            const string NewsUrl = "https://www.fsc.bg/?p=44209";
+            var provider = new FscBgSource();
+            var news = provider.GetPublication(NewsUrl);
+            Assert.Equal(NewsUrl, news.OriginalUrl);
+            Assert.Equal("Комисията за финансов надзор с участие в научно-приложната конференция „Икономика на страха“", news.Title);
+            Assert.Equal("44209", news.RemoteId);
+            Assert.Equal(new DateTime(2022, 6, 27).Date, news.PostDate.Date);
+            Assert.Contains("Висшето училище по застраховане и финанси (ВУЗФ) и Лабораторията за научно-приложни изследвания към него проведоха", news.Content);
+            Assert.Contains("ще продължи да подкрепя бъдещите кръгли маси, уебинари, конференции и тематични професионални дискусии.", news.Content);
+            Assert.True(!news.Content.Contains(news.Title));
+            Assert.True(!news.Content.Contains(news.ImageUrl));
+            Assert.True(!news.Content.Contains("27.06.2022"));
+            Assert.Equal("https://www.fsc.bg/wp-content/uploads/2022/06/KSS_108-1024x683.jpg", news.ImageUrl);
         }
 
         [Fact]

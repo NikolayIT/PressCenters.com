@@ -2,26 +2,23 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
 
     using AngleSharp.Dom;
 
-    using PressCenters.Common;
-
     public class FscBgSource : BaseSource
     {
-        public override string BaseUrl { get; } = "http://www.fsc.bg/";
+        public override string BaseUrl { get; } = "https://www.fsc.bg/";
 
         public override bool UseProxy => true;
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("bg/novini/", ".news-box-listing a");
+            this.GetPublications("?page_id=146", ".ps-live a", urlShouldContain: "?p=");
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            for (var i = 1; i <= 400; i++)
+            for (var i = 1; i <= 570; i++)
             {
-                var news = this.GetPublications($"bg/novini/?p={i}", ".news-box-listing a");
+                var news = this.GetPublications($"paged={i}&page_id=146", ".ps-live a", urlShouldContain: "?p=");
                 Console.WriteLine($"Page {i} => {news.Count} news");
                 foreach (var remoteNews in news)
                 {
@@ -30,22 +27,23 @@
             }
         }
 
-        internal override string ExtractIdFromUrl(string url) => url.GetLastStringBetween("-", ".html", url);
+        internal override string ExtractIdFromUrl(string url) => this.GetUrlParameterValue(url, "p");
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            var titleElement = document.QuerySelector("#content-left-inner h2");
+            var titleElement = document.QuerySelector("h4.entry-title");
             var title = titleElement.TextContent.Trim();
 
-            var timeElement = document.QuerySelector("#content-left-inner .article_date");
-            var time = DateTime.ParseExact(timeElement.TextContent, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-            time = time.Date == DateTime.UtcNow.Date ? DateTime.Now : time;
+            var timeElement = document.QuerySelector("time.entry-date");
+            var timeAsString = timeElement.Attributes["datetime"].Value;
+            var time = DateTime.Parse(timeAsString);
 
-            var imageUrl = document.QuerySelector("#content-right img")?.Attributes?["src"]?.Value;
+            var imageElement = document.QuerySelector(".entry-content img");
+            var imageUrl = imageElement?.Attributes?["src"]?.Value;
 
-            var contentElement = document.QuerySelector("#content-left-inner");
-            contentElement.RemoveElement(titleElement);
-            contentElement.RemoveElement(timeElement);
+            var contentElement = document.QuerySelector(".entry-content");
+            contentElement.RemoveRecursively(imageElement);
+            this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement.InnerHtml.Trim();
 
             return new RemoteNews(title, content, time, imageUrl);
