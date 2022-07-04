@@ -21,7 +21,7 @@
         {
             var json = this.ReadStringFromUrl($"{this.BaseUrl}customSearchWCM/query?context=egov.government.bg-2818&libName=content&saId=3d8d30c4-ca91-4275-9ac5-95e2ae72c8cf&atId=ffdb5a5f-c051-4adb-b2cf-a04f4181a0a1&returnElements=summary&filterByElements=&rootPage=ministry-meu&returnProperties=title,publishDate&rPP=20&currentPage=1&currentUrl=https%3A%2F%2Fegov.government.bg%2Fwps%2Fportal%2Fministry-meu%2Fpress-center%2Fnews%2F&dateFormat=dd.MM.yyyy&ancestors=false&descendants=true&orderBy=publishDate&orderBy2=publishDate&orderBy3=title&sortOrder=false&searchTerm=&from=&before=");
             var newsAsJson = JsonConvert.DeserializeObject<IEnumerable<EgovGovernmentBgSource.NewsItemResponse>>(json);
-            var links = newsAsJson.Select(x => x.ContentUrl?.Url).Where(x => x != null).ToList();
+            var links = newsAsJson.Select(x => x.ContentUrl?.Url).Where(x => x != null).Take(5).ToList();
             if (!links.Any())
             {
                 throw new Exception("No publications found.");
