@@ -21,7 +21,7 @@
       ]
     },
     {
-      "library": "jquery-validation@1.19.3",
+      "library": "jquery-validation@1.19.5",
       "destination": "wwwroot/lib/jquery-validation/",
       "files": [
         "dist/jquery.validate.js",
@@ -37,7 +37,7 @@
       ]
     },
     {
-      "library": "moment@2.29.1",
+      "library": "moment@2.29.3",
       "destination": "wwwroot/lib/moment/",
       "files": [
         "min/moment-with-locales.min.js"
