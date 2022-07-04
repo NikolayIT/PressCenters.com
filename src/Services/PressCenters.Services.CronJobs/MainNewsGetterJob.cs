@@ -73,7 +73,15 @@
                     continue;
                 }
 
-                await this.SaveImageLocally(news.ImageUrl, source.Id, context);
+                try
+                {
+                    await this.SaveImageLocally(news.ImageUrl, source.Id, context);
+                }
+                catch (Exception e)
+                {
+                    context.WriteLine($"Error in saving image for \"{source.TypeName}\": {e.Message}");
+                    continue;
+                }
 
                 await this.mainNewsRepository.AddAsync(
                     new MainNews
