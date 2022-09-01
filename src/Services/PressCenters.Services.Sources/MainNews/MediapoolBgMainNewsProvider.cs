@@ -8,12 +8,12 @@
         {
             var document = this.GetDocument(this.BaseUrl);
 
-            var titleElement = document.QuerySelector(".hot_news h3.big_title a");
+            var titleElement = document.QuerySelector(".c-article-item_accent .c-article-item__content a");
             var title = titleElement.TextContent.Trim().Trim('.').Trim();
 
             var url = titleElement.Attributes["href"].Value.Trim();
 
-            var imageElement = document.QuerySelector(".hot_news .news_pic img");
+            var imageElement = document.QuerySelector(".c-article-item_accent img");
             var imageUrl = imageElement?.Attributes["src"]?.Value?.Trim();
 
             return new RemoteMainNews(title, url, imageUrl);
