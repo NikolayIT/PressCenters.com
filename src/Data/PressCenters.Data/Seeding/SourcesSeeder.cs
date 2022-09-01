@@ -230,6 +230,10 @@
                             "Държавен вестник",
                             "„Държавен вестник“ (ДВ) е официално издание на Република България, което се издава от Народното събрание. Има официален и неофициален раздел.",
                             "https://dv.parliament.bg/", "/images/sources/dv.parliament.bg.jpg"),
+                        ("PressCenters.Services.Sources.BgInstitutions.DkerBgSource", "КЕВР",
+                            "Комисия за енергийно и водно регулиране",
+                            "Комисия за енергийно и водно регулиране (КЕВР) е независим специализиран държавен орган на Република България, регулатор на два сектора: енергетика и водоснабдяване.",
+                            "https://www.dker.bg/", "/images/sources/dker.bg.jpg"),
 
                         ("PressCenters.Services.Sources.BgStateCompanies.ToploBgSource", "Топлофикация",
                             "Топлофикация София ЕАД",
