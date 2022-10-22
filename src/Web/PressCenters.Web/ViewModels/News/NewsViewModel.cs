@@ -12,7 +12,7 @@
 
     using AutoMapper;
 
-    using Ganss.XSS;
+    using Ganss.Xss;
 
     using PressCenters.Common;
     using PressCenters.Data.Models;
