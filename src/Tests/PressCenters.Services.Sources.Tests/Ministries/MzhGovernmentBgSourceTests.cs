@@ -10,8 +10,8 @@
     public class MzhGovernmentBgSourceTests
     {
         [Theory]
-        [InlineData("http://www.mzh.government.bg/bg/press-center/novini/ot-dnes-stopanite-dokazvat-realizaciyata-na-plodov/", "novini/ot-dnes-stopanite-dokazvat-realizaciyata-na-plodov")]
-        [InlineData("http://www.mzh.government.bg/bg/press-center/novini/prevedeni-sa-nad-634-mln-leva-po-shemata-za-edinno", "novini/prevedeni-sa-nad-634-mln-leva-po-shemata-za-edinno")]
+        [InlineData("https://www.mzh.government.bg/bg/press-center/novini/ot-dnes-stopanite-dokazvat-realizaciyata-na-plodov/", "novini/ot-dnes-stopanite-dokazvat-realizaciyata-na-plodov")]
+        [InlineData("https://www.mzh.government.bg/bg/press-center/novini/prevedeni-sa-nad-634-mln-leva-po-shemata-za-edinno", "novini/prevedeni-sa-nad-634-mln-leva-po-shemata-za-edinno")]
         public void ExtractIdFromPressUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new MzhGovernmentBgSource();
@@ -22,7 +22,7 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "http://www.mzh.government.bg/bg/press-center/novini/masirani-proverki-za-nezakonen-drvodobiv-i-po-praz";
+            const string NewsUrl = "https://www.mzh.government.bg/bg/press-center/novini/masirani-proverki-za-nezakonen-drvodobiv-i-po-praz";
             var provider = new MzhGovernmentBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
@@ -34,14 +34,14 @@
             Assert.DoesNotContain("21 Декември 2018", news.Content);
             Assert.DoesNotContain("facebook", news.Content);
             Assert.Equal(new DateTime(2018, 12, 21, 15, 17, 24), news.PostDate);
-            Assert.Equal("http://www.mzh.government.bg/media/filer_public_thumbnails/filer_public/2018/12/21/forest-2m.jpg__623x416_q85_crop_subsampling-2_upscale.jpg", news.ImageUrl);
+            Assert.Equal("https://www.mzh.government.bg/media/filer_public_thumbnails/filer_public/2018/12/21/forest-2m.jpg__623x416_q85_crop_subsampling-2_upscale.jpg", news.ImageUrl);
             Assert.Equal("novini/masirani-proverki-za-nezakonen-drvodobiv-i-po-praz", news.RemoteId);
         }
 
         [Fact]
         public void ParseRemoteNewsWithMultipleImagesShouldWorkCorrectly()
         {
-            const string NewsUrl = "http://www.mzh.government.bg/bg/press-center/novini/4519-zamestnik-ministr-georgi-kostov-napravi-inspe/";
+            const string NewsUrl = "https://www.mzh.government.bg/bg/press-center/novini/4519-zamestnik-ministr-georgi-kostov-napravi-inspe/";
             var provider = new MzhGovernmentBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
@@ -53,14 +53,14 @@
             Assert.DoesNotContain("23 Септември 2016", news.Content);
             Assert.DoesNotContain("facebook", news.Content);
             Assert.Equal(new DateTime(2016, 9, 23, 18, 59, 56), news.PostDate);
-            Assert.Equal("http://www.mzh.government.bg/media/filer_public_thumbnails/filer_public/2018/02/23/23092016_kostov_inspekcia_.jpg__623x416_q85_crop_subsampling-2_upscale.jpg", news.ImageUrl);
+            Assert.Equal("https://www.mzh.government.bg/media/filer_public_thumbnails/filer_public/2018/02/23/23092016_kostov_inspekcia_.jpg__623x416_q85_crop_subsampling-2_upscale.jpg", news.ImageUrl);
             Assert.Equal("novini/4519-zamestnik-ministr-georgi-kostov-napravi-inspe", news.RemoteId);
         }
 
         [Fact]
         public void ParseRemoteNewsWithoutImageShouldWorkCorrectly()
         {
-            const string NewsUrl = "http://www.mzh.government.bg/bg/press-center/novini/70bb-ministr-naidenov-poseti-sizp-tsentra-vv-vrats/";
+            const string NewsUrl = "https://www.mzh.government.bg/bg/press-center/novini/70bb-ministr-naidenov-poseti-sizp-tsentra-vv-vrats/";
             var provider = new MzhGovernmentBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
