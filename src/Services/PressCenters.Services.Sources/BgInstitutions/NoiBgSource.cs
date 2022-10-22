@@ -17,10 +17,10 @@
     {
         public override string BaseUrl { get; } = "http://www.noi.bg/";
 
-        protected override List<(HttpRequestHeader Header, string Value)> Headers =>
-            new List<(HttpRequestHeader Header, string Value)>
+        protected override List<(string Header, string Value)> Headers =>
+            new List<(string Header, string Value)>
             {
-                (HttpRequestHeader.Cookie, "cb379c5a647843b32707848c89ea970d=bg-BG"),
+                ("Cookie", "cb379c5a647843b32707848c89ea970d=bg-BG"),
             };
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
