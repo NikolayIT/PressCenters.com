@@ -14,8 +14,9 @@
 
         public override bool UseProxy => true;
 
+        // TODO: The first link "en/press-center/novini" temporary has EN in the URL. Remove it when the site is fixed.
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("bg/press-center/novini/", ".news h2 a", "bg/press-center/novini");
+            this.GetPublications("en/press-center/novini/", ".news h2 a", "bg/press-center/novini");
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
