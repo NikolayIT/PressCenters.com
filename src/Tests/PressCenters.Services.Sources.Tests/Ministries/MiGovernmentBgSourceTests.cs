@@ -10,8 +10,8 @@
     public class MiGovernmentBgSourceTests
     {
         [Theory]
-        [InlineData("https://www.mi.government.bg/bg/news/prodaljava-obshtestvenoto-obsajdane-na-naredbata-za-licata-osashtestvyavashti-targoviya-s-neft-i-nefteni-pro-3632.html", "3632")]
-        [InlineData("https://www.mi.government.bg/bg/news/i-n-f-o-r-m-a-c-i-ya-za-provedeno-zasedanie-na-nacionalniya-ikonomicheski-savet-3469.html?p=eyJwYWdlIjoxMH0=", "3469")]
+        [InlineData("https://www.mi.government.bg/news/otbelyazvame-50-godini-ot-navlizaneto-na-balgarskoto-kiselo-mlyako-na-yaponskiya-pazar-prez-2023-g/", "otbelyazvame-50-godini-ot-navlizaneto-na-balgarskoto-kiselo-mlyako-na-yaponskiya-pazar-prez-2023-g")]
+        [InlineData("https://www.mi.government.bg/news/ministar-nikola-stoyanov-uchastva-v-godishnata-srestha-na-sdruzhenieto-na-targovczite-na-nehranitelni-stoki-u-nas", "ministar-nikola-stoyanov-uchastva-v-godishnata-srestha-na-sdruzhenieto-na-targovczite-na-nehranitelni-stoki-u-nas")]
         public void ExtractIdFromPressUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new MiGovernmentBgSource();
@@ -22,44 +22,20 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://www.mi.government.bg/bg/news/ministar-karanikolov-germanska-kompaniya-shte-investira-21-5-mln-lv-v-zavod-krai-vraca-3633.html?p=eyJwYWdlIjoxfQ==";
+            const string NewsUrl = "https://www.mi.government.bg/news/ministar-nikola-stoyanov-vsyaka-godina-v-balgariya-se-sazdavat-nad-30-hil-novi-malki-i-sredni-predpriyatiya/";
             var provider = new MiGovernmentBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Министър Караниколов: Германска компания ще инвестира 21,5 млн. лв. в завод край Враца", news.Title);
-            Assert.Contains("Министърът на икономиката Емил Караниколов връчи сертификат за инвестиция клас А на", news.Content);
-            Assert.Contains("производители на части и компоненти за автомобили“, поясни Караниколов.", news.Content);
+            Assert.Equal("Министър Никола Стоянов: Всяка година в България се създават над 30 хил. нови малки и средни предприятия", news.Title);
+            Assert.Contains("Всяка година в България се създават над 30 хил. нови малки и средни предприятия.", news.Content);
+            Assert.Contains("Събитието се организира за осма поредна година от в. „24 часа“.", news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
             Assert.DoesNotContain("<img", news.Content);
-            Assert.DoesNotContain("default_news-3633", news.Content);
-            Assert.DoesNotContain("separator", news.Content);
-            Assert.DoesNotContain("03 януари 2019", news.Content);
-            Assert.DoesNotContain("отпечатай тази страница", news.Content);
-            Assert.DoesNotContain("обратно в списъка", news.Content);
-            Assert.Equal(new DateTime(2019, 1, 3), news.PostDate);
-            Assert.Equal("https://www.mi.government.bg/files/news/image/default_news-3633-5586.jpg", news.ImageUrl);
-            Assert.Equal("3633", news.RemoteId);
-        }
-
-        [Fact]
-        public void ParseRemoteNewsWithoutImageShouldWorkCorrectly()
-        {
-            const string NewsUrl = "https://www.mi.government.bg/bg/news/i-n-f-o-r-m-a-c-i-ya-za-provedeno-zasedanie-na-nacionalniya-ikonomicheski-savet-3545.html?p=eyJwYWdlIjoxMH0=";
-            var provider = new MiGovernmentBgSource();
-            var news = provider.GetPublication(NewsUrl);
-            Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("И Н Ф О Р М А Ц И Я за проведено заседание на Националния икономически съвет", news.Title);
-            Assert.Contains("На 10.09.2018 г. от 14.00 часа в сградата на Министерство на икономиката, ул. „Славянска“ № 8", news.Content);
-            Assert.Contains("сключване на търговски споразумения, които касаят българския бизнес.", news.Content);
-            Assert.DoesNotContain(news.Title, news.Content);
-            Assert.DoesNotContain("<img", news.Content);
-            Assert.DoesNotContain("separator", news.Content);
-            Assert.DoesNotContain("12 септември 2018", news.Content);
-            Assert.DoesNotContain("отпечатай тази страница", news.Content);
-            Assert.DoesNotContain("обратно в списъка", news.Content);
-            Assert.Equal(new DateTime(2018, 9, 12), news.PostDate);
-            Assert.Null(news.ImageUrl);
-            Assert.Equal("3545", news.RemoteId);
+            Assert.DoesNotContain("19.10.2022", news.Content);
+            Assert.DoesNotContain("СПОДЕЛЕТЕ", news.Content);
+            Assert.Equal(new DateTime(2022, 10, 19), news.PostDate);
+            Assert.Equal("https://www.mi.government.bg/wp-content/uploads/2022/10/ministar-nikola-stoyanov-vsyaka-godina-v-balgariya-se-sazdavat-nad-30-hil.-novi-malki-i-sredni-predpriyatiya-1200x907.jpg", news.ImageUrl);
+            Assert.Equal("ministar-nikola-stoyanov-vsyaka-godina-v-balgariya-se-sazdavat-nad-30-hil-novi-malki-i-sredni-predpriyatiya", news.RemoteId);
         }
 
         [Fact]
@@ -67,7 +43,7 @@
         {
             var provider = new MiGovernmentBgSource();
             var result = provider.GetLatestPublications();
-            Assert.Equal(6, result.Count());
+            Assert.Equal(10, result.Count());
         }
     }
 }
