@@ -50,13 +50,13 @@
 
             var title = titleElement.TextContent;
 
-            var timeElement = document.QuerySelector("#main .content span.date-display-single");
-            var time = DateTime.Parse(timeElement?.Attributes["content"]?.Value, CultureInfo.InvariantCulture);
+            var timeElement = document.QuerySelector("#main .content time.datetime");
+            var time = DateTime.Parse(timeElement?.Attributes["datetime"]?.Value, CultureInfo.InvariantCulture);
 
-            var imageElement = document.QuerySelector("#main .content .field-name-field-image a");
+            var imageElement = document.QuerySelector("#main .content .field--name-field-image a");
             var imageUrl = imageElement?.GetAttribute("href");
 
-            var contentElement = document.QuerySelector("#main .content .field-name-body .field-item");
+            var contentElement = document.QuerySelector("#main .content .field--name-body");
             this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement?.InnerHtml;
 

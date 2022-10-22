@@ -22,21 +22,21 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://www.mtc.government.bg/bg/category/1/rosen-zhelyazkov-shte-zashtitim-nacionalnite-interesi-s-vsichki-vuzmozhni-pohvati-pri-glasuvaneto-na-paketa-za-mobilnost-i";
+            const string NewsUrl = "https://www.mtc.government.bg/bg/category/1/blgariya-i-rumniya-izgradikha-avariyno-spasitelni-centrove-po-reka-dunav";
             var provider = new MtitcGovernmentBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Росен Желязков: Ще защитим националните интереси с всички възможни похвати при гласуването на Пакета за мобилност I", news.Title);
-            Assert.Contains("Трябва да бъдат използвани всички похвати на европейската бюрокрация, за да защитим националните интереси", news.Content);
-            Assert.Contains("ще присъства на предстоящия протест на българските превозвачи в Брюксел.", news.Content);
+            Assert.Equal("България и Румъния изградиха аварийно-спасителни центрове по река Дунав", news.Title);
+            Assert.Contains("Успешно приключи проектът „Повишаване на транспортната безопасност в общия българо-румънски участък на река Дунав", news.Content);
+            Assert.Contains("Общият бюджет на проекта е 5 699 612 евро, от които 85% се предоставят от Европейския фонд за регионално развитие, а останалите 15% са национално съфинансиране.", news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
-            Assert.DoesNotContain("1-1_125.jpg", news.Content);
-            Assert.DoesNotContain("04.01.2019", news.Content);
+            Assert.DoesNotContain("1.jpg", news.Content);
+            Assert.DoesNotContain("07.10.2022", news.Content);
             Assert.DoesNotContain("facebook.com", news.Content);
             Assert.DoesNotContain("gallery", news.Content);
-            Assert.Equal("https://www.mtc.government.bg/sites/default/files/1-1_130.jpg", news.ImageUrl);
-            Assert.Equal(new DateTime(2019, 1, 4, 17, 44, 0), news.PostDate);
-            Assert.Equal("1/rosen-zhelyazkov-shte-zashtitim-nacionalnite-interesi-s-vsichki-vuzmozhni-pohvati-pri-glasuvaneto-na-paketa-za-mobilnost-i", news.RemoteId);
+            Assert.Equal("https://www.mtc.government.bg/sites/default/files/images/2022-10/1.jpg", news.ImageUrl);
+            Assert.Equal(new DateTime(2022, 10, 7, 13, 5, 48), news.PostDate);
+            Assert.Equal("1/blgariya-i-rumniya-izgradikha-avariyno-spasitelni-centrove-po-reka-dunav", news.RemoteId);
         }
 
         [Fact]
