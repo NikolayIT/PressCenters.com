@@ -34,7 +34,7 @@
             Assert.DoesNotContain("19.10.2022", news.Content);
             Assert.DoesNotContain("СПОДЕЛЕТЕ", news.Content);
             Assert.Equal(new DateTime(2022, 10, 19), news.PostDate);
-            Assert.Equal("https://www.mi.government.bg/wp-content/uploads/2022/10/ministar-nikola-stoyanov-vsyaka-godina-v-balgariya-se-sazdavat-nad-30-hil.-novi-malki-i-sredni-predpriyatiya-1200x907.jpg", news.ImageUrl);
+            Assert.Equal("https://www.mi.government.bg/file/2022/10/ministar-nikola-stoyanov-vsyaka-godina-v-balgariya-se-sazdavat-nad-30-hil.-novi-malki-i-sredni-predpriyatiya-1200x907.jpg", news.ImageUrl);
             Assert.Equal("ministar-nikola-stoyanov-vsyaka-godina-v-balgariya-se-sazdavat-nad-30-hil-novi-malki-i-sredni-predpriyatiya", news.RemoteId);
         }
 
