@@ -28,7 +28,7 @@
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            var titleElement = document.QuerySelector(".articleEntry h3");
+            var titleElement = document.QuerySelector(".articleEntry h1");
             if (titleElement == null)
             {
                 return null;

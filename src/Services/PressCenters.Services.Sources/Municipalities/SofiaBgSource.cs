@@ -14,7 +14,7 @@
         public override string BaseUrl { get; } = "https://www.sofia.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("news/", ".news-wrapper .small-image a", count: 6);
+            this.GetPublications("news", ".portlet-body .row .row a", count: 5);
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
@@ -66,26 +66,21 @@
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            var titleElement = document.QuerySelector("h3.header-title");
-            if (titleElement == null)
-            {
-                return null;
-            }
-
-            var title = titleElement.TextContent.Trim();
+            var componentParagraphs = document.QuerySelectorAll(".component-paragraph").ToList();
+            var title = componentParagraphs[0].TextContent.Trim();
 
             var time = DateTime.Now;
-            var timeElement = document.QuerySelector(".metadata-publish-date");
-            if (timeElement != null)
+            if (componentParagraphs.Count > 2)
             {
+                var timeElement = componentParagraphs[2];
                 var timeAsString = timeElement.TextContent.Trim();
-                time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                time = DateTime.ParseExact(timeAsString, "dd.MM.yy HH:mm", CultureInfo.InvariantCulture);
             }
 
-            var imageElement = document.QuerySelector(".journal-content-article img");
+            var imageElement = componentParagraphs[1].QuerySelector("img");
             var imageUrl = imageElement?.GetAttribute("src");
 
-            var contentElement = document.QuerySelector(".journal-content-article");
+            var contentElement = componentParagraphs[1];
             contentElement.RemoveRecursively(imageElement);
             this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement.InnerHtml.Trim();
