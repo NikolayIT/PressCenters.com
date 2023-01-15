@@ -46,13 +46,13 @@
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            var titleElement = document.QuerySelector("div.vp-section-main-title");
+            var titleElement = document.QuerySelector(".vp-section-main-title");
             if (titleElement == null)
             {
                 return null;
             }
 
-            var title = titleElement.TextContent;
+            var title = titleElement.TextContent.Trim();
 
             var timeElement = document.QuerySelector("#publish-date");
             var timeAsString = timeElement?.TextContent?.Replace("Дата:", string.Empty)?.Trim();
@@ -72,7 +72,7 @@
         private IList<RemoteNews> GetNews(DateTime from, DateTime to, int results)
         {
             var url =
-                $"{this.BaseUrl}customSearchWCM/customsearch?context=customs.bg28892&libName=agency&saId={this.SaId}&atId=72bd8711-7a20-4b13-85dd-bb04e5c1102f&filterByElements=&rootPage=agency&rPP={results}&currentPage=1&currentUrl=https%3A%2F%2Fcustoms.bg%2F{this.NewsUrl}&dateFormat=dd.MM.yyyy&ancestors=false&descendants=true&orderBy=publishDate&orderBy2=publishDate&orderBy3=title&sortOrder=false&searchTerm=&useQuery=true&from={from:dd.MM.yyyy}&before={to:dd.MM.yyyy}";
+                $"{this.BaseUrl}customSearchWCM/query?context=customs.bg28892&libName=agency&saId={this.SaId}&atId=72bd8711-7a20-4b13-85dd-bb04e5c1102f&filterByElements=&rootPage=agency&rPP={results}&currentPage=1&currentUrl=https%3A%2F%2Fcustoms.bg%2F{this.NewsUrl}&dateFormat=dd.MM.yyyy&ancestors=false&descendants=true&orderBy=publishDate&orderBy2=publishDate&orderBy3=title&sortOrder=false&searchTerm=&useQuery=true&from={from:dd.MM.yyyy}&before={to:dd.MM.yyyy}";
             var json = this.ReadStringFromUrl(url);
             var newsAsJson = JsonConvert.DeserializeObject<IEnumerable<NewsAsJson>>(json);
             var news = newsAsJson.Select(
