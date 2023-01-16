@@ -1,8 +1,7 @@
 ﻿namespace PressCenters.Web.Proxy
 {
     using System;
-    using System.Net.Sockets;
-    using System.Net;
+    using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
 
@@ -11,7 +10,6 @@
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using System.Net.Http;
 
     public class Startup
     {
