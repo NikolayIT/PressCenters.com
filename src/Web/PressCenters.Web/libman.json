@@ -3,7 +3,7 @@
   "defaultProvider": "jsdelivr",
   "libraries": [
     {
-      "library": "jquery@3.6.1",
+      "library": "jquery@3.6.3",
       "destination": "wwwroot/lib/jquery/",
       "files": [
         "dist/jquery.min.js",

@@ -18,7 +18,8 @@
         public IEnumerable<RemoteNews> GetLatestPublicationsFromXml(string xmlUrl)
         {
             var parser = new XmlParser();
-            var document = parser.ParseDocument(this.ReadStringFromUrl($"{this.BaseUrl}{xmlUrl}"));
+            var content = this.ReadStringFromUrl($"{this.BaseUrl}{xmlUrl}");
+            var document = parser.ParseDocument(content);
             var links = document.QuerySelectorAll("item link").Select(x => this.NormalizeUrl(x.TextContent)).Take(5);
             var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
             return news;
