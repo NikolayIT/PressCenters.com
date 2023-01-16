@@ -9,8 +9,8 @@
     public class VssJusticeBgSourceTests
     {
         [Theory]
-        [InlineData("http://www.vss.justice.bg/page/view/107313", "107313")]
-        [InlineData("http://www.vss.justice.bg/page/view/3027", "3027")]
+        [InlineData("https://vss.justice.bg/page/view/107313", "107313")]
+        [InlineData("https://vss.justice.bg/page/view/3027", "3027")]
         public void ExtractIdFromUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new VssJusticeBgSource();
@@ -21,7 +21,7 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "http://www.vss.justice.bg/page/view/2995";
+            const string NewsUrl = "https://vss.justice.bg/page/view/2995";
             var provider = new VssJusticeBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
@@ -30,14 +30,14 @@
             Assert.Contains("с оглед завършването на процедурите по атестиране.", news.Content);
             Assert.DoesNotContain(news.ImageUrl, news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
-            Assert.Equal("http://www.vss.justice.bg/root/f/upload/8/13-07-2015-1-1.jpg", news.ImageUrl);
+            Assert.Equal("https://vss.justice.bg/root/f/upload/8/13-07-2015-1-1.jpg", news.ImageUrl);
             Assert.Equal("2995", news.RemoteId);
         }
 
         [Fact]
         public void ParseRemoteNewsWithoutImageShouldWorkCorrectly()
         {
-            const string NewsUrl = "http://www.vss.justice.bg/page/view/107318";
+            const string NewsUrl = "https://vss.justice.bg/page/view/107318";
             var provider = new VssJusticeBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);

@@ -12,7 +12,7 @@
     /// </summary>
     public class VssJusticeBgSource : BaseSource
     {
-        public override string BaseUrl => "http://www.vss.justice.bg/";
+        public override string BaseUrl => "https://vss.justice.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications()
             => this.GetPublications("page/view/2574", ".right_info .row a", count: 5);
