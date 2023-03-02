@@ -74,7 +74,7 @@
             {
                 var timeElement = componentParagraphs[2];
                 var timeAsString = timeElement.TextContent.Trim();
-                time = DateTime.ParseExact(timeAsString, "dd.MM.yy HH:mm", CultureInfo.InvariantCulture);
+                time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
             }
 
             var imageElement = componentParagraphs[1].QuerySelector("img");

@@ -12,6 +12,8 @@
 
     public abstract class MvrBgBaseSource : BaseSource
     {
+        public override bool UseProxy => true;
+
         public override string BaseUrl { get; } = "https://www.mvr.bg/";
 
         public abstract string NewsListUrl { get; }

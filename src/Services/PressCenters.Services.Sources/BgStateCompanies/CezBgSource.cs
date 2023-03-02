@@ -6,14 +6,12 @@
 
     using AngleSharp.Dom;
 
-    using PressCenters.Common;
-
     /// <summary>
     /// „ЧЕЗ България” ЕАД.
     /// </summary>
     public class CezBgSource : BaseSource
     {
-        public override string BaseUrl { get; } = "https://cez.bg/";
+        public override string BaseUrl { get; } = "https://electrohold.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("bg/mediya-centr-group/novini/", "a.card-content__button", count: 5);

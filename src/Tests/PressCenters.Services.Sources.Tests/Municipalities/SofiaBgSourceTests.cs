@@ -28,7 +28,7 @@
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("На 14 януари отбелязваме 122 години градски транспорт в София", news.Title);
             Assert.Equal("На-14-януари-отбелязваме-122-години-градски-транспор", news.RemoteId);
-            Assert.Equal(new DateTime(2023, 1, 12, 8, 14, 0), news.PostDate);
+            Assert.Equal(new DateTime(2023, 1, 12), news.PostDate);
             Assert.Contains("На 14 януари 1901 г. в София тръгва първият електрически трамвай, което поставя началото на Столичния градски транспорт.", news.Content);
             Assert.Contains("83 реновирани трамвая и 45 електробуса, които се движат по 6 нови електробусни линии.", news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
