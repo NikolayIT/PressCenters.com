@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Net.Http;
     using System.Text;
@@ -81,6 +82,13 @@
 
             requestMessage.Headers.Referrer = targetUri;
             requestMessage.Method = new HttpMethod(originalRequest.Method);
+
+            if (originalRequest.ContentType?.StartsWith("application/json") == true)
+            {
+                var stringContent = GetRawBodyAsync(originalRequest).GetAwaiter().GetResult();
+                requestMessage.Content = new StringContent(stringContent, Encoding.UTF8, "application/json");
+            }
+
             return requestMessage;
         }
 
@@ -127,6 +135,27 @@
             {
                 return responseMessage?.Content?.Headers?.ContentType?.MediaType?.StartsWith(type) == true;
             }
+        }
+
+        private static async Task<string> GetRawBodyAsync(HttpRequest request, Encoding encoding = null)
+        {
+            if (!request.Body.CanSeek)
+            {
+                // We only do this if the stream isn't *already* seekable,
+                // as EnableBuffering will create a new stream instance
+                // each time it's called
+                request.EnableBuffering();
+            }
+
+            request.Body.Position = 0;
+
+            var reader = new StreamReader(request.Body, encoding ?? Encoding.UTF8);
+
+            var body = await reader.ReadToEndAsync().ConfigureAwait(false);
+
+            request.Body.Position = 0;
+
+            return body;
         }
 
         private static Uri BuildTargetUri(PathString pathString, QueryString queryString, out bool replace)
