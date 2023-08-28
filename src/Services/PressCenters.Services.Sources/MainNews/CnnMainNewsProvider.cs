@@ -12,27 +12,15 @@
 
         public override RemoteMainNews GetMainNews()
         {
-            var httpClient = new HttpClient();
-            var response = httpClient
-                .GetAsync(
-                    "https://edition.cnn.com/data/ocs/section/index.html:intl_homepage1-zone-1/views/zones/common/zone-manager.izl")
-                .GetAwaiter().GetResult();
-            var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-            var dataObject = JsonConvert.DeserializeObject<JsonDataObject>(content);
+            var document = this.GetDocument(this.BaseUrl);
 
-            var parser = new HtmlParser();
-            var document = parser.ParseDocument(dataObject.Html);
+            var titleElement = document.QuerySelector(".container_lead-package__title_url-text");
+            var title = titleElement.TextContent.Trim().Trim('.').Trim();
 
-            var titleElement = document.QuerySelector("h2");
-            var subTitleElement = document.QuerySelector("#intl_homepage1-zone-1 .cd--article .cd__headline-text strong");
-            var subTitle = subTitleElement?.TextContent?.Trim();
-            var title = string.IsNullOrWhiteSpace(subTitle) ? $"{titleElement?.TextContent.Trim()}" : $"{titleElement?.TextContent.Trim()} ({subTitle})";
+            var url =titleElement.ParentElement.Attributes["href"].Value.Trim();
 
-            var urlElement = document.QuerySelector("h2")?.ParentElement;
-            var url = this.BaseUrl + urlElement?.Attributes["href"]?.Value.Trim();
-
-            var imageElement = document.QuerySelector("h2")?.ParentElement?.ParentElement?.QuerySelector("noscript img");
-            var imageUrl = "https:" + imageElement?.Attributes["src"]?.Value.Trim();
+            var imageElement = document.QuerySelector(".container_lead-package__cards-wrapper img");
+            var imageUrl = imageElement?.Attributes["src"]?.Value?.Trim();
 
             return new RemoteMainNews(title, url, imageUrl);
         }
