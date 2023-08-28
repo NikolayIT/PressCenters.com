@@ -36,8 +36,8 @@
             var time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
 
             var contentElement = document.QuerySelector("#Content");
-            contentElement.RemoveRecursively(document.QuerySelector("#Content .fa-facebook"));
-            contentElement.RemoveRecursively(document.QuerySelector("#Content .fa-twitter"));
+            contentElement.RemoveRecursively(document.QuerySelector("#Content .fa-facebook").ParentElement);
+            contentElement.RemoveRecursively(document.QuerySelector("#Content .fa-twitter").ParentElement);
             contentElement.RemoveRecursively(titleElement);
             contentElement.RemoveRecursively(timeElement);
             this.NormalizeUrlsRecursively(contentElement);

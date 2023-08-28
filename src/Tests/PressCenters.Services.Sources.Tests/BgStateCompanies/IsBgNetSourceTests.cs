@@ -41,20 +41,21 @@
         [Fact]
         public void ParseRemoteNewsWithGenericImageShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://is-bg.net/bg/news/277";
+            const string NewsUrl = "https://www.is-bg.net/bg/news/328";
             var provider = new IsBgNetSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Позиция на \"Информационно обслужване\" АД по повод обвиненията на управителя на НЗОК г-н Петко Салчев", news.Title);
-            Assert.Contains("Във връзка необоснованите твърдения на управителя на НЗОК г-н Петко Салчев пред парламентарната Комисия по електронно управление и информационни технологии", news.Content);
-            Assert.Contains("удостоверения за електронни подписи, електронни печати и квалифицирани електронни времеви печати.", news.Content);
+            Assert.Equal("Технически проблем затрудни работата на НЗИС", news.Title);
+            Assert.Contains("Уважаеми партньори от Български лекарски съюз, Български фармацевтичен съюз, Български зъболекарски съюз, специалисти по здравни грижи и пациенти.", news.Content);
+            Assert.Contains("Благодарим ви за проявеното разбиране.", news.Content);
             Assert.DoesNotContain("ПРЕДИШНА НОВИНА", news.Content);
-            Assert.DoesNotContain("26 Май, 2022", news.Content);
+            Assert.DoesNotContain("СЛЕДВАЩА НОВИНА", news.Content);
+            Assert.DoesNotContain("07 Юли, 2023", news.Content);
             Assert.DoesNotContain(news.ImageUrl, news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
-            Assert.Equal("https://www.is-bg.net/upload/2864/io-generic.jpg", news.ImageUrl);
-            Assert.Equal(new DateTime(2022, 5, 26), news.PostDate);
-            Assert.Equal("277", news.RemoteId);
+            Assert.Equal("https://www.is-bg.net/upload/3701/io-generic.jpg", news.ImageUrl);
+            Assert.Equal(new DateTime(2023, 7, 7), news.PostDate);
+            Assert.Equal("328", news.RemoteId);
         }
 
         [Fact]

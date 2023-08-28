@@ -15,7 +15,7 @@
         public override string BaseUrl { get; } = "https://ime.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("bg/pr_bg/", "h3 a", "bg/articles");
+            this.GetPublications("articles", "article a");
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
@@ -32,23 +32,19 @@
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            var titleElement = document.QuerySelector(".full-article h1");
+            var titleElement = document.QuerySelector("h1.the-title");
             var title = titleElement?.TextContent;
             if (string.IsNullOrWhiteSpace(title))
             {
                 return null;
             }
 
-            var timeElement = document.QuerySelector(".full-article .meta-details");
+            var timeElement = document.QuerySelector(".single-post__the-content-author-information span");
             var timeAsString = timeElement?.TextContent?.Trim();
-            if (timeAsString?.Contains(" /") == true)
-            {
-                timeAsString = timeAsString.Split(new[] { " /" }, StringSplitOptions.None)[1]?.Trim();
-            }
+            var time = DateTime.ParseExact(timeAsString, "dd-MM-yyyy", CultureInfo.InvariantCulture);
 
-            var time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
-
-            var contentElement = document.QuerySelector(".text-page article");
+            var contentElement = document.QuerySelector(".large-9");
+            contentElement.RemoveRecursively(titleElement);
             this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement?.InnerHtml;
             if (string.IsNullOrWhiteSpace(content))
@@ -56,7 +52,10 @@
                 return null;
             }
 
-            return new RemoteNews(title, content, time, null);
+            var imageElement = document.QuerySelector(".featured-image img");
+            var imageUrl = imageElement?.GetAttribute("src");
+
+            return new RemoteNews(title, content, time, imageUrl);
         }
     }
 }
