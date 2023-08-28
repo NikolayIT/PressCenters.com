@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace PressCenters.Services.Sources.MainNews
+﻿namespace PressCenters.Services.Sources.MainNews
 {
+    using System;
+
     public class BtaBgMainNewsProvider : BaseMainNewsProvider
     {
         public override string BaseUrl { get; } = "https://www.bta.bg";
