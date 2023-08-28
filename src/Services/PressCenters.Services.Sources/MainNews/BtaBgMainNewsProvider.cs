@@ -2,7 +2,9 @@
 {
     public class BtaBgMainNewsProvider : BaseMainNewsProvider
     {
-        public override string BaseUrl { get; } = "http://www.bta.bg";
+        public override string BaseUrl { get; } = "https://www.bta.bg/bg";
+
+        public override bool UseProxy => true;
 
         public override RemoteMainNews GetMainNews()
         {

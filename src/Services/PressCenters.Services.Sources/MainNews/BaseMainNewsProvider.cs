@@ -12,10 +12,19 @@
     {
         public abstract string BaseUrl { get; }
 
+        public virtual bool UseProxy => false;
+
         public abstract RemoteMainNews GetMainNews();
 
         public IDocument GetDocument(string url)
         {
+            url = new Uri(url).GetLeftPart(UriPartial.Query); // Remove hash fragment
+            if (this.UseProxy)
+            {
+                url = url.Replace("https://", "https://proxy.presscenters.com/_plain/https/")
+                         .Replace("http://", "https://proxy.presscenters.com/_plain/http/");
+            }
+
             var parser = new HtmlParser();
             var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Add("User-Agent", GlobalConstants.DefaultUserAgent);
