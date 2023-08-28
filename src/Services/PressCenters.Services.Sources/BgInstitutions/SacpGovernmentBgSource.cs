@@ -14,7 +14,7 @@
         public override string BaseUrl => "https://sacp.government.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("новини", "h2 a", count: 5);
+            this.GetPublications("новини", ".view-content a", count: 5);
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {

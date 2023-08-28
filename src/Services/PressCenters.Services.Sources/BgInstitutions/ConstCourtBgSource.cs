@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.Threading;
+    using System.Linq;
 
     using AngleSharp.Dom;
 
@@ -13,29 +13,16 @@
 
         public override bool UseProxy => true;
 
-        public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("bg/Blog/AllMessages?page=1&pageSize=5", ".row-title a", "/bg/Blog/Display/", 5);
-
-        public override IEnumerable<RemoteNews> GetAllPublications()
+        public override IEnumerable<RemoteNews> GetLatestPublications()
         {
-            for (var i = 1; i <= 102; i++)
-            {
-                var news = this.GetPublications(
-                    $"bg/Blog/AllMessages?page={i}&pageSize=5",
-                    ".row-title a",
-                    "/bg/Blog/Display/");
-                Console.WriteLine($"Page {i} => {news.Count} news");
-                foreach (var remoteNews in news)
-                {
-                    yield return remoteNews;
-                    Thread.Sleep(2500);
-                }
-            }
+            var news = this.GetPublications("bg/news", ".page-content a", count: 10);
+            var messages = this.GetPublications("bg/messages", ".page-content a", count: 10);
+            return news.Concat(messages);
         }
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            var titleElement = document.QuerySelector(".case-details-heading");
+            var titleElement = document.QuerySelector(".page-title");
             if (titleElement == null)
             {
                 return null;
@@ -43,15 +30,21 @@
 
             var title = titleElement.TextContent.Trim();
 
-            var timeElement = document.QuerySelector(".heading-title-all");
+            var timeElement = document.QuerySelector(".news-date");
             var timeAsString = timeElement.TextContent;
-            var time = DateTime.ParseExact(timeAsString.ToLower().Trim(), "d MMMM yyyy г.", new CultureInfo("bg-BG"));
+            if (!DateTime.TryParseExact(timeAsString.ToLower().Trim(), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var time))
+            {
+                time = DateTime.ParseExact(timeAsString.ToLower().Trim(), "dd-MM-yyyy", CultureInfo.InvariantCulture);
+            }
 
-            var contentElement = document.QuerySelector(".blog-content");
+            var contentElement = document.QuerySelector(".news-description");
             this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement.InnerHtml.Trim();
 
-            return new RemoteNews(title, content, time, null);
+            var imageElement = document.QuerySelector(".gallery-list img");
+            var imageUrl = imageElement?.GetAttribute("src");
+
+            return new RemoteNews(title, content, time, imageUrl);
         }
     }
 }

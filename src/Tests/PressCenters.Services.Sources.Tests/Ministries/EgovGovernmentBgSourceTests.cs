@@ -32,7 +32,7 @@
             Assert.Contains("Договор за изграждане на мобилно приложение за електронна идентификация и електронно подписване", news.Content);
             Assert.DoesNotContain("Последна актуализация", news.Content);
             Assert.DoesNotContain(".jpg", news.Content);
-            Assert.Equal("https://egov.government.bg/wps/wcm/connect/egov.government.bg-2818/baa42359-f696-4e9f-8f49-1aa44f99c983/MEU.jpg?MOD=AJPERES&CACHEID=ROOTWORKSPACE.Z18_PPGAHG800PLV6060GL92MR3OU3-baa42359-f696-4e9f-8f49-1aa44f99c983-o1RijCV", news.ImageUrl);
+            Assert.Equal("https://egov.government.bg/wps/wcm/connect/egov.government.bg-2818/baa42359-f696-4e9f-8f49-1aa44f99c983/MEU.jpg?MOD=AJPERES&CACHEID=ROOTWORKSPACE.Z18_PPGAHG800PLV6060GL92MR3OU3-baa42359-f696-4e9f-8f49-1aa44f99c983-oEusV8c", news.ImageUrl);
             Assert.Equal(new DateTime(2022, 4, 28), news.PostDate);
             Assert.Equal("dogovormeuio", news.RemoteId);
         }
@@ -42,7 +42,7 @@
         {
             var provider = new EgovGovernmentBgSource();
             var result = provider.GetLatestPublications();
-            Assert.Equal(5, result.Count());
+            Assert.Equal(4, result.Count());
         }
     }
 }

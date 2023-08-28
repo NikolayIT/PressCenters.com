@@ -6,8 +6,10 @@
     using System.Linq;
 
     using AngleSharp.Dom;
+    using AngleSharp.Xml.Parser;
 
     using Newtonsoft.Json;
+
     using PressCenters.Common;
 
     /// <summary>
@@ -21,14 +23,10 @@
 
         public override IEnumerable<RemoteNews> GetLatestPublications()
         {
-            var json = this.ReadStringFromUrl($"{this.BaseUrl}customSearchWCM/query?context=egov.government.bg-2818&libName=content&saId=3d8d30c4-ca91-4275-9ac5-95e2ae72c8cf&atId=ffdb5a5f-c051-4adb-b2cf-a04f4181a0a1&returnElements=summary&filterByElements=&rootPage=ministry-meu&returnProperties=title,publishDate&rPP=20&currentPage=1&currentUrl=https%3A%2F%2Fegov.government.bg%2Fwps%2Fportal%2Fministry-meu%2Fpress-center%2Fnews%2F&dateFormat=dd.MM.yyyy&ancestors=false&descendants=true&orderBy=publishDate&orderBy2=publishDate&orderBy3=title&sortOrder=false&searchTerm=&from=&before=");
-            var newsAsJson = JsonConvert.DeserializeObject<IEnumerable<EgovGovernmentBgSource.NewsItemResponse>>(json);
-            var links = newsAsJson.Select(x => x.ContentUrl?.Url).Where(x => x != null).Take(5).ToList();
-            if (!links.Any())
-            {
-                throw new Exception("No publications found.");
-            }
-
+            var parser = new XmlParser();
+            var content = this.ReadStringFromUrl($"{this.BaseUrl}wps/contenthandler/!ut/p/digest!ilagdCvhfeyi2zOhtKv_2g/searchfeed/search?sortKey=effectivedate&queryLang=en&locale=bg&resultLang=bg&constraint=%7b%22type%22%3a%22field%22%2c%22id%22%3a%22authoringtemplate%22%2c%22values%22%3a%5b%22contentFromList%22%5d%7d&constraint=%7b%22type%22%3a%22field%22%2c%22id%22%3a%22keywords%22%2c%22values%22%3a%5b%22presscenternews%22%5d%7d&sortOrder=desc&rand=0.17753105456139728&query=*&scope=1649765877343&start=0&results=4");
+            var document = parser.ParseDocument(content);
+            var links = document.QuerySelectorAll("*").Where(x => x.TagName == "wplc:field" && x.GetAttribute("id") == "name").Select(x => this.NormalizeUrl("wps/portal/ministry-meu/press-center/news/" + x.TextContent)).Take(4);
             var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
             return news;
         }
