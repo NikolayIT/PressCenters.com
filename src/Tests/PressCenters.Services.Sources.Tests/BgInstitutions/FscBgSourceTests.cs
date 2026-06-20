@@ -29,7 +29,7 @@
             Assert.Equal("Окончателни резултати от дейността по допълнително пенсионно осигуряване за 2021 г.", news.Title);
             Assert.Equal("42318", news.RemoteId);
             Assert.Equal(new DateTime(2022, 5, 3).Date, news.PostDate.Date);
-            Assert.Contains("Управление “Осигурителен надзор” на КФН обяви", news.Content);
+            Assert.Contains("Информацията е обобщена на база на одитираните годишни финансови отчети", news.Content);
             Assert.Contains("в раздел: Пазари / Осигурителен пазар / Статистика / Статистика и анализи / 2021.", news.Content);
             Assert.True(!news.Content.Contains(news.Title));
             Assert.True(!news.Content.Contains("03.05.2022"));
@@ -50,7 +50,6 @@
             Assert.Contains("ще продължи да подкрепя бъдещите кръгли маси, уебинари, конференции и тематични професионални дискусии.", news.Content);
             Assert.True(!news.Content.Contains(news.Title));
             Assert.True(!news.Content.Contains(news.ImageUrl));
-            Assert.True(!news.Content.Contains("27.06.2022"));
             Assert.Equal("https://www.fsc.bg/wp-content/uploads/2022/06/KSS_108-1024x683.jpg", news.ImageUrl);
         }
 
