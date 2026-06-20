@@ -27,12 +27,14 @@
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            // 2015..2022 is already fully captured; start at 2023 so a backfill fills the scraper-outage
-            // gap (2024+) without re-hammering the F5/TSPD-protected site for years already in the DB.
-            for (var year = 2023; year <= DateTime.UtcNow.Year; year++)
+            // Query month-by-month: a full-year rPP=10000 query is slow enough to hit the HttpClient
+            // timeout through the relay. 2015..2023 is already fully captured, so start at 2024 (the
+            // scraper-outage gap) and walk forward to the current month.
+            var end = DateTime.UtcNow.AddMonths(1);
+            for (var month = new DateTime(2024, 1, 1); month < end; month = month.AddMonths(1))
             {
-                Console.WriteLine($"Year {year}...");
-                foreach (var remoteNews in this.GetNews(new DateTime(year, 1, 1), new DateTime(year + 1, 1, 1), 10000))
+                Console.WriteLine($"{month:yyyy-MM}...");
+                foreach (var remoteNews in this.GetNews(month, month.AddMonths(1), 1000))
                 {
                     yield return remoteNews;
                 }
