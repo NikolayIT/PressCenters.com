@@ -11,7 +11,7 @@
         public override string BaseUrl { get; } = "https://toplo.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("/", ".news a", count: 6);
+            this.GetPublications(string.Empty, ".news a", count: 6);
 
         internal override string ExtractIdFromUrl(string url)
         {
