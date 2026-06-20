@@ -22,18 +22,17 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://www.sofiyskavoda.bg/novini/vtoro-myasto-za-sofiya-v-indeksa-za-optimalno-polzvane-na-vodata-na-economist-impact";
+            const string NewsUrl = "https://www.sofiyskavoda.bg/novini/hartienata-faktura-za-voda-v-sofiya-otiva-v-minaloto";
             var provider = new SofiyskaVodaBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Второ място за София в Индекса за оптимално ползване на водата на Economist Impact", news.Title);
-            Assert.Equal("vtoro-myasto-za-sofiya-v-indeksa-za-optimalno-polzvane-na-vodata-na-economist-impact", news.RemoteId);
-            Assert.Equal(new DateTime(2022, 1, 13), news.PostDate.Date);
-            Assert.Contains("София е на второ място за Западна и Източна Европа и на шесто място", news.Content);
-            Assert.Contains("регистрира консолидирани приходи от 26.010 млрд. евро през 2020 г.", news.Content);
-            Assert.DoesNotContain("Photo.PNG", news.Content);
-            Assert.DoesNotContain("13.01.2022", news.Content);
-            Assert.StartsWith("https://www.sofiyskavoda.bg/modules/news/Снимки Новини/Economist Index Photo.PNG", news.ImageUrl);
+            Assert.Equal("Хартиената фактура за вода в София отива в миналото", news.Title);
+            Assert.Equal("hartienata-faktura-za-voda-v-sofiya-otiva-v-minaloto", news.RemoteId);
+            Assert.Equal(new DateTime(2026, 4, 20), news.PostDate.Date);
+            Assert.Contains("От 19 април 2026 година влизат в сила изменения в Общите условия", news.Content);
+            Assert.DoesNotContain(news.Title, news.Content);
+            Assert.StartsWith("https://www.sofiyskavoda.bg/modules/news/", news.ImageUrl);
+            Assert.Contains("El-Invoice", news.ImageUrl);
         }
 
         [Fact]
