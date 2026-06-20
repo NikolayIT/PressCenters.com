@@ -1,4 +1,4 @@
-namespace Sandbox.Code
+﻿namespace Sandbox.Code
 {
     using System;
     using System.Linq;
@@ -40,6 +40,15 @@ namespace Sandbox.Code
             var stopExisting = int.TryParse(Environment.GetEnvironmentVariable("BACKFILL_STOP_EXISTING"), out var se) ? se : 40;
             var downloadImages = Environment.GetEnvironmentVariable("BACKFILL_IMAGES") == "1";
 
+            // Politeness delay between articles (ms). Bulk bursts get the relay/target site to rate-limit
+            // (502/403), so space the requests out for large backfills.
+            var delayMs = int.TryParse(Environment.GetEnvironmentVariable("BACKFILL_DELAY_MS"), out var dm) ? dm : 0;
+
+            // Where the resized thumbnails are written. Keep the on-disk layout identical to the server
+            // (<webRoot>/images/news/<id%1000>/big_<id>.png) and against the production DB the ids match, so the
+            // folder can be copied straight onto the prod web root.
+            var webRoot = Environment.GetEnvironmentVariable("BACKFILL_WEBROOT") ?? @"C:\Web\presscenters.com\wwwroot";
+
             foreach (var source in sourcesRepository.All().ToList())
             {
                 if (!targets.Any(t => source.TypeName.Contains(t)))
@@ -75,7 +84,7 @@ namespace Sandbox.Code
                                 try
                                 {
                                     await newsService.SaveImageLocallyAsync(
-                                        remoteNews.ImageUrl, newsId.Value, @"C:\Web\presscenters.com\wwwroot", provider.UseProxy);
+                                        remoteNews.ImageUrl, newsId.Value, webRoot, provider.UseProxy);
                                 }
                                 catch (Exception e)
                                 {
@@ -104,6 +113,11 @@ namespace Sandbox.Code
                                 Console.WriteLine($"  reached {stopExisting} consecutive existing items -> caught up, stop.");
                                 break;
                             }
+                        }
+
+                        if (delayMs > 0)
+                        {
+                            await Task.Delay(delayMs);
                         }
                     }
                 }

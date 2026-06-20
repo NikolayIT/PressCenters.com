@@ -19,19 +19,29 @@
 
         public override bool UseProxy => true;
 
-        public override IEnumerable<RemoteNews> GetLatestPublications()
+        public override IEnumerable<RemoteNews> GetLatestPublications() =>
+            this.GetNewsLinks("news").Take(5).Select(this.GetPublication).Where(x => x != null).ToList();
+
+        public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            // The listing has no <a> links; each card navigates via onclick="location.href='/news<id>'".
-            var document = this.Parser.ParseDocument(this.ReadStringFromUrl($"{this.BaseUrl}news"));
-            var links = document.QuerySelectorAll("[onclick]")
-                .Select(x => x.GetAttribute("onclick"))
-                .Where(x => x?.Contains("location.href='/news") == true)
-                .Select(x => this.NormalizeUrl(x.GetStringBetween("location.href='", "'")))
-                .Where(x => !string.IsNullOrWhiteSpace(x))
-                .Distinct()
-                .Take(5)
-                .ToList();
-            return links.Select(this.GetPublication).Where(x => x != null).ToList();
+            // The new site paginates the news list as /news/<page>/1,2,3 (page 1 is just /news), ~8 per page.
+            for (var page = 1; page <= 400; page++)
+            {
+                var links = this.GetNewsLinks(page == 1 ? "news" : $"news/{page}/1,2,3");
+                if (links.Count == 0)
+                {
+                    yield break;
+                }
+
+                foreach (var link in links)
+                {
+                    var news = this.GetPublication(link);
+                    if (news != null)
+                    {
+                        yield return news;
+                    }
+                }
+            }
         }
 
         internal override string ExtractIdFromUrl(string url)
@@ -72,6 +82,26 @@
             var content = contentElement.InnerHtml.Trim();
 
             return new RemoteNews(title, content, time, imageUrl);
+        }
+
+        // The listing has no <a> links; each card navigates via onclick="location.href='/news<id>'".
+        private List<string> GetNewsLinks(string address)
+        {
+            try
+            {
+                var document = this.Parser.ParseDocument(this.ReadStringFromUrl($"{this.BaseUrl}{address}"));
+                return document.QuerySelectorAll("[onclick]")
+                    .Select(x => x.GetAttribute("onclick"))
+                    .Where(x => x?.Contains("location.href='/news") == true)
+                    .Select(x => this.NormalizeUrl(x.GetStringBetween("location.href='", "'")))
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Distinct()
+                    .ToList();
+            }
+            catch (Exception)
+            {
+                return new List<string>();
+            }
         }
     }
 }

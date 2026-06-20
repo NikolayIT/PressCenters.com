@@ -53,6 +53,13 @@ namespace PressCenters.Services.Sources
                 {
                     case HttpStatusCode.NotFound:
                     case HttpStatusCode.InternalServerError:
+                    case HttpStatusCode.Forbidden:
+                    case HttpStatusCode.TooManyRequests:
+                    case HttpStatusCode.BadGateway:
+                    case HttpStatusCode.ServiceUnavailable:
+                    case HttpStatusCode.GatewayTimeout:
+                        // Transient/blocked single-article failures (often relay or target-site rate limiting
+                        // during a bulk backfill) should skip the one article, not abort the whole source.
                         return null;
                 }
 
