@@ -34,6 +34,8 @@
     using PressCenters.Services.Messaging;
     using PressCenters.Web.ViewModels;
 
+    using WebOptimizer;
+
     using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
     public class Startup
@@ -86,6 +88,14 @@
 
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.AddWebOptimizer(
+                pipeline =>
+                {
+                    pipeline.AddCssBundle("/css/site.min.css", "css/site.css");
+                    pipeline.AddCssBundle("/css/unify.min.css", "css/unify.css");
+                    pipeline.AddJavaScriptBundle("/js/site.min.js", "js/site.js");
+                },
+                options => options.EnableTagHelperBundling = true);
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddApplicationInsightsTelemetry();
@@ -132,6 +142,7 @@
             }
 
             app.UseHttpsRedirection();
+            app.UseWebOptimizer();
             app.UseStaticFiles(
                 new StaticFileOptions
                 {
