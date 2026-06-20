@@ -49,7 +49,7 @@ in `.github/workflows/`.
 - **Services/** — `PressCenters.Services` (DTOs like `RemoteNews`, `SlugGenerator`),
   `PressCenters.Services.Data` (business services over repositories), `PressCenters.Services.Sources`
   (the scrapers — the heart of the app), `PressCenters.Services.CronJobs` (Hangfire jobs),
-  `PressCenters.Services.Mapping` (reflection-based AutoMapper), `PressCenters.Services.Messaging` (email).
+  `PressCenters.Services.Mapping` (reflection-based Mapster), `PressCenters.Services.Messaging` (email).
 - **Web/** — `PressCenters.Web` (MVC app, admin area, Hangfire wiring in `Startup.cs`),
   `PressCenters.Web.Infrastructure`, `PressCenters.Web.Proxy` (a thin HTML/asset proxy used by sources
   that set `UseProxy`, served at `proxy.presscenters.com`).
@@ -108,8 +108,11 @@ The Hangfire dashboard is at `/hangfire` (production only, Administrator role re
   bypasses the soft-delete filter.
 - SQL Server via EF Core; migrations in `Data/PressCenters.Data/Migrations`. The app auto-migrates and
   seeds on startup, so a reachable SQL Server is required to run the web app or Sandbox.
-- AutoMapper mappings are wired by reflection (`AutoMapperConfig`): a view model opts in by implementing
-  `IMapFrom<TEntity>`, `IMapTo<T>`, or `IHaveCustomMappings`.
+- Mapster mappings are wired by reflection (`MappingConfig`): a view model opts in by implementing
+  `IMapFrom<TEntity>`, `IMapTo<T>`, or `IHaveCustomMappings`. Projection uses `IQueryable.To<T>()`
+  (`ProjectToType` over `MappingConfig.GlobalConfig`). Mapster auto-flattens single-level navigations
+  (e.g. `SourceName` ← `Source.Name`); collection counts and other computed values need an explicit
+  `IHaveCustomMappings.CreateMappings` (e.g. `SourceViewModel.NewsCount` ← `Source.News.Count()`).
 
 ## Adding a new source (common task)
 

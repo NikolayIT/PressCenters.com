@@ -1,9 +1,9 @@
 ﻿namespace PressCenters.Services.Mapping
 {
-    using AutoMapper;
+    using Mapster;
 
     public interface IHaveCustomMappings
     {
-        void CreateMappings(IProfileExpression configuration);
+        void CreateMappings(TypeAdapterConfig configuration);
     }
 }

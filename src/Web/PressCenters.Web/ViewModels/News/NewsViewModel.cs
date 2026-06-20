@@ -10,8 +10,6 @@
     using AngleSharp;
     using AngleSharp.Html.Parser;
 
-    using AutoMapper;
-
     using Ganss.Xss;
 
     using PressCenters.Common;
@@ -114,11 +112,10 @@
 
         public string Url => $"/News/{this.Id}/{new SlugGenerator().GenerateSlug(this.Title)}";
 
-        public void CreateMappings(IProfileExpression configuration)
+        public void CreateMappings(Mapster.TypeAdapterConfig configuration)
         {
-            configuration.CreateMap<News, NewsViewModel>().ForMember(
-                m => m.Tags,
-                opt => opt.MapFrom(x => x.Tags.Select(t => t.Tag.Name)));
+            configuration.NewConfig<News, NewsViewModel>()
+                .Map(dest => dest.Tags, src => src.Tags.Select(t => t.Tag.Name));
         }
 
         public string GetShortContent(int maxLength)
