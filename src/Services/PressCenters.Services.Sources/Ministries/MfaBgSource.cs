@@ -13,6 +13,10 @@
     {
         public override string BaseUrl { get; } = "https://www.mfa.bg/";
 
+        // mfa.bg article pages sit behind Radware bot-protection that serves the app an error page; the relay
+        // fetches them the way a browser would, so route through it.
+        public override bool UseProxy => true;
+
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("bg/news", ".main-news .news-item h2 a", "bg/news", count: 5);
 
