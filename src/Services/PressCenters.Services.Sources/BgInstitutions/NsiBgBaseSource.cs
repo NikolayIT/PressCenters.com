@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using System.Text;
     using System.Text.RegularExpressions;
 
     using AngleSharp.Dom;
@@ -28,8 +29,16 @@
         internal override string ExtractIdFromUrl(string url)
         {
             var uri = new Uri(url.Trim().Trim('/'));
+            var lastSegment = uri.Segments[^1].Trim('/');
 
-            // Find first segment that looks like a numeric id
+            // Current URLs end with "...-<id>" (e.g. /news/some-slug-9642, /press-release/.../-9338).
+            var trailingId = Regex.Match(lastSegment, @"-(\d+)$");
+            if (trailingId.Success)
+            {
+                return trailingId.Groups[1].Value;
+            }
+
+            // Older URLs carried the id as its own path segment (e.g. /bg/content/13854/...).
             for (var i = uri.Segments.Length - 1; i >= 0; i--)
             {
                 var segment = uri.Segments[i]?.Trim('/') ?? string.Empty;
@@ -44,20 +53,46 @@
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            var title = document.QuerySelector("h1.page-title").TextContent.Trim();
-            var imageAndContent = document.QuerySelector("article.node");
+            var titleElement = document.QuerySelector(".page-title-content h2");
+            if (titleElement == null)
+            {
+                return null;
+            }
 
-            var imageElement = imageAndContent.QuerySelector("img");
-            var imageUrl = imageElement?.Attributes["src"]?.Value;
-            imageAndContent.RemoveRecursively(imageElement);
+            var title = titleElement.TextContent.Trim();
 
-            var timeElement = imageAndContent.QuerySelector(".node__meta span");
-            var timeString = timeElement.TextContent.Replace("Публикувано на: ", string.Empty).Trim();
-            var time = DateTime.ParseExact(timeString, "dd.MM.yyyy - HH:mm", CultureInfo.InvariantCulture);
-            imageAndContent.RemoveRecursively(timeElement);
+            var timeElement = document.QuerySelector(".entry-meta");
+            var timeString = timeElement?.TextContent?.Trim();
+            if (string.IsNullOrWhiteSpace(timeString))
+            {
+                return null;
+            }
 
-            imageAndContent.RemoveRecursively(imageAndContent.QuerySelector("span.addtoany_list"));
-            var content = imageAndContent?.InnerHtml;
+            var time = DateTime.ParseExact(timeString, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+
+            var imageElement = document.QuerySelector(".newsImgHolder img");
+            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src"));
+
+            // The body lives in one or more ".article-content" blocks (the lead one also carries the date,
+            // the duplicated title and any PDF download links; the image gallery and the prev/next nav are
+            // separate siblings we deliberately skip). Keep the PDF links and the text, drop date and <h3>.
+            var contentBuilder = new StringBuilder();
+            foreach (var part in document.QuerySelectorAll(".article-content"))
+            {
+                foreach (var meta in part.QuerySelectorAll(".entry-meta, h3"))
+                {
+                    part.RemoveRecursively(meta);
+                }
+
+                this.NormalizeUrlsRecursively(part);
+                contentBuilder.Append(part.InnerHtml);
+            }
+
+            var content = contentBuilder.ToString().Trim();
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                return null;
+            }
 
             return new RemoteNews(title, content, time, imageUrl);
         }
