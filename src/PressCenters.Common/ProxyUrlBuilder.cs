@@ -10,8 +10,6 @@
     // string are left intact. Non-http(s) input is returned unchanged.
     public static class ProxyUrlBuilder
     {
-        private static readonly Random SharedRandom = new Random();
-
         // Wraps an absolute URL through a randomly chosen relay host. Returns the input unchanged when no
         // relays are configured or the input is not http(s).
         public static string Wrap(string absoluteUrl)
@@ -44,11 +42,11 @@
                     .ToArray();
                 if (alternatives.Length > 0)
                 {
-                    return alternatives[NextRandom(alternatives.Length)];
+                    return alternatives[Random.Shared.Next(alternatives.Length)];
                 }
             }
 
-            return hosts[NextRandom(hosts.Length)];
+            return hosts[Random.Shared.Next(hosts.Length)];
         }
 
         // Rewrites absoluteUrl through the given relay host. Only the scheme prefix is replaced, so the path
@@ -74,14 +72,6 @@
             }
 
             return absoluteUrl;
-        }
-
-        private static int NextRandom(int maxValue)
-        {
-            lock (SharedRandom)
-            {
-                return SharedRandom.Next(maxValue);
-            }
         }
     }
 }

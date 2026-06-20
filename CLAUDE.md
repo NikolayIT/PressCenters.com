@@ -33,10 +33,10 @@ dotnet run --project src/Web/PressCenters.Web
 dotnet run --project src/Tests/Sandbox
 ```
 
-Projects target **net7.0** (`PressCenters.Data.Models` multi-targets `netstandard2.1;net6.0;net7.0`).
-Visual Studio 2022 is the primary IDE (`.sln`, `.csproj.user`, `.vs/` present). The CI build
-(`azure-pipelines.yml`) uses `VSBuild` + `VSTest` on `windows-2022`; there is also a CodeQL workflow
-in `.github/workflows/`.
+All projects target **net10.0**. Visual Studio 2022 is the primary IDE (`.sln`, `.csproj.user`,
+`.vs/` present). The CI build (`azure-pipelines.yml`) uses `VSBuild` + `VSTest` on `windows-2022`
+(the image/SDK must provide the .NET 10 toolchain); there is also a CodeQL workflow in
+`.github/workflows/`.
 
 ## Architecture
 
@@ -137,7 +137,7 @@ source test class typically has:
   `RemoteId`, and `Contains`/`DoesNotContain` on the parsed content.
 - `GetNewsShouldReturnResults` — asserts `GetLatestPublications()` returns the expected count.
 
-Test stack: xUnit + Moq.
+Test stack: xUnit (xunit.v3) + Moq.
 
 ## Code style
 
