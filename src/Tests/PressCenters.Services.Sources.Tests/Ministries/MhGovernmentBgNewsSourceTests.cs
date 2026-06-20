@@ -24,47 +24,47 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://www.mh.government.bg/bg/novini/aktualno/stanovishe-na-pacientski-organizacii-zaedno-s-teb-/";
+            const string NewsUrl = "https://www.mh.government.bg/bg/novini/aktualno/4813";
             var provider = new MhGovernmentBgNewsSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Становище на пациентски организации „Заедно с теб“ относно ваксината „Пентаксим“", news.Title);
-            Assert.Contains("Пациентски организации „Заедно с теб“", news.Content);
-            Assert.Contains("Становище на пациентски организации „Заедно с теб“ относно ваксината „Пентаксим“", news.Content);
-            Assert.Null(news.ImageUrl);
-            Assert.Equal(new DateTime(2016, 1, 22, 9, 49, 2), news.PostDate);
-            Assert.Equal("aktualno/stanovishe-na-pacientski-organizacii-zaedno-s-teb-", news.RemoteId);
+            Assert.Equal("Министърът на здравеопазването Катя Ивкова и омбудсманът Велислава Делчева обединяват усилия за реформа в психиатричната помощ", news.Title);
+            Assert.Contains("Подобряването на психиатричната помощ, ролята на медицинските специалисти", news.Content);
+            Assert.Contains("гарантират защита на правата и интересите на гражданите.", news.Content);
+            Assert.DoesNotContain(news.Title, news.Content);
+            Assert.StartsWith("https://www.mh.government.bg/upload/19809/", news.ImageUrl);
+            Assert.Equal(new DateTime(2026, 6, 19), news.PostDate);
+            Assert.Equal("aktualno/4813", news.RemoteId);
         }
 
         [Fact]
         public void ParseRemoteNewsWithImageShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://www.mh.government.bg/bg/novini/aktualno/kiril-ananiev-prvite-dve-linejki-zakupeni-po-proek/";
+            const string NewsUrl = "https://www.mh.government.bg/bg/novini/aktualno/4811";
             var provider = new MhGovernmentBgNewsSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Кирил Ананиев: Първите две линейки, закупени по проекта за модернизация на спешната помощ, са предназначени за ЦСМП София", news.Title);
-            Assert.Contains("„Първите две линейки, закупени", news.Content);
-            Assert.Contains("този документ отразява официалното становище на Европейския съюз и Управляващия орган на ОПРР 2014-2020 г", news.Content);
-            Assert.DoesNotContain("https://www.mh.government.bg/media/filer_public_thumbnails/filer_public/2018/12/20/priemane-lineiki-20-12-2018-1.jpg__623x416_q85_crop_subsampling-2_upscale.jpg“", news.Content);
-            Assert.Equal("https://www.mh.government.bg/media/filer_public_thumbnails/filer_public/2018/12/20/priemane-lineiki-20-12-2018-1.jpg__623x416_q85_crop_subsampling-2_upscale.jpg", news.ImageUrl);
-            Assert.Equal(new DateTime(2018, 12, 20, 13, 55, 51), news.PostDate);
-            Assert.Equal("aktualno/kiril-ananiev-prvite-dve-linejki-zakupeni-po-proek", news.RemoteId);
+            Assert.Equal("Министър Ивкова: Финансовата дисциплина не означава съкращения и неизплащане на извънреден труд", news.Title);
+            Assert.Contains("Указанията за финансова дисциплина, изпратени от Министерството на здравеопазването", news.Content);
+            Assert.DoesNotContain(news.Title, news.Content);
+            Assert.StartsWith("https://www.mh.government.bg/upload/19800/", news.ImageUrl);
+            Assert.Equal(new DateTime(2026, 6, 17), news.PostDate);
+            Assert.Equal("aktualno/4811", news.RemoteId);
         }
 
         [Fact]
         public void ParseRemoteEpidemicNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://www.mh.government.bg/bg/novini/epidemichna-obstanovka/spravka-za-epidemichnata-obstanovka-v-st-2016-01/";
+            const string NewsUrl = "https://www.mh.government.bg/bg/novini/epidemichna-obstanovka/4721";
             var provider = new MhGovernmentBgEpidemicSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Справка за епидемичната обстановка в страната за периода 04.12.2015 г. - 10.01.2016 г.", news.Title);
-            Assert.Contains("През изминалата седмица са регистрирани общо 6", news.Content);
-            Assert.Contains("През изминалата седмица не са регистрирани хранителни взривове и взривове от вътреболнични инфекции.", news.Content);
+            Assert.Equal("Седмични данни за разпространението на морбили в страната", news.Title);
+            Assert.Contains("Към 8 юни са съобщени общо 364 заболели от морбили лица у нас", news.Content);
+            Assert.DoesNotContain(news.Title, news.Content);
             Assert.Null(news.ImageUrl);
-            Assert.Equal(new DateTime(2016, 1, 15, 15, 44, 0), news.PostDate);
-            Assert.Equal("epidemichna-obstanovka/spravka-za-epidemichnata-obstanovka-v-st-2016-01", news.RemoteId);
+            Assert.Equal(new DateTime(2026, 6, 8), news.PostDate);
+            Assert.Equal("epidemichna-obstanovka/4721", news.RemoteId);
         }
 
         [Fact]
@@ -83,7 +83,7 @@
             Assert.Equal(5, result.Count());
         }
 
-        [Fact]
+        [Fact(Skip = "mh.government.bg removed the 'ministerski-savet' news section in its 2026 redesign; this seeded sub-source is now obsolete and should be repointed to a current section or removed (a product decision).")]
         public void GetMinisterskiSuvetNewsShouldReturnResults()
         {
             var provider = new MhGovernmentBgMinisterskiSuvetSource();
