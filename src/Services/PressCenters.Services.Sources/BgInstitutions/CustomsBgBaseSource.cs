@@ -27,7 +27,9 @@
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            for (var year = 2015; year <= 2019; year++)
+            // 2015..2022 is already fully captured; start at 2023 so a backfill fills the scraper-outage
+            // gap (2024+) without re-hammering the F5/TSPD-protected site for years already in the DB.
+            for (var year = 2023; year <= DateTime.UtcNow.Year; year++)
             {
                 var news = this.GetNews(new DateTime(year, 1, 1), new DateTime(year + 1, 1, 1), 10000);
                 Console.WriteLine($"Year {year} => {news.Count} news");

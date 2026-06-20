@@ -44,6 +44,10 @@
             // (502/403), so space the requests out for large backfills.
             var delayMs = int.TryParse(Environment.GetEnvironmentVariable("BACKFILL_DELAY_MS"), out var dm) ? dm : 0;
 
+            // Bypass the proxy relay (fetch directly). The relay is for the prod server's blocked IP; this
+            // machine reaches many of those sites directly, which is faster and dodges relay rate limiting.
+            var noProxy = Environment.GetEnvironmentVariable("BACKFILL_NO_PROXY") == "1";
+
             // Where the resized thumbnails are written. Keep the on-disk layout identical to the server
             // (<webRoot>/images/news/<id%1000>/big_<id>.png) and against the production DB the ids match, so the
             // folder can be copied straight onto the prod web root.
@@ -57,7 +61,8 @@
                 }
 
                 var provider = ReflectionHelpers.GetInstance<BaseSource>(source.TypeName);
-                Console.WriteLine($"=== {source.TypeName} (id {source.Id}) backfill start (stopExisting={stopExisting}, max={maxPerSource}, images={downloadImages}) ===");
+                provider.DisableProxy = noProxy;
+                Console.WriteLine($"=== {source.TypeName} (id {source.Id}) backfill start (stopExisting={stopExisting}, max={maxPerSource}, images={downloadImages}, noProxy={noProxy}) ===");
                 int inserted = 0, skipped = 0, errors = 0, consecutiveExisting = 0;
                 try
                 {
@@ -84,7 +89,7 @@
                                 try
                                 {
                                     await newsService.SaveImageLocallyAsync(
-                                        remoteNews.ImageUrl, newsId.Value, webRoot, provider.UseProxy);
+                                        remoteNews.ImageUrl, newsId.Value, webRoot, provider.UseProxy && !noProxy);
                                 }
                                 catch (Exception e)
                                 {

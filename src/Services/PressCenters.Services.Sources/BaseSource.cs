@@ -9,6 +9,7 @@ namespace PressCenters.Services.Sources
     using System.Net.Http;
     using System.Text;
     using System.Text.RegularExpressions;
+    using System.Threading.Tasks;
 
     using AngleSharp.Dom;
     using AngleSharp.Html.Dom;
@@ -26,6 +27,14 @@ namespace PressCenters.Services.Sources
         public abstract string BaseUrl { get; }
 
         public virtual bool UseProxy => false;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to bypass the proxy relay even when <see cref="UseProxy"/>
+        /// is true. The relay exists for the production server's blocked IP; some sites are reachable directly
+        /// from other machines, so an operator (e.g. a backfill) can fetch directly -- faster and not subject
+        /// to relay rate limiting -- by setting this.
+        /// </summary>
+        public bool DisableProxy { get; set; }
 
         protected virtual Encoding Encoding => null;
 
@@ -47,23 +56,18 @@ namespace PressCenters.Services.Sources
             {
                 document = this.Parser.ParseDocument(this.ReadStringFromUrl(url));
             }
-            catch (HttpRequestException e)
+            catch (HttpRequestException)
             {
-                switch (e.StatusCode)
-                {
-                    case HttpStatusCode.NotFound:
-                    case HttpStatusCode.InternalServerError:
-                    case HttpStatusCode.Forbidden:
-                    case HttpStatusCode.TooManyRequests:
-                    case HttpStatusCode.BadGateway:
-                    case HttpStatusCode.ServiceUnavailable:
-                    case HttpStatusCode.GatewayTimeout:
-                        // Transient/blocked single-article failures (often relay or target-site rate limiting
-                        // during a bulk backfill) should skip the one article, not abort the whole source.
-                        return null;
-                }
-
-                throw;
+                // Any single-article fetch failure -- a 4xx/5xx, or a relay/connection-level error (timeout,
+                // host not responding) -- should skip that one article, not abort the whole source. This keeps
+                // a bulk backfill limping forward through flaky relays / rate limiting instead of dying on the
+                // first hiccup. A systematic failure still shows up as an inserted=0 result.
+                return null;
+            }
+            catch (TaskCanceledException)
+            {
+                // HttpClient request timeout.
+                return null;
             }
 
             var publication = this.ParseDocument(document, url);
@@ -148,7 +152,7 @@ namespace PressCenters.Services.Sources
         protected string ReadStringFromUrl(string url)
         {
             url = new Uri(url).GetLeftPart(UriPartial.Query); // Remove hash fragment
-            if (this.UseProxy)
+            if (this.UseProxy && !this.DisableProxy)
             {
                 url = ProxyUrlBuilder.Wrap(url);
             }
