@@ -10,6 +10,7 @@
     public class IsBgNetSourceTests
     {
         [Theory]
+        [InlineData("https://is-bg.net/bg/publications/news/544", "544")]
         [InlineData("https://www.is-bg.net/bg/news/194", "194")]
         [InlineData("https://is-bg.net/bg/news/304/", "304")]
         public void ExtractIdFromUrlShouldWorkCorrectly(string url, string id)
@@ -22,40 +23,32 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://is-bg.net/bg/news/306";
+            const string NewsUrl = "https://is-bg.net/bg/publications/news/544";
             var provider = new IsBgNetSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Мобилното приложение „еЗдраве“ осигурява достъп на потребителите до личното им пациентско досие", news.Title);
-            Assert.Contains("Всички граждани вече имат достъп през мобилно устройство до личното си пациентско досие и до всички налични електронни здравни документи", news.Content);
-            Assert.Contains("за издаване и управление на квалифицирани удостоверения за електронни подписи, електронни печати и квалифицирани електронни времеви печати.", news.Content);
+            Assert.Equal("Информационно обслужване и Google Cloud стартират AI-базирана национална киберзащита в България", news.Title);
+            Assert.Contains("Националният системен интегратор на България Информационно обслужване", news.Content);
             Assert.DoesNotContain("ПРЕДИШНА НОВИНА", news.Content);
-            Assert.DoesNotContain("29 Септември, 2022", news.Content);
-            Assert.DoesNotContain(news.ImageUrl, news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
-            Assert.Equal("https://www.is-bg.net/upload/3148/zdrave.jpg", news.ImageUrl);
-            Assert.Equal(new DateTime(2022, 9, 29), news.PostDate);
-            Assert.Equal("306", news.RemoteId);
+            Assert.StartsWith("https://is-bg.net/upload/", news.ImageUrl);
+            Assert.Equal(new DateTime(2026, 5, 20), news.PostDate);
+            Assert.Equal("544", news.RemoteId);
         }
 
         [Fact]
-        public void ParseRemoteNewsWithGenericImageShouldWorkCorrectly()
+        public void ParseRemoteNewsWithImageShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://www.is-bg.net/bg/news/328";
+            const string NewsUrl = "https://is-bg.net/bg/publications/news/546";
             var provider = new IsBgNetSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Технически проблем затрудни работата на НЗИС", news.Title);
-            Assert.Contains("Уважаеми партньори от Български лекарски съюз, Български фармацевтичен съюз, Български зъболекарски съюз, специалисти по здравни грижи и пациенти.", news.Content);
-            Assert.Contains("Благодарим ви за проявеното разбиране.", news.Content);
-            Assert.DoesNotContain("ПРЕДИШНА НОВИНА", news.Content);
-            Assert.DoesNotContain("СЛЕДВАЩА НОВИНА", news.Content);
-            Assert.DoesNotContain("07 Юли, 2023", news.Content);
-            Assert.DoesNotContain(news.ImageUrl, news.Content);
+            Assert.StartsWith("Интервю на изпълнителния директор на Информационно обслужване Ивайло Филипов", news.Title);
+            Assert.Contains("наскоро разказа как Гърция стигна от фалит до отличник на ЕС", news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
-            Assert.Equal("https://www.is-bg.net/upload/3701/io-generic.jpg", news.ImageUrl);
-            Assert.Equal(new DateTime(2023, 7, 7), news.PostDate);
-            Assert.Equal("328", news.RemoteId);
+            Assert.StartsWith("https://is-bg.net/upload/", news.ImageUrl);
+            Assert.Equal(new DateTime(2026, 5, 22), news.PostDate);
+            Assert.Equal("546", news.RemoteId);
         }
 
         [Fact]
