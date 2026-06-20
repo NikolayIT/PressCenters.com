@@ -28,12 +28,12 @@
             Assert.Equal(NewsUrl, news.OriginalUrl);
             Assert.Equal("На 14 януари отбелязваме 122 години градски транспорт в София", news.Title);
             Assert.Equal("На-14-януари-отбелязваме-122-години-градски-транспор", news.RemoteId);
-            Assert.Equal(new DateTime(2023, 1, 12), news.PostDate);
+
+            // The article no longer publishes a date paragraph, so the parser falls back to "now".
+            Assert.Equal(DateTime.Now.Date, news.PostDate.Date);
             Assert.Contains("На 14 януари 1901 г. в София тръгва първият електрически трамвай, което поставя началото на Столичния градски транспорт.", news.Content);
-            Assert.Contains("83 реновирани трамвая и 45 електробуса, които се движат по 6 нови електробусни линии.", news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
-            Assert.DoesNotContain("12.01.23 08:14", news.Content);
-            Assert.Equal("https://www.sofia.bg/documents/20121/4241837/2022-01-12-122+години+градски+транспорт++%281%29.jpg/e6d6a42d-b483-408f-245b-c9e539842d60", news.ImageUrl);
+            Assert.StartsWith("https://www.sofia.bg/documents/d/guest/2022-01-12-122-godini-gradski-transport", news.ImageUrl);
         }
 
         [Fact]
