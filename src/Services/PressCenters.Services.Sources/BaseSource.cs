@@ -146,7 +146,12 @@ namespace PressCenters.Services.Sources
                 url = ProxyUrlBuilder.Wrap(url);
             }
 
-            using var httpClient = new HttpClient();
+            // Request and transparently decompress gzip/brotli. Some sites (e.g. bnb.bg) only serve their
+            // real markup when the client advertises Accept-Encoding the way a browser does; without it they
+            // return a near-empty shell, which made the scraper see no content. Decompression happens before
+            // any custom Encoding decode below, so windows-1251 sources are unaffected.
+            using var handler = new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All };
+            using var httpClient = new HttpClient(handler);
             httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", GlobalConstants.DefaultUserAgent);
             if (this.Headers != null)
             {
