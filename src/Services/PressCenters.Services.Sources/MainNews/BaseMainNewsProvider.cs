@@ -21,8 +21,7 @@
             url = new Uri(url).GetLeftPart(UriPartial.Query); // Remove hash fragment
             if (this.UseProxy)
             {
-                url = url.Replace("https://", "https://proxy.presscenters.com/_plain/https/")
-                         .Replace("http://", "https://proxy.presscenters.com/_plain/http/");
+                url = ProxyUrlBuilder.Wrap(url);
             }
 
             var parser = new HtmlParser();

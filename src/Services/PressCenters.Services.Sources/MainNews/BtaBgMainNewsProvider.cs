@@ -2,6 +2,8 @@
 {
     using System;
 
+    using PressCenters.Common;
+
     public class BtaBgMainNewsProvider : BaseMainNewsProvider
     {
         public override string BaseUrl { get; } = "https://www.bta.bg";
@@ -22,9 +24,7 @@
             if (this.UseProxy)
             {
                 imageUrl = new Uri(imageUrl).GetLeftPart(UriPartial.Query); // Remove hash fragment
-                imageUrl = imageUrl.Replace("https://", "https://proxy.presscenters.com/https/")
-                        .Replace("http://", "https://proxy.presscenters.com/http/");
-                imageUrl = imageUrl.Replace("+", "%20");
+                imageUrl = ProxyUrlBuilder.Wrap(imageUrl).Replace("+", "%20");
             }
 
             return new RemoteMainNews(title, url, imageUrl);

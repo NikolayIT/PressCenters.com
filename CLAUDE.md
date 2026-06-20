@@ -50,9 +50,8 @@ in `.github/workflows/`.
   `PressCenters.Services.Data` (business services over repositories), `PressCenters.Services.Sources`
   (the scrapers — the heart of the app), `PressCenters.Services.CronJobs` (Hangfire jobs),
   `PressCenters.Services.Mapping` (reflection-based Mapster), `PressCenters.Services.Messaging` (email).
-- **Web/** — `PressCenters.Web` (MVC app, admin area, Hangfire wiring in `Startup.cs`),
-  `PressCenters.Web.Infrastructure`, `PressCenters.Web.Proxy` (a thin HTML/asset proxy used by sources
-  that set `UseProxy`, served at `proxy.presscenters.com`).
+- **Web/** — `PressCenters.Web` (MVC app, admin area, Hangfire wiring in `Startup.cs`) and
+  `PressCenters.Web.Infrastructure`.
 - **Tests/** — xUnit test projects + the `Sandbox` console runner.
 
 ### The scraping system (most important concept)
@@ -67,7 +66,8 @@ organized into folders by category: `BgInstitutions`, `Ministries`, `Municipalit
 - `ParseDocument(IDocument, url)` — parse one article into a `RemoteNews` (title, HTML content, post
   date, image URL). Uses **AngleSharp** for HTML parsing/CSS selectors.
 - Optional: `GetAllPublications()` for full backfills, `ExtractIdFromUrl(url)` override,
-  `UseProxy => true`, custom `Encoding` or `Headers`.
+  `UseProxy => true` (routes fetches through a random relay host via
+  `PressCenters.Common.ProxyUrlBuilder` over `GlobalConstants.ProxyHosts`), custom `Encoding` or `Headers`.
 
 `BaseSource.GetPublication()` orchestrates fetch → parse → normalize (trims title/content, clamps
 future dates, normalizes image URL, sets `OriginalUrl`, derives `RemoteId` via `ExtractIdFromUrl`,

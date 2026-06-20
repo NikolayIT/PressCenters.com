@@ -115,9 +115,7 @@
             if (useProxy)
             {
                 imageUrl = new Uri(imageUrl).GetLeftPart(UriPartial.Query); // Remove hash fragment
-                imageUrl = imageUrl.Replace("https://", "https://proxy.presscenters.com/https/")
-                        .Replace("http://", "https://proxy.presscenters.com/http/");
-                imageUrl = imageUrl.Replace("+", "%20");
+                imageUrl = ProxyUrlBuilder.Wrap(imageUrl).Replace("+", "%20");
             }
 
             using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(120), };
