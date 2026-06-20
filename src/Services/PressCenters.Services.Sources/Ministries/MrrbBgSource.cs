@@ -41,7 +41,7 @@
             var time = DateTime.ParseExact(timeAsString, "dd MMMM yyyy | HH:mm", CultureInfo.GetCultureInfo("bg-BG"));
 
             var imageElement = document.QuerySelector(".mainImage img");
-            var imageUrl = imageElement?.GetAttribute("src");
+            var imageUrl = imageElement?.GetAttribute("src")?.Split('?')[0];
 
             var contentElement = document.QuerySelector(".article-description");
             this.NormalizeUrlsRecursively(contentElement);
