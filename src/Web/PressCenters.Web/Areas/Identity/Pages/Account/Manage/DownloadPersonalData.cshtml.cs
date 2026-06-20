@@ -49,7 +49,7 @@
                 personalData.Add(p.Name, p.GetValue(user)?.ToString() ?? "null");
             }
 
-            this.Response.Headers.Add("Content-Disposition", "attachment; filename=PersonalData.json");
+            this.Response.Headers["Content-Disposition"] = "attachment; filename=PersonalData.json";
             return new FileContentResult(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(personalData)), "text/json");
         }
     }

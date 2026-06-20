@@ -6,6 +6,7 @@ namespace PressCenters.Services.Sources
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
+    using System.Net.Http;
     using System.Text;
     using System.Text.RegularExpressions;
 
@@ -46,16 +47,13 @@ namespace PressCenters.Services.Sources
             {
                 document = this.Parser.ParseDocument(this.ReadStringFromUrl(url));
             }
-            catch (WebException e)
+            catch (HttpRequestException e)
             {
-                if (e.Status == WebExceptionStatus.ProtocolError)
+                switch (e.StatusCode)
                 {
-                    switch ((e.Response as HttpWebResponse)?.StatusCode)
-                    {
-                        case HttpStatusCode.NotFound:
-                        case HttpStatusCode.InternalServerError:
-                            return null;
-                    }
+                    case HttpStatusCode.NotFound:
+                    case HttpStatusCode.InternalServerError:
+                        return null;
                 }
 
                 throw;
@@ -148,23 +146,25 @@ namespace PressCenters.Services.Sources
                 url = ProxyUrlBuilder.Wrap(url);
             }
 
-            using var webClient = new WebClient();
-            webClient.Headers.Add(HttpRequestHeader.UserAgent, GlobalConstants.DefaultUserAgent);
+            using var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", GlobalConstants.DefaultUserAgent);
             if (this.Headers != null)
             {
                 foreach (var (header, value) in this.Headers)
                 {
-                    webClient.Headers.Add(header, value);
+                    httpClient.DefaultRequestHeaders.TryAddWithoutValidation(header, value);
                 }
             }
 
+            using var response = httpClient.GetAsync(url).GetAwaiter().GetResult();
+            response.EnsureSuccessStatusCode();
             if (this.Encoding != null)
             {
-                webClient.Encoding = this.Encoding;
+                var bytes = response.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
+                return this.Encoding.GetString(bytes);
             }
 
-            var html = webClient.DownloadString(url);
-            return html;
+            return response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
         }
 
         // TODO: Normalize using current url as base url instead of this.BaseUrl?
