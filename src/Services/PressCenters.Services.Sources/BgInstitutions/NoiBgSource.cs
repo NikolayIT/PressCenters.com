@@ -20,8 +20,15 @@
         {
             for (var page = 1; page <= 25; page++)
             {
-                var remoteNews = this.GetPublications($"publichnost/novini/page/{page}/", ".post-article h4 a");
+                // Page 1 is the bare listing URL; /page/1/ returns nothing.
+                var address = page == 1 ? "publichnost/novini/" : $"publichnost/novini/page/{page}/";
+                var remoteNews = this.GetPublications(address, ".post-article h4 a", throwOnEmpty: false);
                 Console.WriteLine($"Page {page} => {remoteNews.Count}");
+                if (remoteNews.Count == 0)
+                {
+                    yield break;
+                }
+
                 foreach (var news in remoteNews)
                 {
                     yield return news;
