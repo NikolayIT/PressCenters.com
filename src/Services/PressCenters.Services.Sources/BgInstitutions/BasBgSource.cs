@@ -47,7 +47,11 @@
                 return null;
             }
 
-            var time = DateTime.ParseExact(timeAsString, "dddd, d MMMM yyyy", new CultureInfo("bg-BG"));
+            // bas.bg has emitted this date in several shapes over the years: "понеделник, 9 май 2017"
+            // (with weekday) and, more recently, "9 май 2017 г." (no weekday, "година" suffix). Accept all
+            // of them so a cosmetic change to the byline does not take the whole source down again.
+            var formats = new[] { "d MMMM yyyy 'г.'", "d MMMM yyyy 'г'", "d MMMM yyyy", "dddd, d MMMM yyyy" };
+            var time = DateTime.ParseExact(timeAsString, formats, new CultureInfo("bg-BG"), DateTimeStyles.None);
 
             var imageElement = document.QuerySelector(".post-content img");
             var imageUrl = imageElement?.GetAttribute("src");

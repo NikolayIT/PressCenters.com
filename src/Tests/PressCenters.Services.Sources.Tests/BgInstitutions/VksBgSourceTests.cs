@@ -8,8 +8,8 @@
     public class VksBgSourceTests
     {
         [Theory]
-        [InlineData("http://www.vks.bg/novini/ubiistvo_byala_cherkva_14_12.html", "ubiistvo_byala_cherkva_14_12")]
-        [InlineData("http://www.vks.bg/novini/spisak-na-dela-ianuari.html", "spisak-na-dela-ianuari")]
+        [InlineData("https://www.vks.bg/novini/ubiistvo_byala_cherkva_14_12.html", "ubiistvo_byala_cherkva_14_12")]
+        [InlineData("https://www.vks.bg/novini/spisak-na-dela-ianuari.html", "spisak-na-dela-ianuari")]
         public void ExtractIdFromUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new VksBgSource();
@@ -20,7 +20,7 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "http://www.vks.bg/novini/ubiistvo_otvertkata_dupnitsa_14_12.html";
+            const string NewsUrl = "https://www.vks.bg/novini/ubiistvo_otvertkata_dupnitsa_14_12.html";
             var provider = new VksBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
@@ -37,7 +37,7 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectlyWithAnOldNews()
         {
-            const string NewsUrl = "http://www.vks.bg/novini/predsedateliat-komandirova-shestima-sadii.html";
+            const string NewsUrl = "https://www.vks.bg/novini/predsedateliat-komandirova-shestima-sadii.html";
             var provider = new VksBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
