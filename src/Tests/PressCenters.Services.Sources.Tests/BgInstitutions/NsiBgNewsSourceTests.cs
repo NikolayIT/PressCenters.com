@@ -10,10 +10,8 @@
     public class NsiBgNewsSourceTests
     {
         [Theory]
-        // Current URL shape: the id is the trailing "-<id>" of the last segment.
         [InlineData("https://www.nsi.bg/news/nsi-posreshtna-statistici-ot-turciya-9642", "9642")]
         [InlineData("https://www.nsi.bg/press-release/indeks-na-razhodite-za-trud-i-trimesechie-2026-godina-9338", "9338")]
-        // Legacy URL shape (still parseable): the id is its own numeric path segment.
         [InlineData("https://nsi.bg/bg/content/13854/somenewstitle/", "13854")]
         [InlineData("https://www.nsi.bg/bg/content/13840/somecategory/somenewstitle/", "13840")]
         public void ExtractIdFromNewsUrlShouldWorkCorrectly(string url, string id)
