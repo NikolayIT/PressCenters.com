@@ -15,7 +15,7 @@
         public override bool UseProxy => true;
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("bg/news/aktualno", ".news-box .news-group a", "bg/news/aktualno", 10);
+            this.GetPublications("bg/news/aktualno", ".news-item__title a", "bg/news/aktualno", 10);
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
@@ -23,7 +23,7 @@
             {
                 var news = this.GetPublications(
                     $"bg/news/aktualno?p={i}",
-                    ".news-box .news-group a",
+                    ".news-item__title a",
                     "bg/news/aktualno");
                 Console.WriteLine($"Page {i} => {news.Count} news");
                 foreach (var remoteNews in news)
@@ -41,7 +41,7 @@
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            var titleElement = document.QuerySelector("h3.title");
+            var titleElement = document.QuerySelector("h1.page-title");
             if (titleElement == null)
             {
                 return null;
@@ -49,21 +49,29 @@
 
             var title = titleElement.TextContent.Trim();
 
-            var timeElement = document.QuerySelector(".line--red");
-            var timeAsString = timeElement.TextContent;
-            var time = DateTime.ParseExact(timeAsString.ToLower(), "d MMMM yyyy г.", new CultureInfo("bg-BG"));
+            var timeElement = document.QuerySelector(".publication-title__meta");
+            var timeAsString = timeElement?.TextContent?.Trim().ToLower();
+            if (string.IsNullOrWhiteSpace(timeAsString))
+            {
+                return null;
+            }
 
-            var contentElement = document.QuerySelector(".publication-wrapper .col--8");
+            var time = DateTime.ParseExact(timeAsString, "d MMMM yyyy 'г.'", new CultureInfo("bg-BG"));
+
+            var contentElement = document.QuerySelector(".page-content");
             if (contentElement == null)
             {
                 return null;
             }
 
+            // The lead image is a (gallery) figure inside the content; pull it out, then drop it and any
+            // resize query string so the stored content is text-only and the image URL is the full-size original.
+            var imageElement = contentElement.QuerySelector(".media-container__figure img");
+            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src")?.Split('?')[0]);
+            contentElement.RemoveRecursively(contentElement.QuerySelector(".media-container"));
+
             this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement.InnerHtml.Trim();
-
-            var imageElement = document.QuerySelector(".image-container .image");
-            var imageUrl = imageElement?.GetAttribute("style").GetStringBetween("url('", "');");
 
             return new RemoteNews(title, content, time, imageUrl);
         }

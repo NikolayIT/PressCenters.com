@@ -51,7 +51,7 @@
             Assert.Contains("Видно от обобщените от ВАП резултати", news.Content);
             Assert.Contains("по упражняване на стопанска дейност от търговските субекти.", news.Content);
             Assert.DoesNotContain("12.08", news.Content);
-            Assert.Equal("https://prb.bg/assets/images/temp-img.jpg", news.ImageUrl);
+            Assert.Null(news.ImageUrl);
         }
 
         [Fact]
