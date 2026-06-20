@@ -9,12 +9,12 @@
             var document = this.GetDocument(this.BaseUrl);
 
             var titleElement = document.QuerySelector(".c-article-item_accent .c-article-item__content a");
-            var title = titleElement.TextContent.Trim().Trim('.').Trim();
+            var title = titleElement?.TextContent?.Trim().Trim('.').Trim();
 
-            var url = titleElement.Attributes["href"].Value.Trim();
+            var url = this.MakeAbsoluteUrl(titleElement?.GetAttribute("href"));
 
             var imageElement = document.QuerySelector(".c-article-item_accent img");
-            var imageUrl = imageElement?.Attributes["src"]?.Value?.Trim();
+            var imageUrl = this.MakeAbsoluteUrl(imageElement?.GetAttribute("src"));
 
             return new RemoteMainNews(title, url, imageUrl);
         }

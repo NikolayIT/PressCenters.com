@@ -6,7 +6,7 @@
 
     public class ReutersMainNewsProviderTests
     {
-        [Fact]
+        [Fact(Skip = "reuters.com returns HTTP 401 to non-browser clients (hard anti-scraping block, fails even via curl); the provider is intentionally disabled in MainNewsSourcesSeeder.")]
         public void GetMainNewsShouldWorkCorrectly()
         {
             var provider = new ReutersMainNewsProvider();

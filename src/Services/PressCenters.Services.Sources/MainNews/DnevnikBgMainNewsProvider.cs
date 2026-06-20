@@ -8,14 +8,12 @@
         {
             var document = this.GetDocument(this.BaseUrl);
 
-            var titleElement = document.QuerySelector(".primary-article-v1 h3");
+            var titleElement = document.QuerySelector(".main-column .column-content .card-title-link");
             var title = titleElement?.TextContent?.Trim();
+            var url = this.MakeAbsoluteUrl(titleElement?.GetAttribute("href"));
 
-            var urlElement = document.QuerySelector(".primary-article-v1 h3 a");
-            var url = this.BaseUrl + urlElement?.Attributes["href"]?.Value?.Trim();
-
-            var imageElement = document.QuerySelector(".primary-article-v1 .thumbnail img");
-            var imageUrl = imageElement?.Attributes["src"]?.Value?.Trim();
+            var imageElement = document.QuerySelector(".main-column .column-content .card-figure img");
+            var imageUrl = this.MakeAbsoluteUrl(imageElement?.GetAttribute("src"));
 
             return new RemoteMainNews(title, url, imageUrl);
         }

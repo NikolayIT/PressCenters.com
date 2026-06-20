@@ -8,16 +8,17 @@
         {
             var document = this.GetDocument(this.BaseUrl + "/?PageSpeed=noscript");
 
-            var titleElement = document.QuerySelector(".c-first-topstory .media__main h1.media__body__title a")
-                               ?? document.QuerySelector(".m-object__title__link--big-title");
+            var linkElement = document.QuerySelector(".tc-hero a[href]");
+            var title = linkElement?.GetAttribute("aria-label")?.Trim();
+            if (string.IsNullOrEmpty(title))
+            {
+                title = document.QuerySelector(".tc-hero__title")?.TextContent?.Trim();
+            }
 
-            var title = titleElement.TextContent.Trim();
+            var url = this.MakeAbsoluteUrl(linkElement?.GetAttribute("href"));
 
-            var url = this.BaseUrl + titleElement.Attributes["href"].Value.Trim();
-
-            var imageElement = document.QuerySelector(".media__img__link img");
-            var imageUrl = imageElement?.Attributes["data-src"]?.Value ?? imageElement?.Attributes["src"]?.Value;
-            imageUrl = imageUrl?.Trim();
+            var imageElement = document.QuerySelector(".tc-hero__poster img");
+            var imageUrl = this.MakeAbsoluteUrl(imageElement?.GetAttribute("src"));
 
             return new RemoteMainNews(title, url, imageUrl);
         }
