@@ -1,9 +1,10 @@
-﻿namespace PressCenters.Services.Sources.Ministries
+namespace PressCenters.Services.Sources.Ministries
 {
     using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using System.Text.RegularExpressions;
 
     using AngleSharp.Dom;
 
@@ -14,76 +15,63 @@
     /// </summary>
     public class ModBgSource : BaseSource
     {
-        public override string BaseUrl => "https://mod.bg/";
+        public override string BaseUrl => "https://www.mod.bg/";
 
         public override bool UseProxy => true;
 
-        public override IEnumerable<RemoteNews> GetLatestPublications() => this.GetNews($"{this.BaseUrl}bg/news.php", 5);
-
-        public override IEnumerable<RemoteNews> GetAllPublications()
+        public override IEnumerable<RemoteNews> GetLatestPublications()
         {
-            for (var date = DateTime.UtcNow; date >= new DateTime(2011, 1, 1); date = date.AddMonths(-1))
-            {
-                var news = this.GetNews($"{this.BaseUrl}bg/news_archive.php?fn_month={date.Month}&fn_year={date.Year}");
-                Console.WriteLine($"{date:yyyy, MMM} => {news.Count} news");
-                foreach (var remoteNews in news)
-                {
-                    yield return remoteNews;
-                }
-            }
+            // The listing has no <a> links; each card navigates via onclick="location.href='/news<id>'".
+            var document = this.Parser.ParseDocument(this.ReadStringFromUrl($"{this.BaseUrl}news"));
+            var links = document.QuerySelectorAll("[onclick]")
+                .Select(x => x.GetAttribute("onclick"))
+                .Where(x => x?.Contains("location.href='/news") == true)
+                .Select(x => this.NormalizeUrl(x.GetStringBetween("location.href='", "'")))
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct()
+                .Take(5)
+                .ToList();
+            return links.Select(this.GetPublication).Where(x => x != null).ToList();
         }
 
-        internal override string ExtractIdFromUrl(string url) => this.GetUrlParameterValue(url, "fn_id");
+        internal override string ExtractIdFromUrl(string url)
+        {
+            var lastSegment = new Uri(url.Trim().Trim('/')).Segments[^1];
+            return new string(lastSegment.Where(char.IsDigit).ToArray());
+        }
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            // Title
-            var title = document.QuerySelector(".tablelist2 h2").TextContent;
-            if (title == null)
+            var title = document.QuerySelector("meta[property='og:title']")?.GetAttribute("content")?.Trim();
+            if (string.IsNullOrWhiteSpace(title))
             {
                 return null;
             }
 
-            // Time
-            var timeElement = document.QuerySelector(".tablelist");
-            var timeAsString = timeElement?.TextContent?.Trim();
-            var time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
+            // The publish date sits as plain text right after the title heading (e.g. "21.09.2012 г.").
+            var headerText = document.QuerySelector("h3")?.ParentElement?.TextContent ?? string.Empty;
+            var dateMatch = Regex.Match(headerText, @"\d{2}\.\d{2}\.\d{4}");
+            var time = dateMatch.Success
+                           ? DateTime.ParseExact(dateMatch.Value, "dd.MM.yyyy", CultureInfo.InvariantCulture)
+                           : DateTime.Now;
 
-            // Image
-            var imageElement = document.QuerySelector(".tablelist2 div p a[rel^='lightbox'] img");
-            var imageUrl = imageElement?.GetAttribute("src");
-            if (imageUrl != null && !imageUrl.Contains("/bg/"))
+            // og:image is the article photo when present, otherwise it falls back to the site logo.
+            var imageUrl = document.QuerySelector("meta[property='og:image']")?.GetAttribute("content")?.Trim();
+            if (imageUrl?.Contains("/uploads/") != true)
             {
-                imageUrl = "/bg/" + imageUrl;
+                imageUrl = null;
             }
 
-            // Content
-            var contentElement = document.QuerySelector(".tablelist2 div p");
-            var images = document.QuerySelectorAll("a[rel^='lightbox']");
-            foreach (var image in images)
+            var contentElement = document.QuerySelector(".col-md-10.offset-md-1");
+            if (contentElement == null)
             {
-                contentElement.RemoveRecursively(image);
+                return null;
             }
 
             this.NormalizeUrlsRecursively(contentElement);
-            var content = contentElement?.InnerHtml;
+            var content = contentElement.InnerHtml.Trim();
 
             return new RemoteNews(title, content, time, imageUrl);
-        }
-
-        private IList<RemoteNews> GetNews(string address, int count = 0)
-        {
-            var document = this.Parser.ParseDocument(this.ReadStringFromUrl(address));
-            var links = document.QuerySelectorAll("#cat1 .tablelist2 a").Select(x => x?.Attributes["href"]?.Value)
-                .Where(x => x?.Contains("show(") == true).Select(
-                    x => $"{this.BaseUrl}bg/news.php?fn_mode=fullnews&fn_id={x.GetStringBetween("show(", ");")}").ToList();
-            if (count > 0)
-            {
-                links = links.Take(5).ToList();
-            }
-
-            var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
-            return news;
         }
     }
 }

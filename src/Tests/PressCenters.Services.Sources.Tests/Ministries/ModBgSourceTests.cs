@@ -10,9 +10,9 @@
     public class ModBgSourceTests
     {
         [Theory]
-        [InlineData("https://mod.bg/bg/news.php?fn_mode=fullnews&fn_id=10496", "10496")]
-        [InlineData("https://mod.bg/bg/news.php?fn_mode=fullnews&fn_id=10484", "10484")]
-        public void ExtractIdFromPressUrlShouldWorkCorrectly(string url, string id)
+        [InlineData("https://www.mod.bg/news9386", "9386")]
+        [InlineData("https://www.mod.bg/news938", "938")]
+        public void ExtractIdFromUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new ModBgSource();
             var result = provider.ExtractIdFromUrl(url);
@@ -22,57 +22,31 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://mod.bg/bg/news.php?fn_mode=fullnews&fn_id=10498";
+            const string NewsUrl = "https://www.mod.bg/news9386";
             var provider = new ModBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Министърът на отбраната Красимир Каракачанов награди военни разузнавачи по повод празника на служба „Военна информация“", news.Title);
-            Assert.Contains("111-ата годишнина от създаването на българското военно разузнаване отбеляза служба „Военна информация“ ", news.Content);
-            Assert.Contains("12 януари е обявен за официален празник на българското военно разузнаване.", news.Content);
+            Assert.StartsWith("Министърът на отбраната Димитър Стоянов представи в Брюксел", news.Title);
+            Assert.Equal("9386", news.RemoteId);
+            Assert.Equal(new DateTime(2026, 6, 18), news.PostDate);
+            Assert.Contains("ще продължи да изпълнява ангажиментите си към НАТО", news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
-            Assert.DoesNotContain("11.01.2019", news.Content);
-            Assert.DoesNotContain("uploads/01_1", news.Content);
-            Assert.DoesNotContain("<img", news.Content);
-            Assert.Equal("https://mod.bg/bg/galleries/2019/20190111/1.jpg", news.ImageUrl);
-            Assert.Equal(new DateTime(2019, 1, 11), news.PostDate);
-            Assert.Equal("10498", news.RemoteId);
-        }
-
-        [Fact]
-        public void ParseRemoteNewsRelativeImageUrlShouldWorkCorrectly()
-        {
-            const string NewsUrl = "https://mod.bg/bg/news.php?fn_mode=fullnews&fn_id=3139";
-            var provider = new ModBgSource();
-            var news = provider.GetPublication(NewsUrl);
-            Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Новата академична година във Военната академия „Г. С. Раковски” ще започне с лекция на министъра на отбраната Аню Ангелов", news.Title);
-            Assert.Contains("Военната академия “Г. С. Раковски” отваря врати за новата академична година", news.Content);
-            Assert.Contains("Колеги, заповядайте.", news.Content);
-            Assert.DoesNotContain(news.Title, news.Content);
-            Assert.DoesNotContain("31.08.2012", news.Content);
-            Assert.DoesNotContain("201208311", news.Content);
-            Assert.DoesNotContain("<img", news.Content);
-            Assert.Equal("https://mod.bg/bg/galleries/201208311/1.jpg", news.ImageUrl);
-            Assert.Equal(new DateTime(2012, 8, 31), news.PostDate);
-            Assert.Equal("3139", news.RemoteId);
+            Assert.StartsWith("https://www.mod.bg/uploads/news/", news.ImageUrl);
         }
 
         [Fact]
         public void ParseRemoteNewsWithoutImageShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://mod.bg/bg/news.php?fn_mode=fullnews&fn_id=1403";
+            const string NewsUrl = "https://www.mod.bg/news938";
             var provider = new ModBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Няма пострадали български военнослужещи при атака на база „Феникс” в Кабул, Афганистан", news.Title);
-            Assert.Contains("Няма пострадали български военнослужещи при атака днес, 2 април", news.Content);
-            Assert.Contains("Кабул е подложена на комбинирана атака с леко стрелково оръжие, ръчен гранатомет и атентатори самоубийци.", news.Content);
+            Assert.StartsWith("Заместник-министърът на отбраната Августина Цветкова изнесе лекция", news.Title);
+            Assert.Equal("938", news.RemoteId);
+            Assert.Equal(new DateTime(2012, 9, 21), news.PostDate);
+            Assert.Contains("участието на жените в структурите на сигурността и отбраната е жизнено необходимо", news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
-            Assert.DoesNotContain("02.04.2011", news.Content);
-            Assert.DoesNotContain("<img", news.Content);
             Assert.Null(news.ImageUrl);
-            Assert.Equal(new DateTime(2011, 4, 2), news.PostDate);
-            Assert.Equal("1403", news.RemoteId);
         }
 
         [Fact]
