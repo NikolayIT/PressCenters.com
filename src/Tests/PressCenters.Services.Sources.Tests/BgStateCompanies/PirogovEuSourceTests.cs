@@ -32,7 +32,7 @@
             Assert.DoesNotContain("fancybox", news.Content);
             Assert.DoesNotContain(news.ImageUrl, news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
-            Assert.Equal("https://pirogov.eu/image_cache/f/9/6/e/7/f96e732895a56c80730cce4eff316a8625e4b99c.jpeg?v2", news.ImageUrl);
+            Assert.Equal("https://pirogov.eu/image_cache/f/9/6/e/7/f96e732895a56c80730cce4eff316a8625e4b99c.jpeg", news.ImageUrl);
             //// Not supported: Assert.Equal(new DateTime(2019, 1, 28), news.PostDate);
             Assert.Equal("1747", news.RemoteId);
         }
