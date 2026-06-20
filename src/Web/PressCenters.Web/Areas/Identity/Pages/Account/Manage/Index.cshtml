@@ -11,17 +11,17 @@
     <div class="col-md-6">
         <form id="profile-form" method="post">
             <div asp-validation-summary="All" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Username"></label>
+            <div class="mb-3">
+                <label asp-for="Username" class="form-label"></label>
                 <input asp-for="Username" class="form-control" disabled />
             </div>
-            <div class="form-group">
-                <label asp-for="Input.Email"></label>
+            <div class="mb-3">
+                <label asp-for="Input.Email" class="form-label"></label>
                 @if (Model.IsEmailConfirmed)
                 {
                     <div class="input-group">
                         <input asp-for="Input.Email" class="form-control" />
-                        <span class="input-group-addon" aria-hidden="true"><span class="glyphicon glyphicon-ok text-success"></span></span>
+                        <span class="input-group-text text-success" aria-hidden="true">&#10004;</span>
                     </div>
                 }
                 else
@@ -31,8 +31,8 @@
                 }
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Input.PhoneNumber"></label>
+            <div class="mb-3">
+                <label asp-for="Input.PhoneNumber" class="form-label"></label>
                 <input asp-for="Input.PhoneNumber" class="form-control" />
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>

@@ -9,6 +9,7 @@
 button.accept-policy {
     font-size: 1rem;
     line-height: inherit;
+    text-decoration: none;
 }
 
 
@@ -19,3 +20,8 @@ html.dark-mode {
     html.dark-mode img {
         filter: invert(100%);
     }
+
+/* `.text-justify` was removed in Bootstrap 5; keep it as a utility for justified article text. */
+.text-justify {
+    text-align: justify;
+}

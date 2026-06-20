@@ -21,9 +21,7 @@
     <form method="get" asp-controller="News" asp-action="List" asp-route-id="1">
         <div class="input-group mb-4">
             <input type="search" name="search" class="form-control" value="@this.Model.Search" placeholder="Въведете думи за търсене, разделени с интервал..." />
-            <div class="input-group-append">
-                <input type="submit" value="Търси" class="btn btn-outline-secondary" />
-            </div>
+            <input type="submit" value="Търси" class="btn btn-outline-secondary" />
         </div>
     </form>
 }
@@ -41,8 +39,8 @@
                     @news.Title
                 </a>
             </h3>
-            <div class="media">
-                <a class="d-flex mr-2">
+            <div class="d-flex">
+                <a class="d-flex me-2">
                     <img class="rounded g-width-100 g-height-60" src="@news.SmallImageUrl" alt="@news.SourceShortName" title="@news.Title" />
                 </a>
                 <p class="g-color-gray-dark-v4 text-justify mb-2">
@@ -55,7 +53,7 @@
                         <a href="@news.OriginalUrl" target="_blank">@news.SourceName</a>
                     </span>
                 </li>
-                <li class="list-inline-item ml-auto">
+                <li class="list-inline-item ms-auto">
                     <span class="g-color-gray-dark-v5">@news.CreatedOnAsString</span>
                 </li>
             </ul>

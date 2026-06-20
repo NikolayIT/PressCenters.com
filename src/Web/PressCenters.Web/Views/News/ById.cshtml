@@ -10,28 +10,28 @@
 {
     <a asp-area="Administration" asp-controller="News" asp-action="UpdateRemoteNews" asp-route-id="@this.Model.Id" class="btn btn-secondary">Update</a>
 
-    <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#softDeleteModal">Soft delete</a>
+    <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#softDeleteModal">Soft delete</a>
     <div class="modal fade" id="softDeleteModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header"><h5 class="modal-title">Soft delete</h5></div>
                 <div class="modal-body">Are you sure you want to soft delete this news?</div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <a asp-area="Administration" asp-controller="News" asp-action="SoftDelete" asp-route-id="@this.Model.Id" class="btn btn-danger">Soft delete</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#hardDeleteModal">Hard delete</a>
+    <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#hardDeleteModal">Hard delete</a>
     <div class="modal fade" id="hardDeleteModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header"><h5 class="modal-title">Hard delete</h5></div>
                 <div class="modal-body">Are you sure you want to hard delete this news?</div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <a asp-area="Administration" asp-controller="News" asp-action="HardDelete" asp-route-id="@this.Model.Id" class="btn btn-danger">Hard delete</a>
                 </div>
             </div>
@@ -48,8 +48,8 @@
     </div>
 }
 
-<div class="media g-font-size-12 g-color-gray-dark-v4 g-mb-20">
-    <div class="media-body align-self-center">
+<div class="d-flex g-font-size-12 g-color-gray-dark-v4 g-mb-20">
+    <div class="flex-grow-1 align-self-center">
         <a href="@this.Model.SourceUrl" taget="_blank">@this.Model.SourceName</a>
         <span class="g-mx-6">/</span>
         <time>@this.Model.CreatedOnAsString</time>

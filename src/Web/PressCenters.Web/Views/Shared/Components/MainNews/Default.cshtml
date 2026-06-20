@@ -5,11 +5,11 @@
 </div>
 @foreach (var news in this.Model.MainNews)
 {
-    <article class="media g-mb-10">
-        <a class="d-flex mr-3" href="@news.OriginalUrl" target="_blank">
+    <article class="d-flex g-mb-10">
+        <a class="d-flex me-3" href="@news.OriginalUrl" target="_blank">
             <img class="rounded g-width-75 g-height-55" src="@news.LocalImageUrl?t=@news.CreatedOn.ToBinary()" title="@news.Title" alt="@news.Title">
         </a>
-        <div class="media-body">
+        <div class="flex-grow-1">
             <h3 class="h6">
                 <a class="u-link-v5 g-color-black g-color-primary--hover" href="@news.OriginalUrl" target="_blank">@news.Title</a>
             </h3>
