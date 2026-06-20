@@ -34,9 +34,9 @@ dotnet run --project src/Tests/Sandbox
 ```
 
 All projects target **net10.0**. Visual Studio 2022 is the primary IDE (`.sln`, `.csproj.user`,
-`.vs/` present). The CI build (`azure-pipelines.yml`) uses `VSBuild` + `VSTest` on `windows-2022`
-(the image/SDK must provide the .NET 10 toolchain); there is also a CodeQL workflow in
-`.github/workflows/`.
+`.vs/` present). CI runs on GitHub Actions (`.github/workflows/ci.yml`): `dotnet build` + `dotnet test` of
+`src/PressCenters.sln` in Release on `windows-latest` (Windows keeps the legacy code-page encodings
+the scrapers depend on). There is also a CodeQL workflow in `.github/workflows/`.
 
 ## Architecture
 
