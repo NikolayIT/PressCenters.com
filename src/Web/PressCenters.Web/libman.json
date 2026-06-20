@@ -3,7 +3,7 @@
   "defaultProvider": "jsdelivr",
   "libraries": [
     {
-      "library": "jquery@3.7.0",
+      "library": "jquery@3.7.1",
       "destination": "wwwroot/lib/jquery/",
       "files": [
         "dist/jquery.min.js",
@@ -21,7 +21,7 @@
       ]
     },
     {
-      "library": "jquery-validation@1.19.5",
+      "library": "jquery-validation@1.22.1",
       "destination": "wwwroot/lib/jquery-validation/",
       "files": [
         "dist/jquery.validate.js",
@@ -37,7 +37,7 @@
       ]
     },
     {
-      "library": "moment@2.29.4",
+      "library": "moment@2.30.1",
       "destination": "wwwroot/lib/moment/",
       "files": [
         "min/moment-with-locales.min.js"
