@@ -34,9 +34,12 @@
             ConfigureServices(serviceCollection);
             IServiceProvider serviceProvider = serviceCollection.BuildServiceProvider(true);
 
-            // Seed data on application startup
-            using (var serviceScope = serviceProvider.CreateScope())
+            // Seed data on application startup. Skippable (BACKFILL_SKIP_MIGRATE=1) so a backfill run against an
+            // already-migrated/seeded production database performs no schema or seed side effects -- only the
+            // intended News inserts.
+            if (Environment.GetEnvironmentVariable("BACKFILL_SKIP_MIGRATE") != "1")
             {
+                using var serviceScope = serviceProvider.CreateScope();
                 var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 dbContext.Database.Migrate();
                 ApplicationDbContextSeeder.Seed(dbContext, serviceScope.ServiceProvider);
