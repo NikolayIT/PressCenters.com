@@ -31,9 +31,8 @@
             // gap (2024+) without re-hammering the F5/TSPD-protected site for years already in the DB.
             for (var year = 2023; year <= DateTime.UtcNow.Year; year++)
             {
-                var news = this.GetNews(new DateTime(year, 1, 1), new DateTime(year + 1, 1, 1), 10000);
-                Console.WriteLine($"Year {year} => {news.Count} news");
-                foreach (var remoteNews in news)
+                Console.WriteLine($"Year {year}...");
+                foreach (var remoteNews in this.GetNews(new DateTime(year, 1, 1), new DateTime(year + 1, 1, 1), 10000))
                 {
                     yield return remoteNews;
                 }
@@ -71,15 +70,27 @@
             return new RemoteNews(title, content, time, imageUrl);
         }
 
-        private IList<RemoteNews> GetNews(DateTime from, DateTime to, int results)
+        // Lazy: yield each article as it is fetched, so a backfill's per-item throttle and per-article
+        // resilience apply. The eager version fetched a whole year up front, bursting the relay.
+        private IEnumerable<RemoteNews> GetNews(DateTime from, DateTime to, int results)
         {
             var url =
                 $"{this.BaseUrl}customSearchWCM/query?context=customs.bg28892&libName=agency&saId={this.SaId}&atId=72bd8711-7a20-4b13-85dd-bb04e5c1102f&filterByElements=&rootPage=agency&rPP={results}&currentPage=1&currentUrl=https%3A%2F%2Fcustoms.bg%2F{this.NewsUrl}&dateFormat=dd.MM.yyyy&ancestors=false&descendants=true&orderBy=publishDate&orderBy2=publishDate&orderBy3=title&sortOrder=false&searchTerm=&useQuery=true&from={from:dd.MM.yyyy}&before={to:dd.MM.yyyy}";
             var json = this.ReadStringFromUrl(url);
             var newsAsJson = JsonConvert.DeserializeObject<IEnumerable<NewsAsJson>>(json);
-            var news = newsAsJson.Select(
-                x => x?.ContentUrl?.Url == null ? null : this.GetPublication(x.ContentUrl.Url)).Where(x => x != null);
-            return news.ToList();
+            foreach (var item in newsAsJson)
+            {
+                if (item?.ContentUrl?.Url == null)
+                {
+                    continue;
+                }
+
+                var publication = this.GetPublication(item.ContentUrl.Url);
+                if (publication != null)
+                {
+                    yield return publication;
+                }
+            }
         }
 
         private class NewsAsJson
