@@ -35,7 +35,10 @@ jobs:
       run: dotnet build src/PressCenters.sln --configuration Release --no-restore
 
     - name: Test
-      # Exclude sources that fail only from the outside world (anti-bot blocks, offline sites, or a
-      # .NET TLS-fingerprint block no relay bypasses) so a red run means a real regression. These live
-      # integration tests still run on demand: dotnet test --filter "Category=ExternallyBlocked".
-      run: dotnet test src/PressCenters.sln --configuration Release --no-build --verbosity normal --filter "Category!=ExternallyBlocked"
+      # PressCenters.Services.Sources.Tests are LIVE integration tests that fetch real sites, so they
+      # fail (and flake) from CI runners' network/IP regardless of the code. Gate CI on the unit-test
+      # projects only, so a red run means a real regression rather than the outside world. Run the
+      # scraper suite locally/on demand:
+      #   dotnet test src/Tests/PressCenters.Services.Sources.Tests
+      # (add --filter "Category!=ExternallyBlocked" to skip the sources that are blocked even from a dev box).
+      run: dotnet test src/PressCenters.sln --configuration Release --no-build --verbosity normal --filter "FullyQualifiedName!~PressCenters.Services.Sources.Tests"
