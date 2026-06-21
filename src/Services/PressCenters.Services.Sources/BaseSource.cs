@@ -174,6 +174,7 @@ namespace PressCenters.Services.Sources
                     httpClient.DefaultRequestVersion = HttpVersion.Version20;
                     httpClient.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrLower;
                 }
+
                 httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", GlobalConstants.DefaultUserAgent);
                 if (this.Headers != null)
                 {

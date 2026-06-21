@@ -1,4 +1,4 @@
-namespace PressCenters.Services.Sources.Tests.BgInstitutions
+﻿namespace PressCenters.Services.Sources.Tests.BgInstitutions
 {
     using System;
     using System.Linq;

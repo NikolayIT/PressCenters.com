@@ -1,4 +1,4 @@
-namespace PressCenters.Services.Sources.Ministries
+﻿namespace PressCenters.Services.Sources.Ministries
 {
     using System;
     using System.Collections.Generic;
