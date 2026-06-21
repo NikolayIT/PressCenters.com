@@ -8,6 +8,7 @@
 
     using Xunit;
 
+    [Trait("Category", "ExternallyBlocked")]
     public class MvrBgSourceTests
     {
         private readonly List<BaseSource> sources = new List<BaseSource>

@@ -7,6 +7,7 @@
 
     using Xunit;
 
+    [Trait("Category", "ExternallyBlocked")]
     public class BfunionBgSourceTests
     {
         [Theory]

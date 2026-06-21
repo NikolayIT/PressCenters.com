@@ -35,4 +35,7 @@ jobs:
       run: dotnet build src/PressCenters.sln --configuration Release --no-restore
 
     - name: Test
-      run: dotnet test src/PressCenters.sln --configuration Release --no-build --verbosity normal
+      # Exclude sources that fail only from the outside world (anti-bot blocks, offline sites, or a
+      # .NET TLS-fingerprint block no relay bypasses) so a red run means a real regression. These live
+      # integration tests still run on demand: dotnet test --filter "Category=ExternallyBlocked".
+      run: dotnet test src/PressCenters.sln --configuration Release --no-build --verbosity normal --filter "Category!=ExternallyBlocked"
