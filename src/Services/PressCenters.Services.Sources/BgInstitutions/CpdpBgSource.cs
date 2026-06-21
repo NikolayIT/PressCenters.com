@@ -7,66 +7,51 @@
     using AngleSharp.Dom;
 
     /// <summary>
-    /// Комисия за защита на личните данни.
+    /// Комисия за защита на личните данни. Migrated from the old www.cpdp.bg PHP site to WordPress on
+    /// cpdp.bg; news live at /category/новини/. The relays cannot reach the new site (526 SSL / 502), so it
+    /// is fetched directly (no proxy).
     /// </summary>
     public class CpdpBgSource : BaseSource
     {
-        public override string BaseUrl { get; } = "https://www.cpdp.bg/";
-
-        public override bool UseProxy => true;
+        public override string BaseUrl { get; } = "https://cpdp.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("/", ".center-part h6 a.news-title");
+            this.GetPublications("category/новини/", ".entry-title a", count: 5);
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            for (var i = 1; i < 1520; i++)
+            for (var page = 1; page <= 200; page++)
             {
-                var news = this.GetPublication($"https://www.cpdp.bg/index.php?p=news_view&aid={i}");
-                if (news != null)
+                var address = page == 1 ? "category/новини/" : $"category/новини/page/{page}/";
+                var news = this.GetPublications(address, ".entry-title a", throwOnEmpty: false);
+                Console.WriteLine($"Page {page} => {news.Count} news");
+                if (news.Count == 0)
                 {
-                    yield return news;
-                    Console.WriteLine($"{i} => {news.Title}");
+                    yield break;
+                }
+
+                foreach (var remoteNews in news)
+                {
+                    yield return remoteNews;
                 }
             }
         }
 
-        internal override string ExtractIdFromUrl(string url) => this.GetUrlParameterValue(url, "aid");
-
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            if (document.QuerySelector(".center-part .path")?.TextContent?.Contains("» По жалби") == true)
+            var title = document.QuerySelector("meta[property='og:title']")?.GetAttribute("content")?.Trim();
+            var timeAsString = document.QuerySelector("meta[property='article:published_time']")?.GetAttribute("content");
+            var contentElement = document.QuerySelector(".entry-content");
+            if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(timeAsString) || contentElement == null)
             {
                 return null;
             }
 
-            var titleElement = document.QuerySelector(".center-part h1");
-            if (titleElement == null)
-            {
-                return null;
-            }
+            var time = DateTimeOffset.Parse(timeAsString, CultureInfo.InvariantCulture).UtcDateTime;
+            var imageUrl = document.QuerySelector("meta[property='og:image']")?.GetAttribute("content");
 
-            var title = titleElement.TextContent.Trim();
-            if (title == "Добре дошли!")
-            {
-                return null;
-            }
-
-            var timeElement = document.QuerySelector(".center-part .date");
-            var timeAsString = timeElement?.TextContent?.Trim();
-            var time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
-
-            var imageElement = document.QuerySelector(".center-part .titleImage img");
-            var imageUrl = imageElement?.GetAttribute("src");
-
-            var contentElement = document.QuerySelector(".center-part");
-            contentElement.RemoveRecursively(document.QuerySelector(".center-part .path"));
-            contentElement.RemoveRecursively(titleElement);
-            contentElement.RemoveRecursively(timeElement);
-            contentElement.RemoveRecursively(document.QuerySelector(".center-part .titleImage"));
-            contentElement.RemoveRecursively(document.QuerySelector(".center-part #content-bottom"));
             this.NormalizeUrlsRecursively(contentElement);
-            var content = contentElement?.InnerHtml;
+            var content = contentElement.InnerHtml.Trim();
 
             return new RemoteNews(title, content, time, imageUrl);
         }
