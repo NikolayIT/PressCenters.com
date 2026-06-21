@@ -17,7 +17,7 @@
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            for (var i = 2010; i <= 2022; i++)
+            for (var i = 2010; i <= DateTime.UtcNow.Year; i++)
             {
                 var document = this.Parser.ParseDocument(this.ReadStringFromUrl($"{this.BaseUrl}home.nsf/0/FF9D414158A0A77142258159004DE2BC?opendocument&year={i}"));
                 var newsElements = document.QuerySelectorAll("p a");
