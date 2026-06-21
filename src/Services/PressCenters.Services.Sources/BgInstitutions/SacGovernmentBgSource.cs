@@ -9,7 +9,8 @@
 
     public class SacGovernmentBgSource : BaseSource
     {
-        public override string BaseUrl => "http://www.sac.government.bg/";
+        // Moved from the (now dead) www.sac.government.bg to sac.justice.bg -- same Lotus Domino site/markup.
+        public override string BaseUrl => "https://sac.justice.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("pages/bg/newsreel", "p a", "/news/", count: 5);

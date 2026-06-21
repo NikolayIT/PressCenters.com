@@ -8,8 +8,8 @@
     public class SacGovernmentBgSourceTests
     {
         [Theory]
-        [InlineData("http://www.sac.government.bg/news/bg/2021113-1", "2021113-1")]
-        [InlineData("http://www.sac.government.bg/news/bg/2010331-0", "2010331-0")]
+        [InlineData("https://sac.justice.bg/news/bg/2021113-1", "2021113-1")]
+        [InlineData("https://sac.justice.bg/news/bg/2010331-0", "2010331-0")]
         public void ExtractIdFromUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new SacGovernmentBgSource();
@@ -20,7 +20,7 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "http://www.sac.government.bg/news/bg/20131221-0";
+            const string NewsUrl = "https://sac.justice.bg/news/bg/20131221-0";
             var provider = new SacGovernmentBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
@@ -29,14 +29,14 @@
             Assert.Contains("В знак на благодарност, българската делегация връчи почетен плакет и алманах със 100 годишната история на Върховния административен съд на Република България.", news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
             Assert.DoesNotContain("84a98da63f64ee144225814500483d3e/body/0.B9A", news.Content);
-            Assert.Equal("http://www.sac.government.bg/home.nsf/9a2be833279bc3dcc2257beb0020cf53/84a98da63f64ee144225814500483d3e/body/0.B9A?OpenElement&FieldElemFormat=jpg", news.ImageUrl);
+            Assert.Equal("https://sac.justice.bg/home.nsf/9a2be833279bc3dcc2257beb0020cf53/84a98da63f64ee144225814500483d3e/body/0.B9A?OpenElement&FieldElemFormat=jpg", news.ImageUrl);
             Assert.Equal("20131221-0", news.RemoteId);
         }
 
         [Fact]
         public void ParseRemoteNewsWithoutImageShouldWorkCorrectly()
         {
-            const string NewsUrl = "http://www.sac.government.bg/news/bg/2021114-1";
+            const string NewsUrl = "https://sac.justice.bg/news/bg/2021114-1";
             var provider = new SacGovernmentBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
