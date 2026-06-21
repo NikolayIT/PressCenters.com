@@ -139,6 +139,11 @@ source test class typically has:
 
 Test stack: xUnit (xunit.v3) + Moq.
 
+When a source test fails or a source stops producing news, **triage before "fixing"** — most "dead"
+sources are actually reachable (CMS migration, changed listing URL, HTTP/2-only anti-bot, or just quiet),
+not offline. See `src/Services/PressCenters.Services.Sources/TROUBLESHOOTING.md` for the diagnostic
+playbook (reachability layers, HTTP/2 vs HTTP/1.1, relay/TLS gotchas, WordPress/Elementor parsing).
+
 ## Code style
 
 StyleCop.Analyzers is enabled solution-wide (`Rules.ruleset`, `stylecop.json`, `Settings.StyleCop`).
