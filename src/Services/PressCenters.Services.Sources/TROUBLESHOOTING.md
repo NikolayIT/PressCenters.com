@@ -42,27 +42,38 @@ Gotchas:
 - **DvParliament** broke because `dv.parliament.bg` started blocking the prod egress IP (the live issue
   advanced while prod froze) — fixed by `UseProxy`.
 
-## 3. It is almost never the TLS cipher fingerprint
+## 3. It is almost never the TLS cipher fingerprint — it's HTTP version + runtime + egress
 
 Schannel `curl.exe` (same TLS library as .NET) reaches the sites that "block .NET", so the cipher/JA3
-fingerprint is **not** the cause. The real causes seen:
+fingerprint is **not** the cause. Three things actually matter and they compound:
 
-- **HTTP/2 vs HTTP/1.1** — `bfunion.bg` returns **403 on HTTP/1.1, 200 on HTTP/2**. `ReadStringFromUrl`
-  now defaults to HTTP/2 (`DefaultRequestVersion = Version20`, `RequestVersionOrLower` so it falls back).
-- **IP / deep block** — **MinFin**, **Ciaf** return 403 on *both* H2 and H1.1, even to OpenSSL curl →
-  genuinely blocked; needs a **residential proxy** (infra, not code).
-- **SSL / cert** — **Gallup** returns an SSL handshake error → site-side certificate problem.
+- **HTTP/2 vs HTTP/1.1** — opt in per source via `UseHttp2` (default is HTTP/1.1). Some anti-bot reject
+  HTTP/1.1 from non-browser clients (`bfunion.bg`: 403 on 1.1, 200 on 2.0); others reject .NET's HTTP/2
+  fingerprint and want 1.1. It's opt-in, not global, because of that split.
+- **Runtime fingerprint (net10.0)** — net10.0's `HttpClient` is blocked by some sites that **older .NET
+  and curl reach**. So verify reachability with the **actual net10.0 source test, not a PowerShell probe**
+  — PowerShell (older runtime) returned 200 for mon.bg/minfin/bfunion/mvr while net10.0 got 403.
+- **Egress** — when net10.0-direct is blocked, the **Cloudflare relay reaches the site but accepts .NET
+  only over HTTP/2**. So `UseProxy + UseHttp2` *together* is the unlock that revived **Mon, MinFin,
+  Bfunion, Mvr** (Azure relays are IP-blocked by these sites; the Cloudflare worker needs h2).
 
-To classify a 403 fast (PowerShell): build an `HttpRequestMessage`, set `.Version = 2.0` then `1.1` with
-`VersionPolicy = RequestVersionExact`, and compare. 200 on H2 only → HTTP/2 fix. 403 on both → residential
-proxy. SSL error → cert issue.
+Still genuinely stuck (no net10.0 path — would need a residential proxy / real browser):
+- **Ciaf** (`caciaf.bg`) — 403 to direct *and* the Cloudflare relay.
+- **Ime** (`ime.bg`) — Cloudflare bot-management: direct 403, and the Cloudflare relay gets a **202
+  challenge** (worker → Cloudflare-site), Azure relays 403.
+- **Gallup** — SSL handshake / 525 → site-side certificate problem.
+
+To classify fast, run the **source's own test** (net10.0): 403 → add `UseHttp2`; still 403 → add
+`UseProxy` (Cloudflare relay + h2); 403 even via the relay, or a 202/SSL error → stuck, needs new egress.
 
 ## 4. "Stale in prod but tests pass" — quiet vs. changed listing
 
 - **Bivol / IsBgNet** were stale but actually **current** — prod already held the site's newest item;
   they're just quiet (compare the site's latest article date/id to the prod `MAX(CreatedOn)` / latest
   `RemoteId` before touching anything).
-- **Mon / Mvr / Ime** are reachable from .NET but their listing URLs 404 → the site changed → rewrite.
+- **Mon / Mvr / Bfunion / MinFin** combined *both* problems — changed markup **and** a net10.0-direct
+  block — so each needed a parser rewrite **plus** `UseProxy + UseHttp2` (§3). Don't stop at the first
+  cause. **DvParliament** was the opposite: markup unchanged, pure egress block → just `UseProxy`.
 
 ## Quick checklist
 
