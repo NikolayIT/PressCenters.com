@@ -3,6 +3,7 @@
     using System;
     using System.IO;
     using System.Linq;
+    using System.Net;
     using System.Net.Http;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
@@ -111,23 +112,53 @@
                 return false;
             }
 
-            string alternativeImageUrl = imageUrl;
-            if (useProxy)
-            {
-                imageUrl = new Uri(imageUrl).GetLeftPart(UriPartial.Query); // Remove hash fragment
-                imageUrl = ProxyUrlBuilder.Wrap(imageUrl).Replace("+", "%20");
-            }
+            var directUrl = new Uri(imageUrl).GetLeftPart(UriPartial.Query); // Remove hash fragment
 
             using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(120), };
+
+            // Prefer HTTP/2 like the page fetch, and fail over across the relays: some image hosts
+            // (e.g. minfin.bg) block this egress directly but answer the Cloudflare relay over HTTP/2,
+            // and the relays are not interchangeable.
+            client.DefaultRequestVersion = HttpVersion.Version20;
+            client.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrLower;
             client.DefaultRequestHeaders.Add("User-Agent", GlobalConstants.DefaultUserAgent);
-            var result = await client.GetAsync(imageUrl);
-            if (!result.IsSuccessStatusCode)
+
+            HttpResponseMessage result = null;
+            if (useProxy)
             {
-                result = await client.GetAsync(alternativeImageUrl);
-                if (!result.IsSuccessStatusCode)
+                foreach (var host in GlobalConstants.ProxyHosts.OrderBy(_ => Guid.NewGuid()))
+                {
+                    try
+                    {
+                        var candidate = await client.GetAsync(ProxyUrlBuilder.WrapWith(directUrl, host).Replace("+", "%20"));
+                        if (candidate.IsSuccessStatusCode)
+                        {
+                            result = candidate;
+                            break;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // Relay host unreachable -- try the next one.
+                    }
+                }
+            }
+
+            if (result == null || !result.IsSuccessStatusCode)
+            {
+                try
+                {
+                    result = await client.GetAsync(directUrl);
+                }
+                catch (Exception)
                 {
                     return false;
                 }
+            }
+
+            if (!result.IsSuccessStatusCode)
+            {
+                return false;
             }
 
             var imageBytes = await result.Content.ReadAsByteArrayAsync();
