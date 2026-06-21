@@ -1,4 +1,4 @@
-﻿namespace PressCenters.Services.Sources.BgInstitutions
+namespace PressCenters.Services.Sources.BgInstitutions
 {
     using System;
     using System.Collections.Generic;
@@ -13,20 +13,21 @@
     {
         public override string BaseUrl { get; } = "https://bfunion.bg/";
 
+        // bfunion.bg 403s .NET's direct fetch (net10.0 fingerprint); the Cloudflare relay reaches it, and
+        // that relay accepts .NET only over HTTP/2.
+        public override bool UseProxy => true;
+
+        public override bool UseHttp2 => true;
+
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications(
-                $"archive/{DateTime.UtcNow.Year}/{DateTime.UtcNow.Month}/0/0",
-                ".newsItem .entry-title a",
-                count: 5,
-                throwOnEmpty: false);
+            this.GetPublications(string.Empty, ".heroItem a, .infoArticle a, .infoItem a", "/news/", 5, throwOnEmpty: false);
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            for (var i = 40000; i <= 46260; i++)
+            for (var i = 52000; i >= 40000; i--)
             {
                 var remoteNews = this.GetPublication($"{this.BaseUrl}news/{i}/0");
-                if (remoteNews == null || remoteNews.PostDate.Date == DateTime.UtcNow.Date
-                                       || remoteNews.PostDate.Date == DateTime.UtcNow.AddDays(-1).Date)
+                if (remoteNews == null)
                 {
                     continue;
                 }
@@ -44,7 +45,7 @@
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            var titleElement = document.QuerySelector(".post-content .entry-title");
+            var titleElement = document.QuerySelector("h3.big");
             if (titleElement == null)
             {
                 return null;
@@ -52,21 +53,26 @@
 
             var title = titleElement.TextContent.Trim();
 
-            var timeElement = document.QuerySelector(".post-content .date");
+            var timeElement = document.QuerySelector(".introTop__inner-links p");
             var timeAsString = timeElement?.TextContent?.Trim();
             if (string.IsNullOrWhiteSpace(timeAsString))
             {
                 return null;
             }
 
-            var time = DateTime.ParseExact(timeAsString, "dd MMMM yyyy HH:mm", new CultureInfo("bg-BG"));
+            var time = DateTime.ParseExact(timeAsString, "d MMMM yyyy HH:mm", new CultureInfo("bg-BG"));
 
-            var imageElement = document.QuerySelector(".entry-thumbnail img");
-            var imageUrl = imageElement?.GetAttribute("src");
+            var imageElement = document.QuerySelector("meta[property='og:image']");
+            var imageUrl = imageElement?.GetAttribute("content");
 
-            var contentElement = document.QuerySelector(".tr-details");
+            var contentElement = document.QuerySelector(".introArticle");
+            if (contentElement == null)
+            {
+                return null;
+            }
+
             this.NormalizeUrlsRecursively(contentElement);
-            var content = contentElement?.InnerHtml;
+            var content = contentElement.InnerHtml.Trim();
 
             return new RemoteNews(title, content, time, imageUrl);
         }
