@@ -1,4 +1,4 @@
-﻿namespace PressCenters.Services.Sources.Ministries
+namespace PressCenters.Services.Sources.Ministries
 {
     using System;
     using System.Collections.Generic;
@@ -13,15 +13,26 @@
     {
         public override string BaseUrl { get; } = "https://www.mon.bg/";
 
+        // mon.bg blocks .NET's direct fetch and the Azure relay IPs; only the Cloudflare relay reaches it,
+        // and that relay needs HTTP/2.
+        public override bool UseProxy => true;
+
+        public override bool UseHttp2 => true;
+
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("bg/news", ".col-md-9 .news-description a", "bg/news", 5);
+            this.GetPublications("novini", "a.card-link", "/news/", 5);
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
             for (var i = 1; i <= 300; i++)
             {
-                var news = this.GetPublications($"bg/news?p={i}", ".col-md-9 .news-description a", "bg/news");
+                var news = this.GetPublications($"novini/page/{i}", "a.card-link", "/news/", throwOnEmpty: false);
                 Console.WriteLine($"Page {i} => {news.Count} news");
+                if (news.Count == 0)
+                {
+                    break;
+                }
+
                 foreach (var remoteNews in news)
                 {
                     yield return remoteNews;
@@ -31,30 +42,31 @@
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            var titleElement = document.QuerySelector(".col-md-9.content-center h3");
+            var titleElement = document.QuerySelector("h1.post-title");
             if (titleElement == null)
             {
                 return null;
             }
 
+            // The site renders titles in all-caps; normalise to title case (matches the legacy articles).
             var title = new CultureInfo("bg-BG", false).TextInfo.ToTitleCase(
-                titleElement?.TextContent?.ToLower() ?? string.Empty);
+                (titleElement.TextContent?.Trim() ?? string.Empty).ToLower());
 
-            var timeElement = document.QuerySelector(".col-md-9.content-center p");
+            var timeElement = document.QuerySelector(".post-date");
             var timeAsString = timeElement?.TextContent?.Trim();
-            var time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
+            var time = DateTime.ParseExact(timeAsString, "d MMMM yyyy", new CultureInfo("bg-BG"));
 
-            var imageElement = document.QuerySelector(".col-md-9.content-center img");
+            var imageElement = document.QuerySelector(".post-thumbnail img");
             var imageUrl = imageElement?.GetAttribute("src");
 
-            var socialMediaShareElement = document.QuerySelector(".col-md-9.content-center div");
-            var contentElement = document.QuerySelector(".col-md-9.content-center");
-            contentElement.RemoveRecursively(titleElement);
-            contentElement.RemoveRecursively(timeElement);
-            contentElement.RemoveRecursively(imageElement);
-            contentElement.RemoveRecursively(socialMediaShareElement);
+            var contentElement = document.QuerySelector(".entry-content");
+            if (contentElement == null)
+            {
+                return null;
+            }
+
             this.NormalizeUrlsRecursively(contentElement);
-            var content = contentElement?.InnerHtml;
+            var content = contentElement.InnerHtml.Trim();
 
             return new RemoteNews(title, content, time, imageUrl);
         }
