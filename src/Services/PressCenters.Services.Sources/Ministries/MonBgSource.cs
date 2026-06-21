@@ -52,8 +52,15 @@ namespace PressCenters.Services.Sources.Ministries
             var title = new CultureInfo("bg-BG", false).TextInfo.ToTitleCase(
                 (titleElement.TextContent?.Trim() ?? string.Empty).ToLower());
 
+            // The date is usually "18 юни 2026" but some posts append a time, e.g. "24 февруари 2026 (15:00 )";
+            // keep only the date part before the optional "(".
             var timeElement = document.QuerySelector(".post-date");
-            var timeAsString = timeElement?.TextContent?.Trim();
+            var timeAsString = timeElement?.TextContent?.Split('(')[0].Trim();
+            if (string.IsNullOrWhiteSpace(timeAsString))
+            {
+                return null;
+            }
+
             var time = DateTime.ParseExact(timeAsString, "d MMMM yyyy", new CultureInfo("bg-BG"));
 
             var imageElement = document.QuerySelector(".post-thumbnail img");

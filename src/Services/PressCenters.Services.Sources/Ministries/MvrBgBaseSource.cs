@@ -30,7 +30,7 @@ namespace PressCenters.Services.Sources.Ministries
         {
             for (var i = 1; i <= this.NewsListPagesCount; i++)
             {
-                var news = this.GetPublications($"{this.NewsListUrl}?page={i}", this.NewsLinkSelector, throwOnEmpty: false);
+                var news = this.GetPublications($"{this.NewsListUrl}?p={i}", this.NewsLinkSelector, throwOnEmpty: false);
                 Console.WriteLine($"№{i} => {news.Count} news");
                 if (news.Count == 0)
                 {

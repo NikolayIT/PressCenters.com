@@ -3,6 +3,8 @@ namespace PressCenters.Services.Sources.Ministries
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
+    using System.Text.RegularExpressions;
 
     using AngleSharp.Dom;
 
@@ -23,16 +25,15 @@ namespace PressCenters.Services.Sources.Ministries
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            for (var i = 1; i <= 605; i++)
+            // The site ignores the ?p= listing pagination, so walk article ids descending from the newest id
+            // currently on the listing (reuses the relay-aware fetch path via GetPublication).
+            var listingHtml = this.ReadStringFromUrl($"{this.BaseUrl}bg/news");
+            var maxId = Regex.Matches(listingHtml, @"/bg/news/(\d+)")
+                .Select(m => int.Parse(m.Groups[1].Value)).DefaultIfEmpty(0).Max();
+            for (var i = maxId; i >= 1; i--)
             {
-                var news = this.GetPublications($"bg/news?p={i}", ".news_list div a", "bg/news", throwOnEmpty: false);
-                Console.WriteLine($"Page {i} => {news.Count} news");
-                if (news.Count == 0)
-                {
-                    break;
-                }
-
-                foreach (var remoteNews in news)
+                var remoteNews = this.GetPublication($"{this.BaseUrl}bg/news/{i}");
+                if (remoteNews != null)
                 {
                     yield return remoteNews;
                 }
