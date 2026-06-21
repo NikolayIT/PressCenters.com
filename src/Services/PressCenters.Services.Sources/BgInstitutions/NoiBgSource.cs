@@ -39,17 +39,20 @@
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
             var titleElement = document.QuerySelector("#main-content h1");
-            var title = titleElement.TextContent.Trim();
-
-            var timeAsString = document.QuerySelector("meta[property='article:published_time']").GetAttribute("content");
-            var time = DateTime.Parse(timeAsString, CultureInfo.InvariantCulture);
-
-            var imageElement = document.QuerySelector("meta[property='og:image']");
-            var imageUrl = imageElement?.GetAttribute("content");
-
+            var timeElement = document.QuerySelector("meta[property='article:published_time']");
             var contentElement = document.QuerySelector(".post-content");
+            if (titleElement == null || timeElement == null || contentElement == null)
+            {
+                // A malformed/non-article page (e.g. an old archived item) should be skipped, not crash the run.
+                return null;
+            }
+
+            var title = titleElement.TextContent.Trim();
+            var time = DateTime.Parse(timeElement.GetAttribute("content"), CultureInfo.InvariantCulture);
+            var imageUrl = document.QuerySelector("meta[property='og:image']")?.GetAttribute("content");
+
             this.NormalizeUrlsRecursively(contentElement);
-            var content = contentElement?.InnerHtml;
+            var content = contentElement.InnerHtml;
 
             return new RemoteNews(title, content, time, imageUrl);
         }
