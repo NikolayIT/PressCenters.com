@@ -1,24 +1,25 @@
-﻿namespace PressCenters.Services.Sources.Ministries
+namespace PressCenters.Services.Sources.Ministries
 {
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.Linq;
     using System.Net;
-    using System.Net.Http;
 
     using AngleSharp.Dom;
-    using AngleSharp.Html.Parser;
 
     public abstract class MvrBgBaseSource : BaseSource
     {
         public override bool UseProxy => true;
 
+        // mvr.bg blocks .NET's direct fetch and the Azure relay IPs; only the Cloudflare relay reaches it,
+        // and that relay accepts .NET only over HTTP/2.
+        public override bool UseHttp2 => true;
+
         public override string BaseUrl { get; } = "https://www.mvr.bg/";
 
         public abstract string NewsListUrl { get; }
 
-        public abstract string NewsLinkSelector { get; }
+        public virtual string NewsLinkSelector => "a.card__title";
 
         public abstract int NewsListPagesCount { get; }
 
@@ -27,26 +28,15 @@
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            var address = $"{this.BaseUrl}{this.NewsListUrl}";
-            var parser = new HtmlParser();
-            var httpClient = new HttpClient();
             for (var i = 1; i <= this.NewsListPagesCount; i++)
             {
-                var response = httpClient.PostAsync(
-                    address,
-                    new FormUrlEncodedContent(
-                        new List<KeyValuePair<string, string>>
-                        {
-                            new KeyValuePair<string, string>("page_no", i.ToString()),
-                            new KeyValuePair<string, string>("page_size", "24"),
-                        })).GetAwaiter().GetResult();
-                var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                var document = parser.ParseDocument(content);
-                var links = document.QuerySelectorAll(this.NewsLinkSelector)
-                    .Select(x => this.NormalizeUrl(x.Attributes["href"].Value)).Where(x => !new Uri(x).PathAndQuery.Contains(":")).Distinct()
-                    .ToList();
-                var news = links.Select(this.GetPublication).Where(x => x != null).ToList();
-                Console.WriteLine($"№{i} => {news.Count} news ({news.DefaultIfEmpty().Min(x => x?.PostDate)} - {news.DefaultIfEmpty().Max(x => x?.PostDate)})");
+                var news = this.GetPublications($"{this.NewsListUrl}?page={i}", this.NewsLinkSelector, throwOnEmpty: false);
+                Console.WriteLine($"№{i} => {news.Count} news");
+                if (news.Count == 0)
+                {
+                    break;
+                }
+
                 foreach (var remoteNews in news)
                 {
                     yield return remoteNews;
@@ -56,14 +46,14 @@
 
         internal override string ExtractIdFromUrl(string url)
         {
-            // Get last 2 url segments
+            // Last 2 url segments (e.g. "новини/91393"), matching the historical RemoteId format.
             var uri = new Uri(url.Trim().Trim('/'));
             return WebUtility.UrlDecode(uri.Segments[^2] + uri.Segments[^1]);
         }
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            var titleElement = document.QuerySelector(".article__description h1");
+            var titleElement = document.QuerySelector("h1.page-title");
             if (titleElement == null)
             {
                 return null;
@@ -71,47 +61,27 @@
 
             var title = titleElement.TextContent.Trim();
 
-            var timeElement = document.QuerySelector(".article__description h5");
+            var timeElement = document.QuerySelector(".page-content__header small");
             var timeAsString = timeElement?.TextContent?.Trim();
-            if (!DateTime.TryParseExact(timeAsString, "dd MMM yyyy", CultureInfo.GetCultureInfo("bg-BG"), DateTimeStyles.None, out var time))
+            if (string.IsNullOrWhiteSpace(timeAsString))
             {
-                timeElement = document.QuerySelector(".article__description .timestamp");
-                timeAsString = timeElement?.TextContent?.Trim();
-
-                if (!DateTime.TryParseExact(timeAsString, "dd MMMM yyyy | HH:mm", CultureInfo.GetCultureInfo("bg-BG"), DateTimeStyles.None, out time))
-                {
-                    time = DateTime.ParseExact(timeAsString, "dd MMMM yyyy", CultureInfo.GetCultureInfo("bg-BG"));
-                }
+                return null;
             }
 
-            var imageElement = document.QuerySelector("#image_source");
-            var imageUrl = imageElement?.GetAttribute("src");
+            var time = DateTime.ParseExact(timeAsString, "d MMMM yyyy", CultureInfo.GetCultureInfo("bg-BG"));
 
-            // Try to get exact time
-            var modifiedTimeElement = document.QuerySelector(".article__container .timestamp");
-            var modifiedTimeText = modifiedTimeElement?.TextContent?.Trim();
-            if (!string.IsNullOrWhiteSpace(modifiedTimeText))
+            // The lead image carries a ?w= resize query; drop it to store the original.
+            var imageElement = document.QuerySelector(".page-gallery img");
+            var imageUrl = this.NormalizeUrl(imageElement?.GetAttribute("src")?.Split('?')[0]);
+
+            var contentElement = document.QuerySelector(".page-content");
+            if (contentElement == null)
             {
-                if (DateTime.TryParseExact(
-                    modifiedTimeText,
-                    "dd MMMM yyyy | HH:mm",
-                    CultureInfo.GetCultureInfo("bg-BG"),
-                    DateTimeStyles.AllowWhiteSpaces,
-                    out var modifiedTime))
-                {
-                    if (time.Date == modifiedTime.Date)
-                    {
-                        time = modifiedTime;
-                    }
-                }
+                return null;
             }
 
-            var contentElement = document.QuerySelector(".article__container");
-            contentElement.RemoveRecursively(timeElement);
-            contentElement.RemoveRecursively(document.QuerySelector(".article__container div.row"));
-            contentElement.RemoveRecursively(document.QuerySelector(".article__container script"));
-            contentElement.RemoveRecursively(document.QuerySelector(".article__container h1")); // title
-            contentElement.RemoveRecursively(document.QuerySelector(".article__container .pull-right"));
+            contentElement.RemoveRecursively(document.QuerySelector(".page-gallery"));
+            contentElement.RemoveRecursively(document.QuerySelector(".share-widget"));
             this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement.InnerHtml.Trim();
 
