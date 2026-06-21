@@ -152,35 +152,56 @@ namespace PressCenters.Services.Sources
         protected string ReadStringFromUrl(string url)
         {
             url = new Uri(url).GetLeftPart(UriPartial.Query); // Remove hash fragment
-            if (this.UseProxy && !this.DisableProxy)
-            {
-                url = ProxyUrlBuilder.Wrap(url);
-            }
 
             // Request and transparently decompress gzip/brotli. Some sites (e.g. bnb.bg) only serve their
             // real markup when the client advertises Accept-Encoding the way a browser does; without it they
             // return a near-empty shell, which made the scraper see no content. Decompression happens before
             // any custom Encoding decode below, so windows-1251 sources are unaffected.
-            using var handler = new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All };
-            using var httpClient = new HttpClient(handler);
-            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", GlobalConstants.DefaultUserAgent);
-            if (this.Headers != null)
+            string Fetch(string target)
             {
-                foreach (var (header, value) in this.Headers)
+                using var handler = new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All };
+                using var httpClient = new HttpClient(handler);
+                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", GlobalConstants.DefaultUserAgent);
+                if (this.Headers != null)
                 {
-                    httpClient.DefaultRequestHeaders.TryAddWithoutValidation(header, value);
+                    foreach (var (header, value) in this.Headers)
+                    {
+                        httpClient.DefaultRequestHeaders.TryAddWithoutValidation(header, value);
+                    }
+                }
+
+                using var response = httpClient.GetAsync(target).GetAwaiter().GetResult();
+                response.EnsureSuccessStatusCode();
+                if (this.Encoding != null)
+                {
+                    var bytes = response.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
+                    return this.Encoding.GetString(bytes);
+                }
+
+                return response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            }
+
+            if (!this.UseProxy || this.DisableProxy || GlobalConstants.ProxyHosts.Length == 0)
+            {
+                return Fetch(url);
+            }
+
+            // Relay egress IPs differ in which sites they can reach (some get 403/404-blocked), so try the
+            // hosts in random order and fail over to the next on any error rather than giving up on the first.
+            Exception lastError = null;
+            foreach (var host in GlobalConstants.ProxyHosts.OrderBy(_ => Guid.NewGuid()))
+            {
+                try
+                {
+                    return Fetch(ProxyUrlBuilder.WrapWith(url, host));
+                }
+                catch (Exception error)
+                {
+                    lastError = error;
                 }
             }
 
-            using var response = httpClient.GetAsync(url).GetAwaiter().GetResult();
-            response.EnsureSuccessStatusCode();
-            if (this.Encoding != null)
-            {
-                var bytes = response.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
-                return this.Encoding.GetString(bytes);
-            }
-
-            return response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            throw lastError ?? new HttpRequestException("No relay host could fetch the URL.");
         }
 
         // TODO: Normalize using current url as base url instead of this.BaseUrl?
