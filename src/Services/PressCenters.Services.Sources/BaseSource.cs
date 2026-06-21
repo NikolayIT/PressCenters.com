@@ -161,6 +161,12 @@ namespace PressCenters.Services.Sources
             {
                 using var handler = new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All };
                 using var httpClient = new HttpClient(handler);
+
+                // Prefer HTTP/2 like a browser. Some anti-bot setups reject HTTP/1.1 from non-browser clients
+                // (e.g. bfunion.bg: 403 on HTTP/1.1, 200 on HTTP/2). RequestVersionOrLower falls back to 1.1
+                // for servers that don't offer h2, so it's safe for the rest.
+                httpClient.DefaultRequestVersion = HttpVersion.Version20;
+                httpClient.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrLower;
                 httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", GlobalConstants.DefaultUserAgent);
                 if (this.Headers != null)
                 {
