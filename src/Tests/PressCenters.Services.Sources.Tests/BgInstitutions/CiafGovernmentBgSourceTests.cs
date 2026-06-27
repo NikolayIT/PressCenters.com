@@ -7,12 +7,11 @@
 
     using Xunit;
 
-    [Trait("Category", "ExternallyBlocked")]
     public class CiafGovernmentBgSourceTests
     {
         [Theory]
-        [InlineData("https://www.caciaf.bg/aktualno/novini/administrativni-sydili-sht-a-potvyrdiha-re-sh-eni-ja-na-kpkonpi-za-konflikt-na-interesi/", "administrativni-sydili-sht-a-potvyrdiha-re-sh-eni-ja-na-kpkonpi-za-konflikt-na-interesi")]
-        [InlineData("https://www.caciaf.bg/aktualno/novini/kpkonpi-vnas-ja-iskove-za-otnemane-na-imu-sht-estvo-na-stojnost-nad-7-mln-lv", "kpkonpi-vnas-ja-iskove-za-otnemane-na-imu-sht-estvo-na-stojnost-nad-7-mln-lv")]
+        [InlineData("https://ciaf.bg/bg/aktualno/novini/konpi-postigna-uspeh-po-tri-dela-za-otnemane-na-nezakonno-pridobito-imu-sht-estvo", "konpi-postigna-uspeh-po-tri-dela-za-otnemane-na-nezakonno-pridobito-imu-sht-estvo")]
+        [InlineData("https://ciaf.bg/bg/aktualno/novini/na-vnimanieto-na-chlenovete-na-cik/", "na-vnimanieto-na-chlenovete-na-cik")]
         public void ExtractIdFromUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new CiafGovernmentBgSource();
@@ -23,37 +22,29 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://www.caciaf.bg/aktualno/novini/zapo-ch-vat-studentski-stajove-po-iniciativa-akademi-ja-antikorupci-ja";
+            const string NewsUrl = "https://ciaf.bg/bg/aktualno/novini/nov-bylgarski-universitet-i-komisijata-za-otnemane-na-nezakonno-pridobitoto-imushtestvo-podpisaha-memorandum-za-sytrudnichestvo";
             var provider = new CiafGovernmentBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Започват Студентски Стажове По Инициатива „Академия Антикорупция“", news.Title);
-            Assert.Equal("zapo-ch-vat-studentski-stajove-po-iniciativa-akademi-ja-antikorupci-ja", news.RemoteId);
-            Assert.Equal(new DateTime(2020, 10, 1).Date, news.PostDate.Date);
-            Assert.Contains("Днес, 1 октомври 2020 г., председателят на Комисията за борба", news.Content);
-            Assert.Contains("Предвижда се стажът на първата група студенти да започне на 1 ноември 2020 г.", news.Content);
-            Assert.DoesNotContain("thumb_1008x437_size_800x600_5f75af76821ef", news.Content);
-            Assert.DoesNotContain("Принтирай", news.Content);
-            Assert.DoesNotContain("Изпрати на имейл", news.Content);
-            Assert.Equal("https://www.caciaf.bg/web/files/news/519/main_image/thumb_1008x437_size_800x600_5f75af76821ef.jpg", news.ImageUrl);
+            Assert.Equal("Нов български университет и Комисията за отнемане на незаконно придобитото имущество подписаха меморандум за сътрудничество", news.Title);
+            Assert.Equal("nov-bylgarski-universitet-i-komisijata-za-otnemane-na-nezakonno-pridobitoto-imushtestvo-podpisaha-memorandum-za-sytrudnichestvo", news.RemoteId);
+            Assert.Equal(new DateTime(2026, 6, 19).Date, news.PostDate.Date);
+            Assert.Contains("Днес Нов български университет (НБУ) и Комисията за отнемане на незаконно придобитото имущество (КОНПИ) подписаха Меморандум за сътрудничество", news.Content);
+            Assert.Contains("реализация на студентите в областта на правото и публичните политики.", news.Content);
+            Assert.Equal("https://ciaf.bg/web/files/news/687/main_image/thumb_1008x437_20260619_134922.jpg", news.ImageUrl);
         }
 
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectlyWithoutImage()
         {
-            const string NewsUrl = "https://www.caciaf.bg/aktualno/novini/na-vnimanieto-na-chlenovete-na-cik";
+            const string NewsUrl = "https://ciaf.bg/bg/aktualno/novini/komisijata-za-otnemane-na-nezakonno-pridobitoto-imushtestvo-provede-onlajn-rabotna-sreshta-s-predstaviteli-na-otdela-za-izpylnenie-na-reshenijata-na-esp-ch-kym-syveta-na-evropa";
             var provider = new CiafGovernmentBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("На Вниманието На Членовете На Цик", news.Title);
-            Assert.Equal("na-vnimanieto-na-chlenovete-na-cik", news.RemoteId);
-            Assert.Equal(new DateTime(2021, 6, 10).Date, news.PostDate.Date);
-            Assert.Contains("КПКОНПИ прие решение /протокол № 998 от 19.05.2021", news.Content);
-            Assert.Contains("от членовете на ЦИК се счита датата на назначаване с Указ № 131/12.05.2021 г.", news.Content);
-            Assert.DoesNotContain("placeholder-1008x437", news.Content);
-            Assert.DoesNotContain("Принтирай", news.Content);
-            Assert.DoesNotContain("Изпрати на имейл", news.Content);
-            Assert.Equal("https://www.caciaf.bg/web/frontend/images/placeholder/placeholder-1008x437.jpg", news.ImageUrl);
+            Assert.Equal("Комисията за отнемане на незаконно придобитото имущество проведе онлайн работна среща с представители на Отдела за изпълнение на решенията на ЕСПЧ към Съвета на Европа", news.Title);
+            Assert.Equal(new DateTime(2026, 6, 26).Date, news.PostDate.Date);
+            Assert.Contains("Днес Комисията за отнемане на незаконно придобитото имущество проведе онлайн работна среща", news.Content);
+            Assert.Equal("https://ciaf.bg/web/frontend/images/placeholder/placeholder-1008x437.jpg", news.ImageUrl);
         }
 
         [Fact]

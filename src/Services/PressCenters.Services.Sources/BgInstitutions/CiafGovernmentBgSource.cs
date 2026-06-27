@@ -2,28 +2,37 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
 
     using AngleSharp.Dom;
 
     /// <summary>
-    /// Комисия за противодействие на корупцията и за отнемане на незаконно придобитото имущество.
+    /// Комисия за отнемане на незаконно придобитото имущество (КОНПИ). The former КПКОНПИ was split into two
+    /// bodies: the asset-forfeiture commission moved to ciaf.bg (this source), the anti-corruption КПК to
+    /// cacbg.bg. ciaf.bg keeps the same CMS/template as the old caciaf.bg site, just on the new domain under a
+    /// /bg language path, so the article markup (article.inner-block) is unchanged.
     /// </summary>
+    // TODO: Add a sibling source for the anti-corruption commission (КПК) at cacbg.bg -- the other half of the
+    // former КПКОНПИ -- once that site is back online. It is currently unreachable (the host does not respond;
+    // the TLS connection times out). When it is up, mirror this source: a new BaseSource subclass plus a row
+    // in SourcesSeeder.
     public class CiafGovernmentBgSource : BaseSource
     {
-        public override string BaseUrl => "https://www.caciaf.bg/";
-
-        public override bool UseProxy => true;
+        public override string BaseUrl => "https://ciaf.bg/";
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("aktualno/novini", "article.article a", count: 5);
+            this.GetPublications("bg/aktualno/novini", "article.article a", "aktualno/novini", 5);
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            for (var i = 1; i <= 46; i++)
+            for (var page = 1; page <= 100; page++)
             {
-                var news = this.GetPublications($"aktualno/novini?page={i}", "article.article a");
-                Console.WriteLine($"Page {i} => {news.Count} news");
+                var news = this.GetPublications($"bg/aktualno/novini?page={page}", "article.article a", "aktualno/novini", throwOnEmpty: false);
+                Console.WriteLine($"Page {page} => {news.Count} news");
+                if (news.Count == 0)
+                {
+                    yield break;
+                }
+
                 foreach (var remoteNews in news)
                 {
                     yield return remoteNews;
@@ -39,17 +48,29 @@
                 return null;
             }
 
-            var title = new CultureInfo("bg-BG", false).TextInfo.ToTitleCase(
-                titleElement.TextContent?.Trim()?.ToLower() ?? string.Empty);
+            // The site now serves natural sentence-case headlines (the old caciaf.bg site was all-caps, hence
+            // the previous ToTitleCase), so take the heading text as-is.
+            var title = titleElement.TextContent?.Trim();
 
             var timeElement = document.QuerySelector("article.inner-block time.inner-block__date");
-            var timeAsString = timeElement.Attributes["datetime"].Value;
+            var timeAsString = timeElement?.Attributes["datetime"]?.Value;
+            if (string.IsNullOrWhiteSpace(timeAsString))
+            {
+                return null;
+            }
+
             var time = DateTime.Parse(timeAsString);
 
             var contentElement = document.QuerySelector("article.inner-block div.text");
+            if (contentElement == null)
+            {
+                return null;
+            }
+
             this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement.InnerHtml.Trim();
 
+            // Articles without an own image fall back to a site placeholder image (kept, matching prior behaviour).
             var imageElement = document.QuerySelector("article.inner-block img");
             var imageUrl = imageElement?.GetAttribute("src");
 
