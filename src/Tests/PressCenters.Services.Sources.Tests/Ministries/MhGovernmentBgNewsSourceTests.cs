@@ -63,7 +63,10 @@
             Assert.Contains("Към 8 юни са съобщени общо 364 заболели от морбили лица у нас", news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
             Assert.Null(news.ImageUrl);
-            Assert.Equal(new DateTime(2026, 6, 8), news.PostDate);
+
+            // The ministry re-dated this weekly morbili report to 22 June 2026 (the article body still cites
+            // the 8 June figures); the parser reads the page's displayed .news-date, so track the new date.
+            Assert.Equal(new DateTime(2026, 6, 22), news.PostDate);
             Assert.Equal("epidemichna-obstanovka/4721", news.RemoteId);
         }
 
