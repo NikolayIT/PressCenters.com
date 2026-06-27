@@ -16,6 +16,8 @@
 
         public static string TwoFactorAuthentication => "TwoFactorAuthentication";
 
+        public static string ApiKey => "ApiKey";
+
         public static string IndexNavClass(ViewContext viewContext) => PageNavClass(viewContext, Index);
 
         public static string ChangePasswordNavClass(ViewContext viewContext) => PageNavClass(viewContext, ChangePassword);
@@ -25,6 +27,8 @@
         public static string PersonalDataNavClass(ViewContext viewContext) => PageNavClass(viewContext, PersonalData);
 
         public static string TwoFactorAuthenticationNavClass(ViewContext viewContext) => PageNavClass(viewContext, TwoFactorAuthentication);
+
+        public static string ApiKeyNavClass(ViewContext viewContext) => PageNavClass(viewContext, ApiKey);
 
         private static string PageNavClass(ViewContext viewContext, string page)
         {

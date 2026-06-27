@@ -1,0 +1,27 @@
+@page
+@model ApiKeyModel
+@{
+    ViewData["Title"] = "API key";
+    ViewData["ActivePage"] = ManageNavPages.ApiKey;
+}
+
+<h4>@ViewData["Title"]</h4>
+<partial name="_StatusMessage" for="StatusMessage" />
+<p>
+    Send this key in the <code>X-Api-Key</code> request header to
+    <code>@(PressCenters.Common.GlobalConstants.SystemBaseUrl)/api/main-news</code>. Keep it secret.
+</p>
+<div class="row">
+    <div class="col-md-8">
+        <div class="mb-3">
+            <label class="form-label">Your API key</label>
+            <div class="input-group">
+                <input id="api-key" class="form-control" value="@Model.ApiKey" readonly />
+                <button class="btn btn-outline-secondary" type="button" onclick="navigator.clipboard.writeText(document.getElementById('api-key').value)">Copy</button>
+            </div>
+        </div>
+        <form method="post" onsubmit="return confirm('Regenerate your API key? The current key will stop working immediately.');">
+            <button type="submit" class="btn btn-danger">Regenerate</button>
+        </form>
+    </div>
+</div>
