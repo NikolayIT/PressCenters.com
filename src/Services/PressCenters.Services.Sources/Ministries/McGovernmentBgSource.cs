@@ -19,14 +19,14 @@
         public override bool UseProxy => true;
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("новини/", "h4.elementor-heading-title a", "новини/", 5);
+            this.GetPublications("новини/", ".elementor-heading-title a", "новини/", 5);
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
             for (var page = 1; page <= 400; page++)
             {
                 var address = page == 1 ? "новини/" : $"новини/page/{page}/";
-                var news = this.GetPublications(address, "h4.elementor-heading-title a", "новини/", throwOnEmpty: false);
+                var news = this.GetPublications(address, ".elementor-heading-title a", "новини/", throwOnEmpty: false);
                 Console.WriteLine($"Page {page} => {news.Count} news");
                 if (news.Count == 0)
                 {
@@ -42,18 +42,17 @@
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            var title = document.QuerySelector("meta[property='og:title']")?.GetAttribute("content")?.Trim();
+            // The site dropped its OpenGraph/Twitter meta tags, so read the headline from <title>. It reads
+            // "{headline} – Министерство на културата на Република България"; strip that site suffix. The
+            // separator may be an en-dash or a hyphen and the headline itself can contain en-dashes, so anchor
+            // the strip on the ministry name rather than on the first dash.
+            var title = document.QuerySelector("title")?.TextContent?.Trim();
             if (string.IsNullOrWhiteSpace(title))
             {
                 return null;
             }
 
-            // og:title carries a " - Министерство на културата…" site suffix; drop it.
-            var suffixIndex = title.IndexOf(" - Министерство", StringComparison.Ordinal);
-            if (suffixIndex > 0)
-            {
-                title = title.Substring(0, suffixIndex).Trim();
-            }
+            title = Regex.Replace(title, @"\s*[-–]\s*Министерство на културата.*$", string.Empty).Trim();
 
             var dateText = document.QuerySelectorAll(".elementor-icon-box-title")
                 .Select(x => x.TextContent.Trim())
@@ -65,7 +64,8 @@
 
             var time = DateTime.ParseExact(dateText, "d.M.yyyy", CultureInfo.InvariantCulture);
 
-            var imageUrl = document.QuerySelector("meta[property='og:image']")?.GetAttribute("content");
+            // og:image is gone too; use the post's featured image (the lead image widget).
+            var imageUrl = document.QuerySelector(".elementor-widget-theme-post-featured-image img")?.GetAttribute("src");
 
             var contentElement = document.QuerySelector(".elementor-widget-theme-post-content");
             if (contentElement == null)
