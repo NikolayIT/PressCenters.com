@@ -56,7 +56,7 @@
             Assert.Equal("2", news.RemoteId);
         }
 
-        [Fact(Skip = "parliament.bg's /api/v1/front-news endpoint returns HTTP 500 for every count (their own news listing is broken site-wide). The article API (/api/v1/news/bg/{id}) and ParseDocument still work, so GetLatestPublications -- which is correct -- will resume returning results once they fix their backend.")]
+        [Fact]
         public void GetLatestPublicationsShouldReturnResults()
         {
             var provider = new ParliamentBgSource();
