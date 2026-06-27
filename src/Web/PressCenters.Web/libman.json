@@ -3,11 +3,19 @@
   "defaultProvider": "jsdelivr",
   "libraries": [
     {
-      "library": "jquery@3.7.1",
+      "library": "jquery@4.0.0",
       "destination": "wwwroot/lib/jquery/",
       "files": [
         "dist/jquery.min.js",
         "dist/jquery.js"
+      ]
+    },
+    {
+      "library": "jquery-migrate@4.0.2",
+      "destination": "wwwroot/lib/jquery-migrate/",
+      "files": [
+        "dist/jquery-migrate.min.js",
+        "dist/jquery-migrate.js"
       ]
     },
     {
