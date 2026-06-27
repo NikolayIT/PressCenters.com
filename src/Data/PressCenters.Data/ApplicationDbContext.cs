@@ -110,6 +110,16 @@
                 .HasForeignKey(e => e.UserId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<ApplicationUser>()
+                .Property(u => u.ApiKey)
+                .HasMaxLength(64);
+
+            // Unique per user; filtered so the transient NULLs before the backfill seeder runs are allowed.
+            builder.Entity<ApplicationUser>()
+                .HasIndex(u => u.ApiKey)
+                .IsUnique()
+                .HasFilter("[ApiKey] IS NOT NULL");
         }
 
         private static void SetIsDeletedQueryFilter<T>(ModelBuilder builder)

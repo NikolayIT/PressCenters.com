@@ -27,6 +27,7 @@
                               new RolesSeeder(),
                               new SourcesSeeder(),
                               new MainNewsSourcesSeeder(),
+                              new ApiKeysSeeder(),
                           };
 
             foreach (var seeder in seeders)
