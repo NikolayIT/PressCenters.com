@@ -25,6 +25,7 @@
         [InlineData("PressCenters.Services.Sources.MainNews.BtaBgMainNewsProvider", "bta.bg")]
         [InlineData("PressCenters.Services.Sources.MainNews.MediapoolBgMainNewsProvider", "mediapool.bg")]
         [InlineData("PressCenters.Services.Sources.MainNews.ApMainNewsProvider", "apnews.com")]
+        [InlineData("PressCenters.Services.Sources.MainNews.BnrBgMainNewsProvider", "bnr")]
         public void SeededProviderShouldReturnAValidMainNews(string typeName, string expectedHost)
         {
             var provider = ReflectionHelpers.GetInstance<BaseMainNewsProvider>(typeName);

@@ -38,6 +38,8 @@
                                           "PressCenters.Services.Sources.MainNews.MediapoolBgMainNewsProvider"),
                                       ("AP", "https://www.apnews.com",
                                           "PressCenters.Services.Sources.MainNews.ApMainNewsProvider"),
+                                      ("БНР", "https://bnr.bg",
+                                          "PressCenters.Services.Sources.MainNews.BnrBgMainNewsProvider"),
                                       /*("Reuters", "https://www.reuters.com",
                                           "PressCenters.Services.Sources.MainNews.ReutersMainNewsProvider"),*/
                                   };
