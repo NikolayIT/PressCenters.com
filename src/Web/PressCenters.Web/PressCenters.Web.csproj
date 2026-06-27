@@ -24,9 +24,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.9" />
     <PackageReference Include="LigerShark.WebOptimizer.Core" Version="3.0.477" />
-    <PackageReference Include="HtmlSanitizer" Version="9.1.923-beta" />
+    <PackageReference Include="HtmlSanitizer" Version="9.1.949-beta" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="3.1.2" />
-    <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="3.0.71" />
+    <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="3.0.114" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556" PrivateAssets="all">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
