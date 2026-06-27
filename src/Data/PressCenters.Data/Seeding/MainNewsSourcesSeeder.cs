@@ -40,6 +40,8 @@
                                           "PressCenters.Services.Sources.MainNews.ApMainNewsProvider"),
                                       ("БНР", "https://bnr.bg",
                                           "PressCenters.Services.Sources.MainNews.BnrBgMainNewsProvider"),
+                                      ("The Guardian", "https://www.theguardian.com",
+                                          "PressCenters.Services.Sources.MainNews.GuardianMainNewsProvider"),
                                       /*("Reuters", "https://www.reuters.com",
                                           "PressCenters.Services.Sources.MainNews.ReutersMainNewsProvider"),*/
                                   };
