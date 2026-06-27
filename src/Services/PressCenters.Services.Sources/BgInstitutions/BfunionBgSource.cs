@@ -19,8 +19,16 @@
 
         public override bool UseHttp2 => true;
 
+        // Each card now also carries a Facebook "share" link whose href embeds the article URL
+        // (…/sharer.php?u=https://bfunion.bg/news/{id}/0), so it survives the "/news/" filter and steals a
+        // slot; exclude those share anchors so only real article links are taken.
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications(string.Empty, ".heroItem a, .infoArticle a, .infoItem a", "/news/", 5, throwOnEmpty: false);
+            this.GetPublications(
+                string.Empty,
+                ".heroItem a:not([href*='facebook']), .infoArticle a:not([href*='facebook']), .infoItem a:not([href*='facebook'])",
+                "/news/",
+                5,
+                throwOnEmpty: false);
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
