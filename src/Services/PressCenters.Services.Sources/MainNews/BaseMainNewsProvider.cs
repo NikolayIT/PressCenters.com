@@ -19,13 +19,19 @@
 
         public IDocument GetDocument(string url)
         {
+            return new HtmlParser().ParseDocument(this.GetContent(url));
+        }
+
+        // Fetches the raw response body for url using the same transport rules as GetDocument (optional proxy
+        // wrap, gzip/brotli decompression, browser User-Agent, HTTP/2). Providers whose source is not HTML --
+        // e.g. an RSS/XML feed -- read the string here and parse it themselves.
+        public string GetContent(string url)
+        {
             url = new Uri(url).GetLeftPart(UriPartial.Query); // Remove hash fragment
             if (this.UseProxy)
             {
                 url = ProxyUrlBuilder.Wrap(url);
             }
-
-            var parser = new HtmlParser();
 
             // Request and transparently decompress gzip/brotli. Some sites (e.g. Euronews) only serve their
             // full markup when the client advertises Accept-Encoding the way a real browser does; without it
@@ -33,12 +39,8 @@
             using var handler = new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All };
             using var httpClient = new HttpClient(handler);
             httpClient.DefaultRequestHeaders.Add("User-Agent", GlobalConstants.DefaultUserAgent);
-            //// httpClient.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
-            //// httpClient.DefaultRequestHeaders.Add("accept-language", "bg,en-US;q=0.9,en;q=0.8");
             var request = httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, url) { Version = new Version(2, 0) }).GetAwaiter().GetResult();
-            var html = request.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-            var document = parser.ParseDocument(html);
-            return document;
+            return request.Content.ReadAsStringAsync().GetAwaiter().GetResult();
         }
 
         // Resolves a possibly-relative URL (href/src) against BaseUrl. Absolute URLs are returned unchanged,

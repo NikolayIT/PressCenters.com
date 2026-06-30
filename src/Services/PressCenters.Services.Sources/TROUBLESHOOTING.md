@@ -63,8 +63,19 @@ Still genuinely stuck (no net10.0 path — would need a residential proxy / real
   challenge** (worker → Cloudflare-site), Azure relays 403.
 - **Gallup** — SSL handshake / 525 → site-side certificate problem.
 
+**Escape hatch — read an unprotected feed.** When the HTML is bot-blocked on *every* egress (net10.0
+direct **and** all four relays), look for an RSS / sitemap endpoint before declaring it stuck — feeds are
+meant for machines and are usually exempt from the bot-protection on the pages. **Dnevnik**'s homepage is
+Cloudflare-403 to net10.0 and to all four relays (headers / HTTP-version / cookies make no difference — note
+this is **Cloudflare**, not DataDome, despite the intermittent 200s an *older*-runtime PowerShell probe
+gets), but `https://www.dnevnik.bg/rss/` returns clean UTF-8 XML. So `DnevnikBgMainNewsProvider` reads the
+feed's first `<item>` — title + `<link>` (strip the `?ref=rss` query) + the thumbnail `<img>` from the
+HTML-encoded `<description>` — instead of scraping the page. `BaseMainNewsProvider.GetContent` exposes the
+raw response so a provider can parse non-HTML payloads itself.
+
 To classify fast, run the **source's own test** (net10.0): 403 → add `UseHttp2`; still 403 → add
-`UseProxy` (Cloudflare relay + h2); 403 even via the relay, or a 202/SSL error → stuck, needs new egress.
+`UseProxy` (Cloudflare relay + h2); 403 even via the relay, or a 202/SSL error → stuck, needs new egress
+(or an unprotected RSS/sitemap feed — see the escape hatch above).
 
 ## 4. "Stale in prod but tests pass" — quiet vs. changed listing
 
