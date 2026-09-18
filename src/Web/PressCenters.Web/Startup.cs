@@ -101,12 +101,14 @@
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             // Application Insights uses the OpenTelemetry-based SDK (v3). Cost control:
-            // (1) sample traces + dependencies to 20% - request/dependency/failure rates
-            //     stay accurate because the ApplicationInsightsSampler records itemCount;
+            // (1) sample traces + dependencies to 5% - request/dependency/failure rates
+            //     stay accurate because the ApplicationInsightsSampler records itemCount.
+            //     Was 20% until September 2026; the Hangfire jobs' "SQL: update" dependencies
+            //     (~450k/week) still made this app the bulk of the shared-logs-weu workspace;
             // (2) drop the high-volume, low-value HttpClient connection-pool metrics that
             //     the Hangfire scraping jobs generate (http.client.open_connections alone
             //     was ~2.3M data points/week). Latency histograms are kept.
-            services.AddApplicationInsightsTelemetry(options => options.SamplingRatio = 0.2f);
+            services.AddApplicationInsightsTelemetry(options => options.SamplingRatio = 0.05f);
             services.AddOpenTelemetry().WithMetrics(metrics => metrics
                 .AddView("http.client.open_connections", MetricStreamConfiguration.Drop)
                 .AddView("http.client.active_requests", MetricStreamConfiguration.Drop)
