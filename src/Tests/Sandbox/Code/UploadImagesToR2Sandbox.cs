@@ -29,6 +29,15 @@
 
         private const int MaxAttempts = 3;
 
+        private static readonly Dictionary<string, string> ContentTypes = new(StringComparer.OrdinalIgnoreCase)
+        {
+            [".png"] = NewsImagePaths.ContentType,
+            [".jpg"] = "image/jpeg",
+            [".jpeg"] = "image/jpeg",
+            [".gif"] = "image/gif",
+            [".webp"] = "image/webp",
+        };
+
         public async Task Work(IServiceProvider serviceProvider)
         {
             var configuration = serviceProvider.GetRequiredService<IConfiguration>();
@@ -62,8 +71,11 @@
 
             Console.WriteLine($"{existing.Count} keys already in the bucket ({sw.Elapsed:g}).");
 
+            // Besides the generated PNG thumbnails the folder holds a few hand-placed images (e.g. news/custom/*.jpg)
+            // referenced from article HTML, so take every file with a known image type, not only *.png.
             Console.WriteLine($"Scanning {rootPath}...");
-            var pending = Directory.EnumerateFiles(rootPath, "*.png", SearchOption.AllDirectories)
+            var pending = Directory.EnumerateFiles(rootPath, "*", SearchOption.AllDirectories)
+                .Where(path => ContentTypes.ContainsKey(Path.GetExtension(path)))
                 .Select(path => (Path: path, Key: NewsImagePaths.Prefix + Path.GetRelativePath(rootPath, path).Replace('\\', '/')))
                 .Where(x => !existing.Contains(x.Key))
                 .ToList();
@@ -107,7 +119,7 @@
                 try
                 {
                     await using var stream = File.OpenRead(path);
-                    await storage.UploadAsync(key, stream, NewsImagePaths.ContentType, cancellationToken);
+                    await storage.UploadAsync(key, stream, ContentTypes[Path.GetExtension(path)], cancellationToken);
                     return true;
                 }
                 catch (Exception e) when (attempt < MaxAttempts)
