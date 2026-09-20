@@ -3,7 +3,6 @@
     using System.Linq;
     using System.Threading.Tasks;
 
-    using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
 
     using PressCenters.Common;
@@ -18,16 +17,12 @@
 
         private readonly IDeletableEntityRepository<News> newsRepository;
 
-        private readonly IWebHostEnvironment webHostEnvironment;
-
         public NewsController(
             INewsService newsService,
-            IDeletableEntityRepository<News> newsRepository,
-            IWebHostEnvironment webHostEnvironment)
+            IDeletableEntityRepository<News> newsRepository)
         {
             this.newsService = newsService;
             this.newsRepository = newsRepository;
-            this.webHostEnvironment = webHostEnvironment;
         }
 
         public async Task<IActionResult> UpdateRemoteNews(int id)
@@ -42,7 +37,7 @@
             var executor = ReflectionHelpers.GetInstance<BaseSource>(news.TypeName);
             var remoteNews = executor.GetPublication(news.OriginalUrl);
             await this.newsService.UpdateAsync(id, remoteNews);
-            await this.newsService.SaveImageLocallyAsync(remoteNews.ImageUrl, id, this.webHostEnvironment.WebRootPath, true);
+            await this.newsService.SaveImageAsync(remoteNews.ImageUrl, id, true);
 
             return this.RedirectToAction("ById", "News", new { area = string.Empty, id });
         }

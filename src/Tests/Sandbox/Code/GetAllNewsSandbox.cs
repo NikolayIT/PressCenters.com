@@ -27,7 +27,8 @@
             //                            (default 40; 0 = never stop = full backfill). GetAllPublications yields
             //                            newest-first, so this fills a recent "tail" gap and stops once it reaches
             //                            news already in the DB. Set 0 to also fill old internal gaps.
-            //   BACKFILL_IMAGES          "1" to also download+resize images locally (only useful on the prod box)
+            //   BACKFILL_IMAGES          "1" to also download+resize images into the configured image storage
+            //                            (R2 when appsettings.Production.json has the R2 section, else Images:LocalRoot)
             var targets = (Environment.GetEnvironmentVariable("BACKFILL_SOURCES") ?? string.Empty)
                 .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
             if (targets.Length == 0)
@@ -47,11 +48,6 @@
             // Bypass the proxy relay (fetch directly). The relay is for the prod server's blocked IP; this
             // machine reaches many of those sites directly, which is faster and dodges relay rate limiting.
             var noProxy = Environment.GetEnvironmentVariable("BACKFILL_NO_PROXY") == "1";
-
-            // Where the resized thumbnails are written. Keep the on-disk layout identical to the server
-            // (<webRoot>/images/news/<id%1000>/big_<id>.png) and against the production DB the ids match, so the
-            // folder can be copied straight onto the prod web root.
-            var webRoot = Environment.GetEnvironmentVariable("BACKFILL_WEBROOT") ?? @"C:\Web\presscenters.com\wwwroot";
 
             foreach (var source in sourcesRepository.All().ToList())
             {
@@ -88,8 +84,8 @@
                             {
                                 try
                                 {
-                                    await newsService.SaveImageLocallyAsync(
-                                        remoteNews.ImageUrl, newsId.Value, webRoot, provider.UseProxy && !noProxy);
+                                    await newsService.SaveImageAsync(
+                                        remoteNews.ImageUrl, newsId.Value, provider.UseProxy && !noProxy);
                                 }
                                 catch (Exception e)
                                 {

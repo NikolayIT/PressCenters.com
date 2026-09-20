@@ -342,5 +342,6 @@ healthchecksdb
 
 # Custom ignores
 /Web/PressCenters.Web/appsettings.Production.json
+/Tests/Sandbox/appsettings.Production.json
 *.min.css
 *.min.js

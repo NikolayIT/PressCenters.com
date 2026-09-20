@@ -14,6 +14,7 @@
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Rewrite;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
     using Microsoft.Extensions.Configuration;
@@ -32,6 +33,7 @@
     using PressCenters.Services;
     using PressCenters.Services.CronJobs;
     using PressCenters.Services.Data;
+    using PressCenters.Services.Data.Images;
     using PressCenters.Services.Mapping;
     using PressCenters.Services.Messaging;
     using PressCenters.Web.ViewModels;
@@ -122,6 +124,11 @@
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
             services.AddScoped<IDbQueryRunner, DbQueryRunner>();
 
+            // News thumbnails: Cloudflare R2 when the "R2" section is configured, wwwroot/images otherwise.
+            GlobalConstants.ImagesBaseUrl = services.AddImageStorage(
+                this.configuration,
+                Path.Combine(this.env.WebRootPath, "images"));
+
             // Application services
             services.AddTransient<IEmailSender>(
                 serviceProvider => new SendGridEmailSender(this.configuration["SendGrid:ApiKey"]));
@@ -157,21 +164,22 @@
             }
 
             app.UseHttpsRedirection();
+
+            // Until September 2026 the thumbnails were served from wwwroot as /images/news/{id % 1000}/{big|small}_{id}.png.
+            // They now live on Cloudflare R2 behind GlobalConstants.ImagesBaseUrl, so anyone still holding an old URL
+            // (search engines, social previews, hot-links) is sent to the same key on the new host. Only active when
+            // the base URL is an absolute host; with the local wwwroot fallback the static files handler serves them.
+            if (Uri.IsWellFormedUriString(GlobalConstants.ImagesBaseUrl, UriKind.Absolute))
+            {
+                app.UseRewriter(
+                    new RewriteOptions().AddRedirect(
+                        "(?i)^images/news/(.+)$",
+                        $"{GlobalConstants.ImagesBaseUrl}/news/$1",
+                        StatusCodes.Status301MovedPermanently));
+            }
+
             app.UseWebOptimizer();
-            app.UseStaticFiles(
-                new StaticFileOptions
-                {
-                    OnPrepareResponse = ctx =>
-                        {
-                            if (ctx.Context.Request.Path.ToString().Contains("/news/"))
-                            {
-                                // Cache static files for 90 days
-                                ctx.Context.Response.Headers["Cache-Control"] = "public,max-age=31536000";
-                                ctx.Context.Response.Headers["Expires"] =
-                                    DateTime.UtcNow.AddYears(1).ToString("R", CultureInfo.InvariantCulture);
-                            }
-                        },
-                });
+            app.UseStaticFiles();
 
             app.UseRouting();
 

@@ -19,6 +19,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <!-- Secrets (R2 credentials, prod connection string). Git-ignored; lives only on dev boxes and the server. -->
+    <Content Include="appsettings.Production.json" Condition="Exists('appsettings.Production.json')">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

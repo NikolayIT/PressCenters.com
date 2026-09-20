@@ -20,6 +20,7 @@
     using PressCenters.Data.Repositories;
     using PressCenters.Data.Seeding;
     using PressCenters.Services.Data;
+    using PressCenters.Services.Data.Images;
     using PressCenters.Services.Messaging;
 
     using Sandbox.Code;
@@ -30,14 +31,16 @@
         {
             Console.OutputEncoding = Encoding.UTF8;
             Console.WriteLine($"{typeof(Program).Namespace} ({string.Join(" ", args)}) starts working...");
+            var configuration = BuildConfiguration();
             var serviceCollection = new ServiceCollection();
-            ConfigureServices(serviceCollection);
+            ConfigureServices(serviceCollection, configuration);
             IServiceProvider serviceProvider = serviceCollection.BuildServiceProvider(true);
 
             // Seed data on application startup. Skippable (BACKFILL_SKIP_MIGRATE=1) so a backfill run against an
             // already-migrated/seeded production database performs no schema or seed side effects -- only the
-            // intended News inserts.
-            if (Environment.GetEnvironmentVariable("BACKFILL_SKIP_MIGRATE") != "1")
+            // intended News inserts. The R2 upload mode never touches the database, so it always skips this.
+            var uploadImagesMode = !string.IsNullOrWhiteSpace(configuration[UploadImagesToR2Sandbox.UploadRootKey]);
+            if (!uploadImagesMode && Environment.GetEnvironmentVariable("BACKFILL_SKIP_MIGRATE") != "1")
             {
                 using var serviceScope = serviceProvider.CreateScope();
                 var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -50,18 +53,22 @@
                 serviceProvider = serviceScope.ServiceProvider;
 
                 return Parser.Default.ParseArguments<SandboxOptions>(args).MapResult(
-                    (SandboxOptions opts) => SandboxCode(opts, serviceProvider),
+                    (SandboxOptions opts) => SandboxCode(opts, serviceProvider, uploadImagesMode),
                     _ => 255);
             }
         }
 
-        private static int SandboxCode(SandboxOptions options, IServiceProvider serviceProvider)
+        private static int SandboxCode(SandboxOptions options, IServiceProvider serviceProvider, bool uploadImagesMode)
         {
             var sw = Stopwatch.StartNew();
 
-            //// serviceProvider.GetService<INewsService>().SaveImageLocallyAsync("https://prb.bg/upload/55508/%D0%93%D0%B5%D1%80%D0%B1+%D0%92%D0%B8%D1%82%D1%80%D0%B0%D0%B6.JPG", 191333, @"C:\Temp\wwwroot", false).GetAwaiter().GetResult();
+            //// serviceProvider.GetService<INewsService>().SaveImageAsync("https://prb.bg/upload/55508/%D0%93%D0%B5%D1%80%D0%B1+%D0%92%D0%B8%D1%82%D1%80%D0%B0%D0%B6.JPG", 191333, false).GetAwaiter().GetResult();
             //// new UpdateSearchTextSandbox().Work(serviceProvider).GetAwaiter().GetResult();
-            if (Environment.GetEnvironmentVariable("IMAGES_WEBROOT") != null)
+            if (uploadImagesMode)
+            {
+                new UploadImagesToR2Sandbox().Work(serviceProvider).GetAwaiter().GetResult();
+            }
+            else if (Environment.GetEnvironmentVariable("IMAGES_BACKFILL") == "1")
             {
                 new DownloadImagesSandbox().Work(serviceProvider).GetAwaiter().GetResult();
             }
@@ -74,13 +81,20 @@
             return 0;
         }
 
-        private static void ConfigureServices(ServiceCollection services)
+        private static IConfiguration BuildConfiguration()
         {
-            var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+            // appsettings.Production.json is git-ignored (the repo is public) and holds the secrets: the production
+            // connection string, the R2 credentials and the R2:UploadRoot switch. Copy it next to Sandbox.exe on
+            // the server.
+            return new ConfigurationBuilder().SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("appsettings.json", false, true)
+                .AddJsonFile("appsettings.Production.json", true, true)
                 .AddEnvironmentVariables()
                 .Build();
+        }
 
+        private static void ConfigureServices(ServiceCollection services, IConfiguration configuration)
+        {
             services.AddSingleton<IConfiguration>(configuration);
             var loggerFactory = new LoggerFactory();
             services.AddDbContext<ApplicationDbContext>(
@@ -104,6 +118,11 @@
             services.AddScoped(typeof(IDeletableEntityRepository<>), typeof(EfDeletableEntityRepository<>));
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
             services.AddScoped<IDbQueryRunner, DbQueryRunner>();
+
+            // News thumbnails: R2 when the "R2" section is filled in (appsettings.Production.json); otherwise a
+            // local folder (Images:LocalRoot, default C:\Web\presscenters.com\wwwroot\images) in the pre-R2 layout.
+            var localImagesRoot = configuration["Images:LocalRoot"] ?? @"C:\Web\presscenters.com\wwwroot\images";
+            services.AddImageStorage(configuration, localImagesRoot);
 
             // Application services
             services.AddTransient<IEmailSender, NullMessageSender>();

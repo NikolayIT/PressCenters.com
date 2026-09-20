@@ -97,9 +97,21 @@ The Hangfire dashboard is at `/hangfire` (production only, Administrator role re
 
 ### Images
 
-`NewsService.SaveImageLocallyAsync` downloads each article image and writes two resized PNGs via
-**SixLabors.ImageSharp** to `wwwroot/images/news/{newsId % 1000}/` as `big_{id}.png` (730px wide) and
-`small_{id}.png` (200×120 cropped). Main-news images go to `wwwroot/images/mainnews/{sourceId}.png`.
+`NewsService.SaveImageAsync` downloads each article image, renders two PNGs via **SixLabors.ImageSharp**
+(`big_{id}.png` 730px wide, `small_{id}.png` 200×120 cropped) and uploads them through `IImageStorage`
+(`Services/PressCenters.Services.Data/Images/`) under the keys from `NewsImagePaths`:
+`news/{newsId % 1000}/big_{id}.png`. In production `IImageStorage` is `R2ImageStorage` (Cloudflare R2 bucket
+`presscenters-images`, S3 API via AWSSDK.S3, served from `https://images.presscenters.com`); when the `R2`
+config section is empty it is `LocalImageStorage` rooted at `wwwroot/images`, i.e. the pre-R2 on-disk layout.
+`AddImageStorage` (Startup / Sandbox `Program`) picks the implementation and returns the public base URL,
+stored in `GlobalConstants.ImagesBaseUrl`, which `NewsViewModel.Small/BigImageUrl` prepend to the key.
+Main-news images stay local in `wwwroot/images/mainnews/{sourceId}.png`.
+
+The R2 credentials live only in the git-ignored `appsettings.Production.json` files (Web and Sandbox); the
+repo is public, so never put them in `appsettings.json` or in code. The Sandbox loads
+`appsettings.Production.json` next to its exe when present. One-time migration of the historical folder:
+Sandbox with `R2:UploadRoot` set (to `<wwwroot>\images\news`) runs `UploadImagesToR2Sandbox` (resumable,
+skips keys already in the bucket, never touches the database).
 
 ### Data access & mapping
 

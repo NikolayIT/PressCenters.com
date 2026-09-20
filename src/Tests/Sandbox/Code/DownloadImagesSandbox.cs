@@ -1,7 +1,6 @@
 ﻿namespace Sandbox.Code
 {
     using System;
-    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -11,6 +10,7 @@
     using PressCenters.Data.Common.Repositories;
     using PressCenters.Data.Models;
     using PressCenters.Services.Data;
+    using PressCenters.Services.Data.Images;
     using PressCenters.Services.Sources;
 
     using SixLabors.ImageSharp;
@@ -19,13 +19,14 @@
     {
         public async Task Work(IServiceProvider serviceProvider)
         {
-            // Env-driven so a backfill operator can stage thumbnails into a local folder (then copy to the prod
-            // web root) and limit the scan to a recent id window instead of every article.
-            var rootPath = Environment.GetEnvironmentVariable("IMAGES_WEBROOT") ?? @"C:\Web\presscenters.com\wwwroot";
+            // Env-driven (IMAGES_BACKFILL=1 selects this mode) so a backfill operator can limit the scan to a
+            // recent id window / a few sources instead of every article. Thumbnails go to the configured
+            // IImageStorage (R2 from appsettings.Production.json, or Images:LocalRoot when R2 is not configured).
             var minId = int.TryParse(Environment.GetEnvironmentVariable("IMAGES_MIN_ID"), out var mi) ? mi : 0;
             var sources = (Environment.GetEnvironmentVariable("IMAGES_SOURCES") ?? string.Empty)
                 .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
             var newsService = serviceProvider.GetService<INewsService>();
+            var imageStorage = serviceProvider.GetService<IImageStorage>();
             var newsRepository = serviceProvider.GetService<IDeletableEntityRepository<News>>();
             var allNews = newsRepository.AllWithDeleted().Count();
             for (var i = 0; i <= allNews / 1000; i++)
@@ -37,7 +38,7 @@
                 {
                     if (newsItem.Id < minId || newsItem.ImageUrl == null
                         || (sources.Length > 0 && (newsItem.TypeName == null || !sources.Any(t => newsItem.TypeName.Contains(t))))
-                        || File.Exists(rootPath + $"/images/news/{newsItem.Id % 1000}/big_{newsItem.Id}.png"))
+                        || await imageStorage.ExistsAsync(NewsImagePaths.BigKey(newsItem.Id)))
                     {
                         continue;
                     }
@@ -51,11 +52,7 @@
 
                     try
                     {
-                        var result = await newsService.SaveImageLocallyAsync(
-                                         newsItem.ImageUrl,
-                                         newsItem.Id,
-                                         rootPath,
-                                         useProxy);
+                        var result = await newsService.SaveImageAsync(newsItem.ImageUrl, newsItem.Id, useProxy);
                         Console.Write(result ? "." : $"_{newsItem.Id}_");
                     }
                     catch (UnknownImageFormatException)

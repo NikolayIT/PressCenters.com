@@ -28,5 +28,9 @@
         };
 
         public static string SystemVersion { get; set; }
+
+        // Base URL the news thumbnails are served from: the Cloudflare R2 custom domain in production
+        // (https://images.presscenters.com) or "/images" when the app writes to wwwroot locally. Set at startup.
+        public static string ImagesBaseUrl { get; set; } = "/images";
     }
 }

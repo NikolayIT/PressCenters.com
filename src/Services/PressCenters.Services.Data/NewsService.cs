@@ -12,6 +12,7 @@
     using PressCenters.Common;
     using PressCenters.Data.Common.Repositories;
     using PressCenters.Data.Models;
+    using PressCenters.Services.Data.Images;
 
     using SixLabors.ImageSharp;
     using SixLabors.ImageSharp.Formats.Png;
@@ -21,9 +22,12 @@
     {
         private readonly IDeletableEntityRepository<News> newsRepository;
 
-        public NewsService(IDeletableEntityRepository<News> newsRepository)
+        private readonly IImageStorage imageStorage;
+
+        public NewsService(IDeletableEntityRepository<News> newsRepository, IImageStorage imageStorage)
         {
             this.newsRepository = newsRepository;
+            this.imageStorage = imageStorage;
         }
 
         public async Task<int?> AddAsync(RemoteNews remoteNews, int sourceId)
@@ -102,11 +106,8 @@
             return string.Join(" ", words);
         }
 
-        public async Task<bool> SaveImageLocallyAsync(string imageUrl, int newsId, string webRoot, bool useProxy = false)
+        public async Task<bool> SaveImageAsync(string imageUrl, int newsId, bool useProxy = false)
         {
-            var directory = webRoot + $"/images/news/{newsId % 1000}/";
-            Directory.CreateDirectory(directory);
-
             if (string.IsNullOrWhiteSpace(imageUrl))
             {
                 return false;
@@ -173,7 +174,7 @@
                         Size = new Size(730, 0),
                         Position = AnchorPositionMode.Center,
                     }));
-            await SaveImage(bigThumbnail, "big_" + newsId);
+            await this.UploadImage(bigThumbnail, NewsImagePaths.BigKey(newsId));
 
             // Small thumbnail
             using var smallThumbnail = Image.Load(imageBytes);
@@ -185,28 +186,23 @@
                         Size = new Size(200, 120),
                         Position = AnchorPositionMode.Center,
                     }));
-            await SaveImage(smallThumbnail, "small_" + newsId);
+            await this.UploadImage(smallThumbnail, NewsImagePaths.SmallKey(newsId));
             return true;
+        }
 
-            async Task SaveImage(Image image, string fileName)
-            {
-                var tempPath = directory + Path.GetRandomFileName() + ".png";
-                await using (var stream = File.OpenWrite(tempPath))
+        private async Task UploadImage(Image image, string key)
+        {
+            using var stream = new MemoryStream();
+            image.SaveAsPng(
+                stream,
+                new PngEncoder
                 {
-                    image.SaveAsPng(
-                        stream,
-                        new PngEncoder
-                        {
-                            FilterMethod = PngFilterMethod.Adaptive,
-                            CompressionLevel = PngCompressionLevel.BestCompression,
-                            ColorType = PngColorType.Palette,
-                        });
-                }
-
-                var filePath = directory + fileName + ".png";
-                File.Delete(filePath);
-                File.Move(tempPath, filePath);
-            }
+                    FilterMethod = PngFilterMethod.Adaptive,
+                    CompressionLevel = PngCompressionLevel.BestCompression,
+                    ColorType = PngColorType.Palette,
+                });
+            stream.Position = 0;
+            await this.imageStorage.UploadAsync(key, stream, NewsImagePaths.ContentType);
         }
     }
 }

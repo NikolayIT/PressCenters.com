@@ -15,6 +15,7 @@
     using PressCenters.Common;
     using PressCenters.Data.Models;
     using PressCenters.Services;
+    using PressCenters.Services.Data.Images;
     using PressCenters.Services.Mapping;
 
     public class NewsViewModel : IMapFrom<News>, IHaveCustomMappings
@@ -66,10 +67,14 @@
         public string ImageUrl { get; set; }
 
         public string SmallImageUrl =>
-            this.ImageUrl == null ? this.SourceDefaultImageUrl : $"/images/news/{this.Id % 1000}/small_{this.Id}.png";
+            this.ImageUrl == null
+                ? this.SourceDefaultImageUrl
+                : NewsImagePaths.Url(GlobalConstants.ImagesBaseUrl, NewsImagePaths.SmallKey(this.Id));
 
         public string BigImageUrl =>
-            this.ImageUrl == null ? this.SourceDefaultImageUrl : $"/images/news/{this.Id % 1000}/big_{this.Id}.png";
+            this.ImageUrl == null
+                ? this.SourceDefaultImageUrl
+                : NewsImagePaths.Url(GlobalConstants.ImagesBaseUrl, NewsImagePaths.BigKey(this.Id));
 
         public string OriginalUrl { get; set; }
 

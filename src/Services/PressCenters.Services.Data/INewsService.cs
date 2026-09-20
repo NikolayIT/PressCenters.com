@@ -14,6 +14,10 @@
 
         string GetSearchText(News news);
 
-        Task<bool> SaveImageLocallyAsync(string imageUrl, int newsId, string webRoot, bool useProxy = false);
+        /// <summary>
+        /// Downloads the article image, generates the big and small thumbnails and stores them in the
+        /// configured <see cref="Images.IImageStorage"/> under <see cref="Images.NewsImagePaths"/> keys.
+        /// </summary>
+        Task<bool> SaveImageAsync(string imageUrl, int newsId, bool useProxy = false);
     }
 }
