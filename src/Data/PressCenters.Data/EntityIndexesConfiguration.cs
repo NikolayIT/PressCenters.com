@@ -25,6 +25,12 @@
             modelBuilder.Entity<News>()
                 .HasIndex(x => new { x.IsDeleted, x.CreatedOn, x.Id })
                 .IsDescending(false, true, true);
+
+            // The latest main news of each source is a TOP(1) per source. With IsDeleted in the key it is a single
+            // covering seek, not a backward scan past the other sources' rows (far back for a source that stopped
+            // updating). Replaces the IX_MainNews_SourceId foreign key index.
+            modelBuilder.Entity<MainNews>()
+                .HasIndex(x => new { x.SourceId, x.IsDeleted });
         }
     }
 }

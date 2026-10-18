@@ -326,7 +326,7 @@ namespace PressCenters.Data.Migrations
 
                     b.HasIndex("IsDeleted");
 
-                    b.HasIndex("SourceId");
+                    b.HasIndex("SourceId", "IsDeleted");
 
                     b.ToTable("MainNews");
                 });

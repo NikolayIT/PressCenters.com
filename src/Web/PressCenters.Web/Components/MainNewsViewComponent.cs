@@ -1,12 +1,12 @@
 ﻿namespace PressCenters.Web.Components
 {
-    using System.Collections.Generic;
     using System.Linq;
 
     using Microsoft.AspNetCore.Mvc;
 
     using PressCenters.Data.Common.Repositories;
     using PressCenters.Data.Models;
+    using PressCenters.Services.Data;
     using PressCenters.Services.Mapping;
     using PressCenters.Web.ViewModels.MainNews;
 
@@ -15,25 +15,21 @@
     {
         private readonly IDeletableEntityRepository<MainNews> mainNewsRepository;
 
-        private readonly IDeletableEntityRepository<MainNewsSource> mainNewsSourcesRepository;
+        private readonly IMainNewsSourcesService mainNewsSourcesService;
 
         public MainNewsViewComponent(
             IDeletableEntityRepository<MainNews> mainNewsRepository,
-            IDeletableEntityRepository<MainNewsSource> mainNewsSourcesRepository)
+            IMainNewsSourcesService mainNewsSourcesService)
         {
             this.mainNewsRepository = mainNewsRepository;
-            this.mainNewsSourcesRepository = mainNewsSourcesRepository;
+            this.mainNewsSourcesService = mainNewsSourcesService;
         }
 
         public IViewComponentResult Invoke()
         {
-            if (this.mainNewsRepository.All().Count() == 0)
-            {
-                return this.View(new MainNewsComponentViewModel { MainNews = new List<MainNewsViewModel>() });
-            }
-
-            var news = this.mainNewsSourcesRepository.All()
-                .Select(x => x.MainNews.OrderByDescending(x => x.Id).FirstOrDefault())
+            var latestIds = this.mainNewsSourcesService.GetLatestMainNewsIds();
+            var news = this.mainNewsRepository.All()
+                .Where(x => latestIds.Contains(x.Id))
                 .OrderByDescending(x => x.CreatedOn).To<MainNewsViewModel>().ToList();
             var viewModel = new MainNewsComponentViewModel { MainNews = news };
             return this.View(viewModel);
