@@ -5,6 +5,7 @@
     using Microsoft.EntityFrameworkCore;
 
     using PressCenters.Data.Common.Models;
+    using PressCenters.Data.Models;
 
     internal static class EntityIndexesConfiguration
     {
@@ -18,6 +19,12 @@
             {
                 modelBuilder.Entity(deletableEntityType.ClrType).HasIndex(nameof(IDeletableEntity.IsDeleted));
             }
+
+            // The news lists page with WHERE IsDeleted = 0 ORDER BY CreatedOn DESC, Id DESC. Without this index every
+            // page scanned and sorted the whole table (Content included) with huge memory grants.
+            modelBuilder.Entity<News>()
+                .HasIndex(x => new { x.IsDeleted, x.CreatedOn, x.Id })
+                .IsDescending(false, true, true);
         }
     }
 }

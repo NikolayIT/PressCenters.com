@@ -414,6 +414,9 @@ namespace PressCenters.Data.Migrations
 
                     b.HasIndex("SourceId");
 
+                    b.HasIndex("IsDeleted", "CreatedOn", "Id")
+                        .IsDescending(false, true, true);
+
                     b.ToTable("News");
                 });
 
