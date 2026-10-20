@@ -1,0 +1,12 @@
+<Project>
+
+  <!-- SkiaSharp.NativeAssets.Win32 4.x ships the native symbols (libSkiaSharp.pdb, ~95 MB per Windows runtime) next to
+       libSkiaSharp.dll. Keep them out of the build and publish output, and so out of the deployment. -->
+  <Target Name="RemoveSkiaSharpNativeSymbols" AfterTargets="ResolvePackageAssets">
+    <ItemGroup>
+      <RuntimeTargetsCopyLocalItems Remove="@(RuntimeTargetsCopyLocalItems)" Condition="'%(Filename)%(Extension)' == 'libSkiaSharp.pdb'" />
+      <NativeCopyLocalItems Remove="@(NativeCopyLocalItems)" Condition="'%(Filename)%(Extension)' == 'libSkiaSharp.pdb'" />
+    </ItemGroup>
+  </Target>
+
+</Project>

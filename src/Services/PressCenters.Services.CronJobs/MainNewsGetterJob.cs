@@ -16,10 +16,8 @@
     using PressCenters.Data.Common.Repositories;
     using PressCenters.Data.Models;
     using PressCenters.Services;
+    using PressCenters.Services.Data.Images;
     using PressCenters.Services.Sources.MainNews;
-
-    using SixLabors.ImageSharp;
-    using SixLabors.ImageSharp.Processing;
 
     public class MainNewsGetterJob
     {
@@ -162,21 +160,9 @@
             try
             {
                 var imageBytes = await result.Content.ReadAsByteArrayAsync();
-                using var image = Image.Load(imageBytes);
-                image.Mutate(
-                    x => x.Resize(
-                        new ResizeOptions
-                            {
-                                Mode = ResizeMode.Crop,
-                                Size = new Size(150, 110),
-                                Position = AnchorPositionMode.Center,
-                            }));
+                var thumbnail = ImageThumbnails.CropToFill(imageBytes, 150, 110);
                 var tempPath = this.webHostEnvironment.WebRootPath + "/images/mainnews/" + Path.GetRandomFileName() + ".png";
-                await using (var stream = File.OpenWrite(tempPath))
-                {
-                    await image.SaveAsPngAsync(stream);
-                }
-
+                await File.WriteAllBytesAsync(tempPath, thumbnail);
                 File.Move(tempPath, filePath, true);
             }
             catch (Exception e)

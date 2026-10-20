@@ -1,6 +1,7 @@
 ﻿namespace Sandbox.Code
 {
     using System;
+    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -12,8 +13,6 @@
     using PressCenters.Services.Data;
     using PressCenters.Services.Data.Images;
     using PressCenters.Services.Sources;
-
-    using SixLabors.ImageSharp;
 
     public class DownloadImagesSandbox
     {
@@ -55,13 +54,10 @@
                         var result = await newsService.SaveImageAsync(newsItem.ImageUrl, newsItem.Id, useProxy);
                         Console.Write(result ? "." : $"_{newsItem.Id}_");
                     }
-                    catch (UnknownImageFormatException)
+                    catch (InvalidDataException)
                     {
+                        // Not an image, or one that cannot be decoded (see ImageThumbnails).
                         Console.Write("?");
-                    }
-                    catch (ImageFormatException)
-                    {
-                        Console.Write("!");
                     }
                     catch (Exception e)
                     {

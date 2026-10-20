@@ -1,6 +1,7 @@
 ﻿namespace PressCenters.Services.CronJobs
 {
     using System;
+    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -13,8 +14,6 @@
     using PressCenters.Data.Models;
     using PressCenters.Services.Data;
     using PressCenters.Services.Sources;
-
-    using SixLabors.ImageSharp;
 
     public class GetLatestPublicationsJob
     {
@@ -54,7 +53,7 @@
                     {
                         await this.newsService.SaveImageAsync(remoteNews.ImageUrl, newsId.Value, instance.UseProxy);
                     }
-                    catch (Exception e) when (e is ImageFormatException || e is UriFormatException)
+                    catch (Exception e) when (e is InvalidDataException || e is UriFormatException)
                     {
                         // The news is already saved; a malformed image URL or a file that is not a decodable image
                         // must not abort the rest of the batch (it would never be retried anyway).

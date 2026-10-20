@@ -14,10 +14,6 @@
     using PressCenters.Data.Models;
     using PressCenters.Services.Data.Images;
 
-    using SixLabors.ImageSharp;
-    using SixLabors.ImageSharp.Formats.Png;
-    using SixLabors.ImageSharp.Processing;
-
     public class NewsService : INewsService
     {
         private static readonly Regex NonAlphanumericRegex = new Regex(@"[^\w\d]", RegexOptions.Compiled);
@@ -169,44 +165,17 @@
 
             var imageBytes = await result.Content.ReadAsByteArrayAsync();
 
-            // Big thumbnail
-            using var bigThumbnail = Image.Load(imageBytes);
-            bigThumbnail.Mutate(
-                x => x.Resize(
-                    new ResizeOptions
-                    {
-                        Mode = ResizeMode.Min,
-                        Size = new Size(730, 0),
-                        Position = AnchorPositionMode.Center,
-                    }));
+            // Both thumbnails before uploading either, so an image that cannot be decoded leaves nothing behind.
+            var bigThumbnail = ImageThumbnails.ShrinkToWidth(imageBytes, 730);
+            var smallThumbnail = ImageThumbnails.CropToFill(imageBytes, 200, 120);
             await this.UploadImage(bigThumbnail, NewsImagePaths.BigKey(newsId));
-
-            // Small thumbnail
-            using var smallThumbnail = Image.Load(imageBytes);
-            smallThumbnail.Mutate(
-                x => x.Resize(
-                    new ResizeOptions
-                    {
-                        Mode = ResizeMode.Crop,
-                        Size = new Size(200, 120),
-                        Position = AnchorPositionMode.Center,
-                    }));
             await this.UploadImage(smallThumbnail, NewsImagePaths.SmallKey(newsId));
             return true;
         }
 
-        private async Task UploadImage(Image image, string key)
+        private async Task UploadImage(byte[] png, string key)
         {
-            using var stream = new MemoryStream();
-            image.SaveAsPng(
-                stream,
-                new PngEncoder
-                {
-                    FilterMethod = PngFilterMethod.Adaptive,
-                    CompressionLevel = PngCompressionLevel.BestCompression,
-                    ColorType = PngColorType.Palette,
-                });
-            stream.Position = 0;
+            using var stream = new MemoryStream(png);
             await this.imageStorage.UploadAsync(key, stream, NewsImagePaths.ContentType);
         }
     }
