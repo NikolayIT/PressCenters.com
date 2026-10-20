@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net.Http;
+    using System.Threading.Tasks;
 
     using AngleSharp.Dom;
 
@@ -49,9 +51,20 @@
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
             var id = this.ExtractIdFromUrl(url);
-            var json = this.ReadStringFromUrl($"{this.BaseUrl}api/v1/news/bg/{id}");
+            string json;
+            try
+            {
+                json = this.ReadStringFromUrl($"{this.BaseUrl}api/v1/news/bg/{id}");
+            }
+            catch (Exception e) when (e is HttpRequestException || e is TaskCanceledException)
+            {
+                // Like a failed page fetch in GetPublication: skip this article instead of aborting the source.
+                return null;
+            }
+
+            // The API answers 200 with "{}" for an id that does not exist (GetAllPublications walks every id).
             var newsAsJson = JsonConvert.DeserializeObject<NewsResponse>(json);
-            if (newsAsJson == null)
+            if (string.IsNullOrWhiteSpace(newsAsJson?.Title))
             {
                 return null;
             }

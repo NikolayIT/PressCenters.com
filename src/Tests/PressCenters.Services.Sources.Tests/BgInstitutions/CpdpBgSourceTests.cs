@@ -19,7 +19,7 @@
             Assert.Contains("в Комисията за защита на личните данни (КЗЛД) се проведе финалният етап", news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
             Assert.Null(news.ImageUrl);
-            Assert.Equal(new DateTime(2026, 6, 9, 8, 19, 35), news.PostDate);
+            Assert.Equal(new DateTime(2026, 6, 9, 11, 19, 35), news.PostDate); // Sofia time, 08:19:35 UTC
         }
 
         [Fact]

@@ -1,30 +1,21 @@
 ﻿namespace PressCenters.Services.Sources
 {
-    using System;
-
     using AngleSharp.Dom;
 
     public static class AngleSharpExtensions
     {
+        // Removes elementToRemove when it is anywhere inside element (but not element itself). It used to call
+        // RemoveChild on every node of the subtree, throwing and swallowing an exception per node, and threw a
+        // NullReferenceException when element was null.
         public static void RemoveRecursively(this INode element, INode elementToRemove)
         {
-            if (elementToRemove == null)
+            if (element == null || elementToRemove == null || elementToRemove == element
+                || !element.Contains(elementToRemove))
             {
                 return;
             }
 
-            try
-            {
-                element.RemoveChild(elementToRemove);
-            }
-            catch (Exception)
-            {
-            }
-
-            foreach (var node in element.ChildNodes)
-            {
-                node.RemoveRecursively(elementToRemove);
-            }
+            elementToRemove.Parent?.RemoveChild(elementToRemove);
         }
     }
 }

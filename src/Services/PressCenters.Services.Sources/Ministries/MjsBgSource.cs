@@ -33,7 +33,9 @@
         {
             var html = document.ToHtml();
 
-            var title = html.GetStringBetween("\"title\": {\n      \"bg\": \"", "\"");
+            // Mask escaped quotes like the content below; otherwise a title containing "..." is cut at the first one.
+            var title = html.Replace("\\\"", "__QUOTE__").GetStringBetween("\"title\": {\n      \"bg\": \"", "\"")
+                .Replace("__QUOTE__", "\"");
 
             var time = DateTime.Now;
 

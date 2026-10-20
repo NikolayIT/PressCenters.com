@@ -45,7 +45,7 @@
             }
         }
 
-        internal override string ExtractIdFromUrl(string url) => url.GetLastStringBetween("_p", ".html");
+        internal override string ExtractIdFromUrl(string url) => url.GetLastStringBetween("_p", ".html", url);
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {

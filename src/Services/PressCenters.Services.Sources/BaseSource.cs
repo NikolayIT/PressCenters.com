@@ -93,8 +93,10 @@ namespace PressCenters.Services.Sources
                 publication.PostDate = DateTime.Now;
             }
 
-            if (publication.PostDate.Date == DateTime.UtcNow.Date && publication.PostDate.Hour == 0
-                                                                  && publication.PostDate.Minute == 0)
+            // A date-only post of today gets the current time. Local "today", like the rest of PostDate: with UtcNow
+            // a date-only post from yesterday was moved to "now" after local midnight on a non-UTC server.
+            if (publication.PostDate.Date == DateTime.Now.Date && publication.PostDate.Hour == 0
+                                                                && publication.PostDate.Minute == 0)
             {
                 publication.PostDate = DateTime.Now;
             }

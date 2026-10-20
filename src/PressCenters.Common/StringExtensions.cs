@@ -53,7 +53,8 @@
 
         public static string StripHtml(this string input)
         {
-            return Regex.Replace(input, "<.*?>", string.Empty);
+            // Singleline: a tag whose attribute value contains a line break must be removed too.
+            return Regex.Replace(input, "<.*?>", string.Empty, RegexOptions.Singleline);
         }
     }
 }

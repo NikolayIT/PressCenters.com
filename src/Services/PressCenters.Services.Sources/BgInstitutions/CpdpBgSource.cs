@@ -47,7 +47,9 @@
                 return null;
             }
 
-            var time = DateTimeOffset.Parse(timeAsString, CultureInfo.InvariantCulture).UtcDateTime;
+            // Local time like every other source (and DateTime.Now in BaseSource), not UTC: UTC listed CPDP
+            // articles 2-3 hours too early and put posts from after midnight on the previous day.
+            var time = DateTimeOffset.Parse(timeAsString, CultureInfo.InvariantCulture).LocalDateTime;
             var imageUrl = document.QuerySelector("meta[property='og:image']")?.GetAttribute("content");
 
             this.NormalizeUrlsRecursively(contentElement);

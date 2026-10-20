@@ -51,7 +51,7 @@
 
             var imageElement = document.QuerySelector(".featured-image img");
             var imageUrl = imageElement?.GetAttribute("src");
-            if (imageUrl.EndsWith("/images/news/news-1.jpg"))
+            if (imageUrl?.EndsWith("/images/news/news-1.jpg") == true)
             {
                 imageUrl = null;
             }

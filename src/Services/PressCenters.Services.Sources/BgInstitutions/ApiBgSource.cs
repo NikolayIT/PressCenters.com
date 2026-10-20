@@ -16,7 +16,7 @@
             this.GetPublications("bg/novini", ".news-panel a", count: 5);
 
         internal override string ExtractIdFromUrl(string url) =>
-            WebUtility.UrlDecode(url.GetLastStringBetween("/", ".html"));
+            WebUtility.UrlDecode(url.GetLastStringBetween("/", ".html", url));
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
