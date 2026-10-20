@@ -26,17 +26,22 @@
                 query = query.Where(x => x.SourceId == id);
             }
 
-            var allDates = query.Select(x => x.CreatedOn.Date).ToList();
-            var byDateOfWeek = allDates.GroupBy(x => x.Date.DayOfWeek)
-                .Select(g => new GroupByViewModel<DayOfWeek> { Group = g.Key, Count = g.Count() }).ToList();
-            var byMonth = allDates.GroupBy(x => x.Date.Month)
-                .Select(g => new GroupByViewModel<int> { Group = g.Key, Count = g.Count() }).ToList();
-            var byYear = allDates.GroupBy(x => x.Date.Year)
-                .Select(g => new GroupByViewModel<int> { Group = g.Key, Count = g.Count() }).ToList();
-            var newsCount = query.Count();
-            var newsToday = query.Count(x => x.CreatedOn.Date == DateTime.Today);
-            var newsYesterday = query.Count(x => x.CreatedOn.Date == DateTime.Today.AddDays(-1));
-            var newsTheDayBeforeYesterday = query.Count(x => x.CreatedOn.Date == DateTime.Today.AddDays(-2));
+            // Count per day in SQL (a few thousand rows) and aggregate everything else from that, instead of
+            // loading the date of every news item into memory and running four more counts over the table.
+            var countsByDate = query.GroupBy(x => x.CreatedOn.Date)
+                .Select(g => new { Date = g.Key, Count = g.Count() })
+                .ToList();
+            var byDateOfWeek = countsByDate.GroupBy(x => x.Date.DayOfWeek)
+                .Select(g => new GroupByViewModel<DayOfWeek> { Group = g.Key, Count = g.Sum(x => x.Count) }).ToList();
+            var byMonth = countsByDate.GroupBy(x => x.Date.Month)
+                .Select(g => new GroupByViewModel<int> { Group = g.Key, Count = g.Sum(x => x.Count) }).ToList();
+            var byYear = countsByDate.GroupBy(x => x.Date.Year)
+                .Select(g => new GroupByViewModel<int> { Group = g.Key, Count = g.Sum(x => x.Count) }).ToList();
+            var today = DateTime.Today;
+            var newsCount = countsByDate.Sum(x => x.Count);
+            var newsToday = countsByDate.Where(x => x.Date == today).Sum(x => x.Count);
+            var newsYesterday = countsByDate.Where(x => x.Date == today.AddDays(-1)).Sum(x => x.Count);
+            var newsTheDayBeforeYesterday = countsByDate.Where(x => x.Date == today.AddDays(-2)).Sum(x => x.Count);
             var model = new IndexViewModel
                         {
                             NewsByDayOfWeek = byDateOfWeek,

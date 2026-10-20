@@ -1,5 +1,7 @@
 ﻿namespace PressCenters.Web.Controllers
 {
+    using System;
+    using System.Globalization;
     using System.Linq;
     using System.Net;
     using System.Net.Mime;
@@ -50,11 +52,11 @@
             foreach (var newsItem in news)
             {
                 sb.AppendLine($@"<item>
-    <title>{newsItem.SourceShortName}: {WebUtility.HtmlEncode(newsItem.Title)}</title>
+    <title>{WebUtility.HtmlEncode(newsItem.SourceShortName)}: {WebUtility.HtmlEncode(newsItem.Title)}</title>
     <link>{GlobalConstants.SystemBaseUrl}{newsItem.Url}</link>
     <description>{WebUtility.HtmlEncode(newsItem.GetShortContent(10000))}</description>
-    <pubDate>{newsItem.CreatedOn:ddd, dd MMM yyyy HH:mm:ss zzz}</pubDate>
-    <category>{newsItem.SourceName}</category>
+    <pubDate>{ToRfc822Date(newsItem.CreatedOn)}</pubDate>
+    <category>{WebUtility.HtmlEncode(newsItem.SourceName)}</category>
     <guid>{GlobalConstants.SystemBaseUrl}{newsItem.Url}</guid>
 </item>");
             }
@@ -63,5 +65,11 @@
             sb.AppendLine("</rss>");
             return this.Content(sb.ToString(), "application/xml");
         }
+
+        // RSS requires RFC 822 dates: English day/month names whatever the server culture is, and a "+0300" offset
+        // (the "zzz" specifier writes "+03:00").
+        private static string ToRfc822Date(DateTime date) =>
+            date.ToString("ddd, dd MMM yyyy HH:mm:ss ", CultureInfo.InvariantCulture)
+            + date.ToString("zzz", CultureInfo.InvariantCulture).Replace(":", string.Empty);
     }
 }
