@@ -76,17 +76,9 @@
                 ? this.SourceDefaultImageUrl
                 : NewsImagePaths.Url(GlobalConstants.ImagesBaseUrl, NewsImagePaths.BigKey(this.Id));
 
-        // While ConvertThumbnailsToWebpSandbox converts the old PNG thumbnails, an image whose WebP is not there yet
-        // loads its PNG instead (data-fallback, handled in _BaseLayout).
-        public string SmallImageFallbackUrl =>
-            this.ImageUrl == null
-                ? null
-                : NewsImagePaths.Url(GlobalConstants.ImagesBaseUrl, NewsImagePaths.PngKeyForWebp(NewsImagePaths.SmallKey(this.Id)));
-
-        public string BigImageFallbackUrl =>
-            this.ImageUrl == null
-                ? null
-                : NewsImagePaths.Url(GlobalConstants.ImagesBaseUrl, NewsImagePaths.PngKeyForWebp(NewsImagePaths.BigKey(this.Id)));
+        // A thumbnail that is not in the storage (its image could not be made, e.g. the original was gone) shows the
+        // source's image instead, as a news without an image does (data-fallback, handled in _BaseLayout).
+        public string ImageFallbackUrl => this.ImageUrl == null ? null : this.SourceDefaultImageUrl;
 
         public string OriginalUrl { get; set; }
 

@@ -27,9 +27,9 @@
     /// WebP files next to them (big_{id}.webp, small_{id}.webp) in the configured image storage: the R2 bucket when
     /// the "R2" section of appsettings.Production.json is filled in, otherwise the local folder (Images:LocalRoot).
     /// Resumable: a PNG that already has its WebP is skipped, so a run can be stopped with Ctrl+C and started again.
-    /// Rollout: deploy the code that links the .webp files (the pages fall back to the PNG while the WebP is missing),
-    /// then run this with IMAGES_WEBP_DELETE_PNG=1: it converts everything and then deletes the PNGs that have a WebP.
-    /// Once a run ends with nothing left to convert, the fallback can go.
+    /// Rollout (done in October 2026): deploy the code that links the .webp files, with the pages falling back to the PNG
+    /// while the WebP is missing, then run this with IMAGES_WEBP_DELETE_PNG=1: it converts everything and then deletes
+    /// the PNGs that have a WebP.
     /// A damaged PNG (one that does not decode, or is cut short) is made again from the article's original image
     /// instead, as for a new article. The image URLs come from the database (only read), which must be the production
     /// one: with any other, e.g. the local copy that DefaultConnection is on a dev box, the damaged PNGs are left and

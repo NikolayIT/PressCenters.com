@@ -119,9 +119,9 @@ from the database, which must be the production one (it checks that most of the 
 the local dev database the damaged PNGs are left and listed in `webp-conversion-failures.txt`). On a dev box that is the
 "... (production database)" launch profile: `SANDBOX_DATABASE=Production` makes the Sandbox use
 `ConnectionStrings:Production` from its git-ignored `appsettings.Production.json` (or asks for it) instead of
-`DefaultConnection`, the local database. Meanwhile
-the news pages fall back to the PNG when the WebP is missing (`data-fallback` + the error handler in `_BaseLayout`);
-once a run finds nothing left to convert, that fallback can be removed.
+`DefaultConnection`, the local database. The conversion was done on 2026-10-20 (319,217 PNGs; 3 damaged ones could
+not be made again, their originals being gone). A news thumbnail that is not in the storage shows the source's image
+instead (`data-fallback` + the error handler in `_BaseLayout`), as a news without an image does.
 
 The R2 credentials live only in the git-ignored `appsettings.Production.json` files (Web and Sandbox); the
 repo is public, so never put them in `appsettings.json` or in code. The Sandbox loads
