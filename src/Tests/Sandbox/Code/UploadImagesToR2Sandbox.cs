@@ -20,7 +20,8 @@
     /// already present in the bucket are skipped, so the run can be interrupted and restarted.
     /// Configured in the git-ignored appsettings.Production.json next to the exe, "R2" section:
     ///   AccountId / AccessKeyId / SecretAccessKey / BucketName  R2 credentials
-    ///   UploadRoot         local folder to upload, e.g. C:\Web\presscenters.com\wwwroot\images\news (selects this mode)
+    ///   UploadRoot         local folder to upload, e.g. C:\Web\presscenters.com\wwwroot\images\news (selects this mode
+    ///                      unless IMAGES_WEBP=1 or IMAGES_BACKFILL=1 selects another one)
     ///   UploadParallelism  concurrent uploads (default 32).
     /// </summary>
     public class UploadImagesToR2Sandbox

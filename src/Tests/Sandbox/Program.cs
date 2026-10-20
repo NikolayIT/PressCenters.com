@@ -40,8 +40,12 @@
             // already-migrated/seeded production database performs no schema or seed side effects -- only the
             // intended News inserts. The R2 upload and WebP conversion modes never touch the database, so they always
             // skip this.
-            var uploadImagesMode = !string.IsNullOrWhiteSpace(configuration[UploadImagesToR2Sandbox.UploadRootKey]);
             var webpMode = Environment.GetEnvironmentVariable(ConvertThumbnailsToWebpSandbox.ModeVariable) == "1";
+
+            // A mode chosen with an environment variable (as the launch profiles do) wins over the R2:UploadRoot
+            // switch, which stays in appsettings.Production.json after the one-time upload.
+            var uploadImagesMode = !webpMode && Environment.GetEnvironmentVariable("IMAGES_BACKFILL") != "1"
+                && !string.IsNullOrWhiteSpace(configuration[UploadImagesToR2Sandbox.UploadRootKey]);
             if (!uploadImagesMode && !webpMode && Environment.GetEnvironmentVariable("BACKFILL_SKIP_MIGRATE") != "1")
             {
                 using var serviceScope = serviceProvider.CreateScope();
