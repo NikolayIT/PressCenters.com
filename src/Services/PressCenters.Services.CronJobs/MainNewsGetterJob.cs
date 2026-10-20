@@ -160,7 +160,7 @@
             try
             {
                 var imageBytes = await result.Content.ReadAsByteArrayAsync();
-                var thumbnail = ImageThumbnails.CropToFill(imageBytes, 150, 110);
+                var thumbnail = ImageThumbnails.CropToFill(imageBytes, 150, 110, ThumbnailFormat.Png);
                 var tempPath = this.webHostEnvironment.WebRootPath + "/images/mainnews/" + Path.GetRandomFileName() + ".png";
                 await File.WriteAllBytesAsync(tempPath, thumbnail);
                 File.Move(tempPath, filePath, true);

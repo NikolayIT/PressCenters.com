@@ -22,7 +22,9 @@
         [InlineData(SKEncodedImageFormat.Webp)]
         public void ShrinkToWidthShouldScaleDownKeepingTheAspectRatio(SKEncodedImageFormat format)
         {
-            using var thumbnail = DecodePng(ImageThumbnails.ShrinkToWidth(CreateImage(1460, 1000, format), 730));
+            using var thumbnail = Decode(
+                ImageThumbnails.ShrinkToWidth(CreateImage(1460, 1000, format), 730, ThumbnailFormat.Webp),
+                ThumbnailFormat.Webp);
 
             Assert.Equal(730, thumbnail.Width);
             Assert.Equal(500, thumbnail.Height);
@@ -31,8 +33,9 @@
         [Fact]
         public void ShrinkToWidthShouldNotEnlargeSmallImages()
         {
-            using var thumbnail = DecodePng(
-                ImageThumbnails.ShrinkToWidth(CreateImage(400, 300, SKEncodedImageFormat.Jpeg), 730));
+            using var thumbnail = Decode(
+                ImageThumbnails.ShrinkToWidth(CreateImage(400, 300, SKEncodedImageFormat.Jpeg), 730, ThumbnailFormat.Webp),
+                ThumbnailFormat.Webp);
 
             Assert.Equal(400, thumbnail.Width);
             Assert.Equal(300, thumbnail.Height);
@@ -45,17 +48,21 @@
         [InlineData(50, 30)]
         public void CropToFillShouldReturnExactlyTheRequestedSize(int width, int height)
         {
-            using var thumbnail = DecodePng(
-                ImageThumbnails.CropToFill(CreateImage(width, height, SKEncodedImageFormat.Jpeg), 200, 120));
+            var image = CreateImage(width, height, SKEncodedImageFormat.Jpeg);
 
-            Assert.Equal(200, thumbnail.Width);
-            Assert.Equal(120, thumbnail.Height);
+            using var webp = Decode(ImageThumbnails.CropToFill(image, 200, 120, ThumbnailFormat.Webp), ThumbnailFormat.Webp);
+            using var png = Decode(ImageThumbnails.CropToFill(image, 150, 110, ThumbnailFormat.Png), ThumbnailFormat.Png);
+
+            Assert.Equal(200, webp.Width);
+            Assert.Equal(120, webp.Height);
+            Assert.Equal(150, png.Width);
+            Assert.Equal(110, png.Height);
         }
 
         [Fact]
         public void CropToFillShouldKeepTheCenter()
         {
-            // Red | green | blue stripes: filling a square keeps only the green middle.
+            // Red | green | blue stripes: filling a square keeps only the green middle (PNG, so the colors are exact).
             using var source = new SKBitmap(300, 100);
             using (var canvas = new SKCanvas(source))
             using (var paint = new SKPaint())
@@ -67,15 +74,19 @@
                 canvas.DrawRect(SKRect.Create(200, 0, 100, 100), paint);
             }
 
-            using var thumbnail = DecodePng(ImageThumbnails.CropToFill(Encode(source, SKEncodedImageFormat.Png), 100, 100));
+            using var thumbnail = Decode(
+                ImageThumbnails.CropToFill(Encode(source, SKEncodedImageFormat.Png), 100, 100, ThumbnailFormat.Png),
+                ThumbnailFormat.Png);
 
             Assert.Equal(SKColors.Lime, thumbnail.GetPixel(0, 0));
             Assert.Equal(SKColors.Lime, thumbnail.GetPixel(50, 50));
             Assert.Equal(SKColors.Lime, thumbnail.GetPixel(99, 99));
         }
 
-        [Fact]
-        public void ThumbnailsShouldKeepTransparency()
+        [Theory]
+        [InlineData(ThumbnailFormat.Webp)]
+        [InlineData(ThumbnailFormat.Png)]
+        public void ThumbnailsShouldKeepTransparency(ThumbnailFormat format)
         {
             using var source = new SKBitmap(new SKImageInfo(400, 240, SKColorType.Rgba8888, SKAlphaType.Premul));
             using (var canvas = new SKCanvas(source))
@@ -85,10 +96,25 @@
                 canvas.DrawRect(SKRect.Create(100, 60, 200, 120), paint);
             }
 
-            using var thumbnail = DecodePng(ImageThumbnails.CropToFill(Encode(source, SKEncodedImageFormat.Png), 200, 120));
+            using var thumbnail = Decode(
+                ImageThumbnails.CropToFill(Encode(source, SKEncodedImageFormat.Png), 200, 120, format), format);
 
             Assert.Equal(0, thumbnail.GetPixel(0, 0).Alpha);
-            Assert.Equal(SKColors.Red, thumbnail.GetPixel(100, 60));
+            Assert.Equal(255, thumbnail.GetPixel(100, 60).Alpha);
+            Assert.True(thumbnail.GetPixel(100, 60).Red > 240);
+        }
+
+        [Fact]
+        public void ReencodeShouldConvertAPngThumbnailToWebpOfTheSameSize()
+        {
+            var png = CreateImage(730, 487, SKEncodedImageFormat.Png);
+
+            using var thumbnail = Decode(ImageThumbnails.Reencode(png, ThumbnailFormat.Webp), ThumbnailFormat.Webp);
+
+            Assert.Equal(730, thumbnail.Width);
+            Assert.Equal(487, thumbnail.Height);
+            AssertClose(SKColors.SteelBlue, thumbnail.GetPixel(5, 5));
+            AssertClose(SKColors.Orange, thumbnail.GetPixel(365, 243));
         }
 
         [Fact]
@@ -98,8 +124,10 @@
             using var gray = new SKBitmap(new SKImageInfo(300, 200, SKColorType.Gray8, SKAlphaType.Opaque));
             gray.Erase(SKColors.Gray);
 
-            using var gifThumbnail = DecodePng(ImageThumbnails.CropToFill(gif, 200, 120));
-            using var grayThumbnail = DecodePng(ImageThumbnails.ShrinkToWidth(Encode(gray, SKEncodedImageFormat.Jpeg), 730));
+            using var gifThumbnail = Decode(ImageThumbnails.CropToFill(gif, 200, 120, ThumbnailFormat.Webp), ThumbnailFormat.Webp);
+            using var grayThumbnail = Decode(
+                ImageThumbnails.ShrinkToWidth(Encode(gray, SKEncodedImageFormat.Jpeg), 730, ThumbnailFormat.Webp),
+                ThumbnailFormat.Webp);
 
             Assert.Equal(200, gifThumbnail.Width);
             Assert.Equal(300, grayThumbnail.Width);
@@ -113,8 +141,8 @@
             source.Erase(SKColors.SteelBlue);
             var jpeg = Encode(source, SKEncodedImageFormat.Jpeg);
 
-            using var big = DecodePng(ImageThumbnails.ShrinkToWidth(jpeg, 730));
-            using var small = DecodePng(ImageThumbnails.CropToFill(jpeg, 200, 120));
+            using var big = Decode(ImageThumbnails.ShrinkToWidth(jpeg, 730, ThumbnailFormat.Webp), ThumbnailFormat.Webp);
+            using var small = Decode(ImageThumbnails.CropToFill(jpeg, 200, 120, ThumbnailFormat.Webp), ThumbnailFormat.Webp);
 
             Assert.Equal(730, big.Width);
             Assert.Equal(593, big.Height);
@@ -128,8 +156,9 @@
         {
             var bytes = Encoding.UTF8.GetBytes(content);
 
-            Assert.Throws<InvalidDataException>(() => ImageThumbnails.ShrinkToWidth(bytes, 730));
-            Assert.Throws<InvalidDataException>(() => ImageThumbnails.CropToFill(bytes, 200, 120));
+            Assert.Throws<InvalidDataException>(() => ImageThumbnails.ShrinkToWidth(bytes, 730, ThumbnailFormat.Webp));
+            Assert.Throws<InvalidDataException>(() => ImageThumbnails.CropToFill(bytes, 200, 120, ThumbnailFormat.Webp));
+            Assert.Throws<InvalidDataException>(() => ImageThumbnails.Reencode(bytes, ThumbnailFormat.Webp));
         }
 
         [Fact]
@@ -138,7 +167,8 @@
             // A few bytes of PNG that declare 20000x20000 pixels: decoding them would need a 1.6 GB buffer.
             var png = CreatePngHeader(20000, 20000);
 
-            var exception = Assert.Throws<InvalidDataException>(() => ImageThumbnails.CropToFill(png, 200, 120));
+            var exception = Assert.Throws<InvalidDataException>(
+                () => ImageThumbnails.CropToFill(png, 200, 120, ThumbnailFormat.Webp));
             Assert.Contains("too large", exception.Message);
         }
 
@@ -162,10 +192,27 @@
             return data.ToArray();
         }
 
-        private static SKBitmap DecodePng(byte[] png)
+        private static SKBitmap Decode(byte[] image, ThumbnailFormat expectedFormat)
         {
-            Assert.Equal(PngSignature, png.Take(PngSignature.Length));
-            return SKBitmap.Decode(png);
+            if (expectedFormat == ThumbnailFormat.Png)
+            {
+                Assert.Equal(PngSignature, image.Take(PngSignature.Length));
+            }
+            else
+            {
+                Assert.Equal("RIFF", Encoding.ASCII.GetString(image, 0, 4));
+                Assert.Equal("WEBP", Encoding.ASCII.GetString(image, 8, 4));
+            }
+
+            return SKBitmap.Decode(image);
+        }
+
+        // Lossy WebP shifts flat colors by a few levels.
+        private static void AssertClose(SKColor expected, SKColor actual)
+        {
+            Assert.InRange(actual.Red, Math.Max(0, expected.Red - 10), Math.Min(255, expected.Red + 10));
+            Assert.InRange(actual.Green, Math.Max(0, expected.Green - 10), Math.Min(255, expected.Green + 10));
+            Assert.InRange(actual.Blue, Math.Max(0, expected.Blue - 10), Math.Min(255, expected.Blue + 10));
         }
 
         // A PNG that declares width x height pixels but carries almost no image data.

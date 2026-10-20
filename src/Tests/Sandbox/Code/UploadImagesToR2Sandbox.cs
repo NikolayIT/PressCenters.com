@@ -31,7 +31,7 @@
 
         private static readonly Dictionary<string, string> ContentTypes = new(StringComparer.OrdinalIgnoreCase)
         {
-            [".png"] = NewsImagePaths.ContentType,
+            [".png"] = "image/png",
             [".jpg"] = "image/jpeg",
             [".jpeg"] = "image/jpeg",
             [".gif"] = "image/gif",

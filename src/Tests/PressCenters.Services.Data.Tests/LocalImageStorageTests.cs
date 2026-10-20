@@ -22,10 +22,10 @@
 
             Assert.False(await storage.ExistsAsync(key));
 
-            await storage.UploadAsync(key, new MemoryStream(Encoding.ASCII.GetBytes("png")), NewsImagePaths.ContentType);
+            await storage.UploadAsync(key, new MemoryStream(Encoding.ASCII.GetBytes("webp")), NewsImagePaths.ContentType);
 
             Assert.True(await storage.ExistsAsync(key));
-            Assert.Equal("png", await File.ReadAllTextAsync(Path.Combine(this.root, "news", "456", "big_123456.png")));
+            Assert.Equal("webp", await File.ReadAllTextAsync(Path.Combine(this.root, "news", "456", "big_123456.webp")));
             Assert.Empty(Directory.GetFiles(Path.Combine(this.root, "news", "456"), "*.tmp"));
         }
 
@@ -38,7 +38,7 @@
             await storage.UploadAsync(key, new MemoryStream(Encoding.ASCII.GetBytes("old")), NewsImagePaths.ContentType);
             await storage.UploadAsync(key, new MemoryStream(Encoding.ASCII.GetBytes("new")), NewsImagePaths.ContentType);
 
-            Assert.Equal("new", await File.ReadAllTextAsync(Path.Combine(this.root, "news", "7", "small_7.png")));
+            Assert.Equal("new", await File.ReadAllTextAsync(Path.Combine(this.root, "news", "7", "small_7.webp")));
         }
 
         [Fact]
@@ -56,7 +56,7 @@
             }
 
             keys.Sort(StringComparer.Ordinal);
-            Assert.Equal(new[] { "news/1/big_1.png", "news/1/small_1.png" }, keys);
+            Assert.Equal(new[] { "news/1/big_1.webp", "news/1/small_1.webp" }, keys);
         }
 
         [Fact]
@@ -67,6 +67,30 @@
             {
                 Assert.Fail($"Unexpected key {key}");
             }
+        }
+
+        [Fact]
+        public async Task DownloadShouldReturnTheUploadedBytesAndDeleteShouldRemoveThem()
+        {
+            var storage = new LocalImageStorage(this.root);
+            var key = NewsImagePaths.BigKey(42);
+            await storage.UploadAsync(key, new MemoryStream(new byte[] { 1, 2, 3 }), NewsImagePaths.ContentType);
+
+            Assert.Equal(new byte[] { 1, 2, 3 }, await storage.DownloadAsync(key));
+
+            await storage.DeleteAsync(key);
+
+            Assert.False(await storage.ExistsAsync(key));
+        }
+
+        [Fact]
+        public async Task DeleteShouldIgnoreAMissingKey()
+        {
+            var storage = new LocalImageStorage(this.root);
+
+            await storage.DeleteAsync("news/1/big_1.png");
+
+            Assert.False(await storage.ExistsAsync("news/1/big_1.png"));
         }
 
         public void Dispose()

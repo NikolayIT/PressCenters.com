@@ -38,9 +38,11 @@
 
             // Seed data on application startup. Skippable (BACKFILL_SKIP_MIGRATE=1) so a backfill run against an
             // already-migrated/seeded production database performs no schema or seed side effects -- only the
-            // intended News inserts. The R2 upload mode never touches the database, so it always skips this.
+            // intended News inserts. The R2 upload and WebP conversion modes never touch the database, so they always
+            // skip this.
             var uploadImagesMode = !string.IsNullOrWhiteSpace(configuration[UploadImagesToR2Sandbox.UploadRootKey]);
-            if (!uploadImagesMode && Environment.GetEnvironmentVariable("BACKFILL_SKIP_MIGRATE") != "1")
+            var webpMode = Environment.GetEnvironmentVariable(ConvertThumbnailsToWebpSandbox.ModeVariable) == "1";
+            if (!uploadImagesMode && !webpMode && Environment.GetEnvironmentVariable("BACKFILL_SKIP_MIGRATE") != "1")
             {
                 using var serviceScope = serviceProvider.CreateScope();
                 var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -67,6 +69,10 @@
             if (uploadImagesMode)
             {
                 new UploadImagesToR2Sandbox().Work(serviceProvider).GetAwaiter().GetResult();
+            }
+            else if (Environment.GetEnvironmentVariable(ConvertThumbnailsToWebpSandbox.ModeVariable) == "1")
+            {
+                new ConvertThumbnailsToWebpSandbox().Work(serviceProvider).GetAwaiter().GetResult();
             }
             else if (Environment.GetEnvironmentVariable("IMAGES_BACKFILL") == "1")
             {

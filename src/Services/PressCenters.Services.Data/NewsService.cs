@@ -166,16 +166,16 @@
             var imageBytes = await result.Content.ReadAsByteArrayAsync();
 
             // Both thumbnails before uploading either, so an image that cannot be decoded leaves nothing behind.
-            var bigThumbnail = ImageThumbnails.ShrinkToWidth(imageBytes, 730);
-            var smallThumbnail = ImageThumbnails.CropToFill(imageBytes, 200, 120);
+            var bigThumbnail = ImageThumbnails.ShrinkToWidth(imageBytes, 730, ThumbnailFormat.Webp);
+            var smallThumbnail = ImageThumbnails.CropToFill(imageBytes, 200, 120, ThumbnailFormat.Webp);
             await this.UploadImage(bigThumbnail, NewsImagePaths.BigKey(newsId));
             await this.UploadImage(smallThumbnail, NewsImagePaths.SmallKey(newsId));
             return true;
         }
 
-        private async Task UploadImage(byte[] png, string key)
+        private async Task UploadImage(byte[] thumbnail, string key)
         {
-            using var stream = new MemoryStream(png);
+            using var stream = new MemoryStream(thumbnail);
             await this.imageStorage.UploadAsync(key, stream, NewsImagePaths.ContentType);
         }
     }

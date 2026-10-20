@@ -97,17 +97,23 @@ The Hangfire dashboard is at `/hangfire` (production only, Administrator role re
 
 ### Images
 
-`NewsService.SaveImageAsync` downloads each article image, renders two PNGs with `ImageThumbnails` (**SkiaSharp**;
-`big_{id}.png` shrunk to 730px wide, `small_{id}.png` 200×120 cropped) and uploads them through `IImageStorage`
-(`Services/PressCenters.Services.Data/Images/`) under the keys from `NewsImagePaths`:
-`news/{newsId % 1000}/big_{id}.png`. In production `IImageStorage` is `R2ImageStorage` (Cloudflare R2 bucket
+`NewsService.SaveImageAsync` downloads each article image, renders two lossy WebP thumbnails with `ImageThumbnails`
+(**SkiaSharp**; `big_{id}.webp` shrunk to 730px wide, `small_{id}.webp` 200×120 cropped) and uploads them through
+`IImageStorage` (`Services/PressCenters.Services.Data/Images/`) under the keys from `NewsImagePaths`:
+`news/{newsId % 1000}/big_{id}.webp`. In production `IImageStorage` is `R2ImageStorage` (Cloudflare R2 bucket
 `presscenters-images`, S3 API via AWSSDK.S3, served from `https://images.presscenters.com`); when the `R2`
 config section is empty it is `LocalImageStorage` rooted at `wwwroot/images`, i.e. the pre-R2 on-disk layout.
 `AddImageStorage` (Startup / Sandbox `Program`) picks the implementation and returns the public base URL,
 stored in `GlobalConstants.ImagesBaseUrl`, which `NewsViewModel.Small/BigImageUrl` prepend to the key.
-Main-news images stay local in `wwwroot/images/mainnews/{sourceId}.png` (150×110, also `ImageThumbnails`).
-`ImageThumbnails` decodes JPEG, PNG, GIF, WebP, BMP and ICO (no TIFF) and throws `InvalidDataException` for anything
-else; `src/Directory.Build.targets` keeps SkiaSharp's ~95 MB native PDBs out of the build/publish output.
+Main-news images stay local PNGs in `wwwroot/images/mainnews/{sourceId}.png` (150×110, also `ImageThumbnails`; the
+API returns these URLs). `ImageThumbnails` decodes JPEG, PNG, GIF, WebP, BMP and ICO (no TIFF) and throws
+`InvalidDataException` for anything else; `src/Directory.Build.targets` keeps SkiaSharp's ~95 MB native PDBs out of
+the build/publish output.
+
+Until October 2026 the news thumbnails were PNGs (`big_{id}.png`). `ConvertThumbnailsToWebpSandbox` (Sandbox with
+`IMAGES_WEBP=1`; see its doc comment for the other `IMAGES_WEBP_*` variables) converts them to `.webp` next to the PNGs
+in the configured storage, resumably, with a live Spectre.Console view. Rollout: run it, deploy the code that links
+`.webp`, run it again for the PNGs created meanwhile, then optionally once more with `IMAGES_WEBP_DELETE_PNG=1`.
 
 The R2 credentials live only in the git-ignored `appsettings.Production.json` files (Web and Sandbox); the
 repo is public, so never put them in `appsettings.json` or in code. The Sandbox loads

@@ -76,6 +76,19 @@
             }
         }
 
+        public async Task<byte[]> DownloadAsync(string key, CancellationToken cancellationToken = default)
+        {
+            using var response = await this.client.GetObjectAsync(this.bucketName, key, cancellationToken);
+            using var buffer = new MemoryStream();
+            await response.ResponseStream.CopyToAsync(buffer, cancellationToken);
+            return buffer.ToArray();
+        }
+
+        public async Task DeleteAsync(string key, CancellationToken cancellationToken = default) =>
+            await this.client.DeleteObjectAsync(this.bucketName, key, cancellationToken);
+
+        public override string ToString() => $"R2 bucket {this.bucketName}";
+
         public async IAsyncEnumerable<string> ListKeysAsync(string prefix, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var request = new ListObjectsV2Request { BucketName = this.bucketName, Prefix = prefix, MaxKeys = 1000, };

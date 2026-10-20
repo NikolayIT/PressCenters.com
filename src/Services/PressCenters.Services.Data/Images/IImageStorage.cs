@@ -15,6 +15,11 @@
 
         Task<bool> ExistsAsync(string key, CancellationToken cancellationToken = default);
 
+        Task<byte[]> DownloadAsync(string key, CancellationToken cancellationToken = default);
+
+        /// <summary>Deletes the object; a key that does not exist is not an error.</summary>
+        Task DeleteAsync(string key, CancellationToken cancellationToken = default);
+
         IAsyncEnumerable<string> ListKeysAsync(string prefix, CancellationToken cancellationToken = default);
     }
 }

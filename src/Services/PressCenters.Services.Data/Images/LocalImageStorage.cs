@@ -39,6 +39,20 @@
         public Task<bool> ExistsAsync(string key, CancellationToken cancellationToken = default) =>
             Task.FromResult(File.Exists(this.GetPath(key)));
 
+        public Task<byte[]> DownloadAsync(string key, CancellationToken cancellationToken = default) =>
+            File.ReadAllBytesAsync(this.GetPath(key), cancellationToken);
+
+        public Task DeleteAsync(string key, CancellationToken cancellationToken = default)
+        {
+            var filePath = this.GetPath(key);
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+
+            return Task.CompletedTask;
+        }
+
         public async IAsyncEnumerable<string> ListKeysAsync(string prefix, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
@@ -56,6 +70,8 @@
                 yield return file;
             }
         }
+
+        public override string ToString() => $"local folder {this.rootPath}";
 
         private string GetPath(string key) => Path.Combine(this.rootPath, key.Replace('/', Path.DirectorySeparatorChar));
     }
