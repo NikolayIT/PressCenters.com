@@ -61,10 +61,20 @@
                     continue;
                 }
 
-                if (news == null)
+                // Providers return an object with null fields when their selectors miss (an error page from the site,
+                // changed markup) rather than null. Saving it would show an empty tile and replace the last good image.
+                if (string.IsNullOrWhiteSpace(news?.Title))
                 {
-                    context.WriteLine($"Null news in \"{source.TypeName}\"");
+                    context.WriteLine($"No news (empty title) in \"{source.TypeName}\"");
                     continue;
+                }
+
+                // OriginalUrl is rendered as a link on every page and returned by the API, and HTML encoding does not
+                // neutralize a "javascript:" URL taken from a scraped page, so keep only http(s) links.
+                if (!Uri.TryCreate(news.OriginalUrl, UriKind.Absolute, out var originalUri)
+                    || (originalUri.Scheme != Uri.UriSchemeHttp && originalUri.Scheme != Uri.UriSchemeHttps))
+                {
+                    news.OriginalUrl = null;
                 }
 
                 if (lastNews?.Title == news.Title && lastNews?.ImageUrl == news.ImageUrl)
@@ -75,7 +85,7 @@
 
                 try
                 {
-                    await this.SaveImageLocally(news.ImageUrl, source.Id, context);
+                    await this.SaveImageLocally(news.ImageUrl, source.Id, instance.UseProxy, context);
                 }
                 catch (Exception e)
                 {
@@ -95,7 +105,42 @@
             }
         }
 
-        private async Task SaveImageLocally(string imageUrl, int sourceId, PerformContext context)
+        // The relays differ in which sites they can reach (see BaseSource.ReadStringFromUrl), so try them in random
+        // order until one returns the image. Returns the last response (possibly unsuccessful) or throws the last
+        // error. Like ProxyUrlBuilder.Wrap, goes direct when no relay is configured.
+        private static async Task<HttpResponseMessage> GetThroughRelaysAsync(HttpClient client, string url)
+        {
+            var hosts = GlobalConstants.ProxyHosts.OrderBy(_ => Guid.NewGuid()).ToList();
+            if (hosts.Count == 0)
+            {
+                return await client.GetAsync(url);
+            }
+
+            HttpResponseMessage response = null;
+            for (var i = 0; i < hosts.Count; i++)
+            {
+                response?.Dispose();
+                response = null;
+                try
+                {
+                    response = await client.GetAsync(ProxyUrlBuilder.WrapWith(url, hosts[i]).Replace("+", "%20"));
+                }
+                catch (Exception) when (i < hosts.Count - 1)
+                {
+                    // Relay host unreachable -- try the next one.
+                    continue;
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    break;
+                }
+            }
+
+            return response;
+        }
+
+        private async Task SaveImageLocally(string imageUrl, int sourceId, bool useProxy, PerformContext context)
         {
             var filePath = this.webHostEnvironment.WebRootPath + "/images/mainnews/" + sourceId + ".png";
             var defaultFilePath = this.webHostEnvironment.WebRootPath + "/images/mainnews/default.png";
@@ -107,7 +152,7 @@
 
             using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(120), };
             client.DefaultRequestHeaders.Add("User-Agent", GlobalConstants.DefaultUserAgent);
-            var result = await client.GetAsync(imageUrl);
+            using var result = useProxy ? await GetThroughRelaysAsync(client, imageUrl) : await client.GetAsync(imageUrl);
             if (!result.IsSuccessStatusCode)
             {
                 File.Copy(defaultFilePath, filePath, true);

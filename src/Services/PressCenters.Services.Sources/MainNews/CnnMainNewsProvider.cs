@@ -12,8 +12,10 @@
             // CNN ships both a text-only and an "-with-images" variant of that zone; take whichever comes first.
             // Inside the lead card the image and the headline live in separate anchors, so anchor everything to
             // the zone: the first headline-text is the title and the first dam image is the lead picture.
-            var zone = document.QuerySelector(".container_lead-plus-headlines")
-                       ?? document.QuerySelector(".container_lead-plus-headlines-with-images");
+            // One selector list, so the first match in document order wins (a "??" between two lookups preferred the
+            // text-only variant wherever it was on the page, e.g. a lower "More top stories" zone).
+            var zone = document.QuerySelector(
+                ".container_lead-plus-headlines, .container_lead-plus-headlines-with-images");
 
             var headlineElement = zone?.QuerySelector(".container__headline-text");
             var title = headlineElement?.TextContent?.Trim().Trim('.').Trim();
