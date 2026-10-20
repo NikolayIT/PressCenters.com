@@ -31,9 +31,10 @@
     /// then run this with IMAGES_WEBP_DELETE_PNG=1: it converts everything and then deletes the PNGs that have a WebP.
     /// Once a run ends with nothing left to convert, the fallback can go.
     /// A damaged PNG (one that does not decode, or is cut short) is made again from the article's original image
-    /// instead, as for a new article. The image URLs come from the database of ConnectionStrings:DefaultConnection
-    /// (only read), which must be the production one: with any other, e.g. a local copy, the damaged PNGs are left and
-    /// listed in the failures file, and a later run with the production database makes them.
+    /// instead, as for a new article. The image URLs come from the database (only read), which must be the production
+    /// one: with any other, e.g. the local copy that DefaultConnection is on a dev box, the damaged PNGs are left and
+    /// listed in the failures file, and a later run with the production database (SANDBOX_DATABASE=Production, as in the
+    /// "(production database)" launch profile) makes them.
     /// Environment: IMAGES_WEBP=1 selects this mode; IMAGES_WEBP_PARALLELISM (default 8); IMAGES_WEBP_PREFIX
     /// (default "news/", e.g. "news/42/" for a trial run); IMAGES_WEBP_LIMIT (convert at most that many);
     /// IMAGES_WEBP_DELETE_PNG=1 (asks for confirmation in a terminal). Never writes to the database.
@@ -53,6 +54,8 @@
         {
             var storage = serviceProvider.GetRequiredService<IImageStorage>();
             var target = storage.ToString();
+            var connection = serviceProvider.GetRequiredService<ApplicationDbContext>().Database.GetDbConnection();
+            var database = $"{connection.Database} on {connection.DataSource}";
             var parallelism = int.TryParse(Environment.GetEnvironmentVariable("IMAGES_WEBP_PARALLELISM"), out var p) && p > 0 ? p : 8;
             var prefix = Environment.GetEnvironmentVariable("IMAGES_WEBP_PREFIX") is { Length: > 0 } value ? value : NewsImagePaths.Prefix;
             var limit = int.TryParse(Environment.GetEnvironmentVariable("IMAGES_WEBP_LIMIT"), out var l) && l > 0 ? l : int.MaxValue;
@@ -83,20 +86,21 @@
                 var work = Run(serviceProvider, storage, progress, prefix, parallelism, limit, deletePngs, cancellation.Token);
                 if (interactive)
                 {
-                    await AnsiConsole.Live(WebpConversionDashboard.Render(progress, target, options))
+                    await AnsiConsole.Live(WebpConversionDashboard.Render(progress, target, database, options))
                         .AutoClear(false)
                         .StartAsync(async context =>
                         {
                             while (!work.IsCompleted)
                             {
                                 await Task.WhenAny(work, Task.Delay(250));
-                                context.UpdateTarget(WebpConversionDashboard.Render(progress, target, options));
+                                context.UpdateTarget(WebpConversionDashboard.Render(progress, target, database, options));
                             }
                         });
                 }
                 else
                 {
-                    Console.WriteLine($"Converting the PNG news thumbnails to WebP in {target} ({Markup.Remove(options)})");
+                    Console.WriteLine(
+                        $"Converting the PNG news thumbnails to WebP in {target}, database {database} ({Markup.Remove(options)})");
                     while (!work.IsCompleted)
                     {
                         await Task.WhenAny(work, Task.Delay(TimeSpan.FromSeconds(5)));
@@ -267,8 +271,9 @@
                     var details = $"the database '{connection.Database}' on '{connection.DataSource}' has only"
                                   + $" {known.ToString("N0", CultureInfo.InvariantCulture)} of the"
                                   + $" {thumbnailIds.Count.ToString("N0", CultureInfo.InvariantCulture)} news that have"
-                                  + " thumbnails here, so it is not the one behind this storage. Run again with"
-                                  + " ConnectionStrings:DefaultConnection set to the production database to make them";
+                                  + " thumbnails here, so it is not the one behind this storage. Run again with the launch"
+                                  + " profile \"Convert thumbnails to WebP and delete the PNGs (production database)\""
+                                  + " (SANDBOX_DATABASE=Production) to make them";
                     NotRecreated("not the production database", details);
                     return;
                 }

@@ -116,7 +116,10 @@ other `IMAGES_WEBP_*` variables) converts them to `.webp` in the configured stor
 Spectre.Console view, and with `IMAGES_WEBP_DELETE_PNG=1` deletes each converted PNG at the end of the run. A damaged
 PNG (does not decode, or is cut short) is made again from the article's original image instead, with the image URL read
 from the database, which must be the production one (it checks that most of the news with thumbnails are in it; with
-the local dev database the damaged PNGs are left and listed in `webp-conversion-failures.txt`). Meanwhile
+the local dev database the damaged PNGs are left and listed in `webp-conversion-failures.txt`). On a dev box that is the
+"... (production database)" launch profile: `SANDBOX_DATABASE=Production` makes the Sandbox use
+`ConnectionStrings:Production` from its git-ignored `appsettings.Production.json` (or asks for it) instead of
+`DefaultConnection`, the local database. Meanwhile
 the news pages fall back to the PNG when the WebP is missing (`data-fallback` + the error handler in `_BaseLayout`);
 once a run finds nothing left to convert, that fallback can be removed.
 

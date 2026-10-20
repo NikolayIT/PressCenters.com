@@ -8,6 +8,15 @@
         "IMAGES_WEBP_DELETE_PNG": "1"
       }
     },
+    "Convert thumbnails to WebP and delete the PNGs (production database)": {
+      "commandName": "Project",
+      "commandLineArgs": "sandbox",
+      "environmentVariables": {
+        "IMAGES_WEBP": "1",
+        "IMAGES_WEBP_DELETE_PNG": "1",
+        "SANDBOX_DATABASE": "Production"
+      }
+    },
     "Convert thumbnails to WebP (trial: 200 newest, keeps the PNGs)": {
       "commandName": "Project",
       "commandLineArgs": "sandbox",

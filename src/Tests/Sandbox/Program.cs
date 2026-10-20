@@ -25,15 +25,25 @@
 
     using Sandbox.Code;
 
+    using Spectre.Console;
+
     public static class Program
     {
+        private const string DatabaseVariable = "SANDBOX_DATABASE";
+
         public static int Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
             Console.WriteLine($"{typeof(Program).Namespace} ({string.Join(" ", args)}) starts working...");
             var configuration = BuildConfiguration();
+            var connectionString = GetConnectionString(configuration);
+            if (connectionString == null)
+            {
+                return 1;
+            }
+
             var serviceCollection = new ServiceCollection();
-            ConfigureServices(serviceCollection, configuration);
+            ConfigureServices(serviceCollection, configuration, connectionString);
             IServiceProvider serviceProvider = serviceCollection.BuildServiceProvider(true);
 
             // Seed data on application startup. Skippable (BACKFILL_SKIP_MIGRATE=1) so a backfill run against an
@@ -94,8 +104,8 @@
         private static IConfiguration BuildConfiguration()
         {
             // appsettings.Production.json is git-ignored (the repo is public) and holds the secrets: the production
-            // connection string, the R2 credentials and the R2:UploadRoot switch. Copy it next to Sandbox.exe on
-            // the server.
+            // connection string (on a dev box under ConnectionStrings:Production, see GetConnectionString), the R2
+            // credentials and the R2:UploadRoot switch. Copy it next to Sandbox.exe on the server.
             return new ConfigurationBuilder().SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("appsettings.json", false, true)
                 .AddJsonFile("appsettings.Production.json", true, true)
@@ -103,14 +113,47 @@
                 .Build();
         }
 
-        private static void ConfigureServices(ServiceCollection services, IConfiguration configuration)
+        // DefaultConnection: the local database on a dev box, the production one on the server. SANDBOX_DATABASE=<name>
+        // (Production in the "(production database)" launch profiles) runs against ConnectionStrings:<name> instead:
+        // from the git-ignored appsettings.Production.json or the ConnectionStrings__<name> environment variable, else
+        // asked for in the console, so that the password never goes into launchSettings.json. Null: there is none.
+        private static string GetConnectionString(IConfiguration configuration)
+        {
+            var name = Environment.GetEnvironmentVariable(DatabaseVariable);
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return configuration.GetConnectionString("DefaultConnection");
+            }
+
+            var connectionString = configuration.GetConnectionString(name);
+            if (string.IsNullOrWhiteSpace(connectionString) && AnsiConsole.Profile.Capabilities.Interactive)
+            {
+                connectionString = AnsiConsole.Prompt(
+                    new TextPrompt<string>(
+                            $"Connection string of the [yellow]{Markup.Escape(name)}[/] database"
+                            + $" [grey](or put it in appsettings.Production.json as ConnectionStrings:{Markup.Escape(name)})[/]:")
+                        .Secret());
+            }
+
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                Console.WriteLine(
+                    $"{DatabaseVariable}={name}, but there is no connection string for it: put it in appsettings.Production.json"
+                    + $" as ConnectionStrings:{name}, or in the ConnectionStrings__{name} environment variable.");
+                return null;
+            }
+
+            return connectionString;
+        }
+
+        private static void ConfigureServices(ServiceCollection services, IConfiguration configuration, string connectionString)
         {
             services.AddSingleton<IConfiguration>(configuration);
             var loggerFactory = new LoggerFactory();
             services.AddDbContext<ApplicationDbContext>(
                 options => options
                     .UseSqlServer(
-                        configuration.GetConnectionString("DefaultConnection"),
+                        connectionString,
                         sqlServerOptions => sqlServerOptions.CommandTimeout(600)).EnableSensitiveDataLogging()
                     .UseLoggerFactory(loggerFactory)
                     .ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning)));

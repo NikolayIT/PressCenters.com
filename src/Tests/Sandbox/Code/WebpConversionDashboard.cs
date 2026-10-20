@@ -14,11 +14,12 @@
 
         private static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
 
-        public static IRenderable Render(WebpConversionProgress progress, string target, string optionsMarkup)
+        public static IRenderable Render(WebpConversionProgress progress, string target, string database, string optionsMarkup)
         {
             var rows = new List<IRenderable>
                        {
                            new Markup($"[grey]Storage[/]  [deepskyblue1]{Markup.Escape(target)}[/]"),
+                           new Markup($"[grey]Database[/] [deepskyblue1]{Markup.Escape(database)}[/]  [grey]only read, for the damaged PNGs[/]"),
                            new Markup($"[grey]Options[/]  {optionsMarkup}"),
                            Text.Empty,
                            PhaseLine(progress),
