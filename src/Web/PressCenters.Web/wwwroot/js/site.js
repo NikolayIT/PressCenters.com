@@ -10,14 +10,29 @@
         $(e).html(time.format("llll"));
         $(e).attr("title", $(e).attr("datetime"));
     });
-
-    if (document.cookie.includes('darkMode=true')) {
-        document.getElementById("dark-mode").checked = 1;
-    }
 });
 
-function toggleDarkMode() {
-    document.documentElement.classList.toggle('dark-mode');
-    if (document.cookie.includes('darkMode=true')) document.cookie = 'darkMode=false';
-    else document.cookie = 'darkMode=true';
-}
+// The navbar theme toggle. The choice is kept in a site-wide cookie for a year; the inline script at the top of
+// _BaseLayout reads it back before the next page is painted.
+(function () {
+    const toggle = document.getElementById("theme-toggle");
+    if (!toggle) {
+        return;
+    }
+
+    const root = document.documentElement;
+    const updateLabel = function () {
+        const label = root.getAttribute("data-bs-theme") === "dark" ? "Светла тема" : "Тъмна тема";
+        toggle.title = label;
+        toggle.setAttribute("aria-label", label);
+    };
+
+    updateLabel();
+    toggle.addEventListener("click", function () {
+        const theme = root.getAttribute("data-bs-theme") === "dark" ? "light" : "dark";
+        root.setAttribute("data-bs-theme", theme);
+        document.cookie = "theme=" + theme + "; path=/; max-age=31536000; samesite=lax"
+            + (location.protocol === "https:" ? "; secure" : "");
+        updateLabel();
+    });
+})();

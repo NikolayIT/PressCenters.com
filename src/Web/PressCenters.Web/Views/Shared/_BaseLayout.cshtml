@@ -26,14 +26,25 @@
         <link href="~/css/site.min.css" rel="stylesheet" asp-append-version="true" />
         <link href="~/css/unify.min.css" rel="stylesheet" asp-append-version="true" />
     </environment>
-    <script>if (document.cookie.includes('darkMode=true')) { document.documentElement.classList.toggle('dark-mode'); }</script>
+    <script>
+        // Apply the theme before the first paint (no flash of the light page). The "theme" cookie is written by the
+        // navbar toggle in site.js; without it the site is light.
+        document.documentElement.setAttribute('data-bs-theme', /(?:^|;\s*)theme=dark(?:;|$)/.test(document.cookie) ? 'dark' : 'light');
+    </script>
     @this.Html.Raw(this.JavaScriptSnippet.FullScript)
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm bg-body border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" href="/">@GlobalConstants.SystemName</a>
+                @* Outside the collapsed menu so it stays visible on phones; the last item of the bar on wider screens. *@
+                <div class="navbar-nav ms-auto me-1 me-sm-0 order-sm-last">
+                    <button type="button" id="theme-toggle" class="nav-link text-dark theme-toggle px-2" title="Тъмна тема" aria-label="Тъмна тема">
+                        <svg class="theme-icon-light" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278"/></svg>
+                        <svg class="theme-icon-dark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708"/></svg>
+                    </button>
+                </div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -65,7 +76,7 @@
 
     <footer>
         <div class="container">
-            <div class="card-body bg-light p-3">
+            <div class="card-body bg-body-tertiary p-3">
                 Информацията, публикувана в този сайт, в общия случай е публично достъпна и споделена от оригиналния автор с цел препубликуване. Към всяка новина в сайта е сложена препратка към оригиналния автор на публикацията. @GlobalConstants.SystemName не носи отговорност за съдържанието на препубликуваните новини. При използване на информация от сайта, моля цитирайте оригиналния автор.
                 <div class="float-end"><a href="/">@GlobalConstants.SystemName</a> @GlobalConstants.SystemVersion &copy; 2016-@(DateTime.UtcNow.Year) - <a href="https://github.com/NikolayIT/PressCenters.com" target="_blank">Open source system</a></div>
             </div>

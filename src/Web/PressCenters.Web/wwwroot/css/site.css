@@ -12,14 +12,71 @@ button.accept-policy {
     text-decoration: none;
 }
 
-
-html.dark-mode {
-    filter: invert(100%);
+/* Theme toggle in the navbar: the moon switches to the dark theme, the sun back to the light one. */
+.theme-toggle svg {
+    width: 1.125rem;
+    height: 1.125rem;
+    vertical-align: -0.2em;
 }
 
-    html.dark-mode img {
-        filter: invert(100%);
-    }
+[data-bs-theme="dark"] .theme-icon-light,
+:root:not([data-bs-theme="dark"]) .theme-icon-dark {
+    display: none;
+}
+
+/* Dark theme: Bootstrap's color mode (data-bs-theme="dark" on <html>, see _BaseLayout) restyles its own components;
+   these rules cover the colors that unify.css hard-codes. unify.css is loaded after this file, so every rule needs a
+   more specific selector than the one it overrides. */
+[data-bs-theme="dark"] body {
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+}
+
+[data-bs-theme="dark"] .navbar .text-dark {
+    color: var(--bs-body-color) !important;
+}
+
+[data-bs-theme="dark"] .g-color-black {
+    color: var(--bs-emphasis-color) !important;
+}
+
+[data-bs-theme="dark"] .g-color-main {
+    color: var(--bs-body-color) !important;
+}
+
+[data-bs-theme="dark"] .g-color-gray-dark-v4,
+[data-bs-theme="dark"] .g-color-gray-dark-v5 {
+    color: var(--bs-secondary-color) !important;
+}
+
+[data-bs-theme="dark"] .card,
+[data-bs-theme="dark"] .card-header,
+[data-bs-theme="dark"] .list-group-item,
+[data-bs-theme="dark"] .form-control {
+    border-color: var(--bs-border-color);
+}
+
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-control:focus {
+    color: var(--bs-body-color);
+}
+
+[data-bs-theme="dark"] .list-group-item-action:hover,
+[data-bs-theme="dark"] .dropdown-item:focus,
+[data-bs-theme="dark"] .dropdown-item:hover {
+    background-color: var(--bs-tertiary-bg);
+}
+
+/* Republished articles keep the inline colors of their source site (dark text, white boxes). */
+[data-bs-theme="dark"] .news-content [style*="color"],
+[data-bs-theme="dark"] .news-content font[color] {
+    color: inherit !important;
+}
+
+[data-bs-theme="dark"] .news-content [style*="background"],
+[data-bs-theme="dark"] .news-content [bgcolor] {
+    background-color: transparent !important;
+}
 
 /* `.text-justify` was removed in Bootstrap 5; keep it as a utility for justified article text. */
 .text-justify {
