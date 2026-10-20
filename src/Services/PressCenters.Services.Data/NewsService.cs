@@ -20,6 +20,8 @@
 
     public class NewsService : INewsService
     {
+        private static readonly Regex NonAlphanumericRegex = new Regex(@"[^\w\d]", RegexOptions.Compiled);
+
         private readonly IDeletableEntityRepository<News> newsRepository;
 
         private readonly IImageStorage imageStorage;
@@ -32,8 +34,11 @@
 
         public async Task<int?> AddAsync(RemoteNews remoteNews, int sourceId)
         {
+            // Look up the same (trimmed) id that is stored below, otherwise an id with surrounding whitespace
+            // never matches and the news is inserted again on every run.
+            var remoteId = remoteNews.RemoteId?.Trim();
             if (this.newsRepository.AllWithDeleted()
-                .Any(x => x.SourceId == sourceId && x.RemoteId == remoteNews.RemoteId))
+                .Any(x => x.SourceId == sourceId && x.RemoteId == remoteId))
             {
                 // Already exists
                 return null;
@@ -47,7 +52,7 @@
                              Content = remoteNews.Content?.Trim(),
                              CreatedOn = remoteNews.PostDate,
                              SourceId = sourceId,
-                             RemoteId = remoteNews.RemoteId?.Trim(),
+                             RemoteId = remoteId,
                          };
             news.SearchText = this.GetSearchText(news);
 
@@ -95,9 +100,9 @@
             var text = news.Title + " " + document.Body.TextContent;
             text = text.ToLower();
 
-            // Remove all non-alphanumeric characters
-            var regex = new Regex(@"[^\w\d]", RegexOptions.Compiled);
-            text = regex.Replace(text, " ");
+            // Remove all non-alphanumeric characters (a static compiled instance: compiling a new Regex per call
+            // costs far more than the replace itself)
+            text = NonAlphanumericRegex.Replace(text, " ");
 
             // Split words and remove duplicate values
             var words = text.Split(' ', StringSplitOptions.RemoveEmptyEntries).Where(x => x.Length > 1).Distinct();

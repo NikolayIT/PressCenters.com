@@ -20,7 +20,9 @@
             for (var i = 0; i <= allNews / 1000; i++)
             {
                 Console.WriteLine($"{i}/{allNews / 1000}");
-                var news = newsRepository.AllWithDeleted().Skip(i * 1000).Take(1000);
+
+                // Paging needs a stable order, otherwise SQL Server may return overlapping pages and skip rows.
+                var news = newsRepository.AllWithDeleted().OrderBy(x => x.Id).Skip(i * 1000).Take(1000);
                 foreach (var newsItem in news)
                 {
                     newsItem.SearchText = newsService.GetSearchText(newsItem);

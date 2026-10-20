@@ -88,7 +88,7 @@ Sources are **not** auto-discovered by type scanning. They are listed in
 class name). On startup `Startup.Configure` runs `dbContext.Database.Migrate()`, seeds, then
 `SeedHangfireJobs` registers one recurring Hangfire job **per DB source row**:
 
-- `GetLatestPublicationsJob` per source — every 7 minutes; resolves the source instance with
+- `GetLatestPublicationsJob` per source — every 10 minutes; resolves the source instance with
   `ReflectionHelpers.GetInstance<BaseSource>(typeName)`, fetches latest, adds new ones, downloads images.
 - `MainNewsGetterJob` — every 2 minutes.
 - `DbCleanupJob` — weekly.

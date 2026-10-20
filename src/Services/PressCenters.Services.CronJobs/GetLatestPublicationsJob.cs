@@ -14,6 +14,8 @@
     using PressCenters.Services.Data;
     using PressCenters.Services.Sources;
 
+    using SixLabors.ImageSharp;
+
     public class GetLatestPublicationsJob
     {
         private readonly IDeletableEntityRepository<Source> sourcesRepository;
@@ -38,14 +40,26 @@
             }
 
             var instance = ReflectionHelpers.GetInstance<BaseSource>(typeName);
-            var publications = instance.GetLatestPublications().ToList();
+
+            // GetPublication returns null for an article it could not fetch or parse, and some sources yield its
+            // result as is. Skip those instead of failing the whole run on the first one.
+            var publications = instance.GetLatestPublications().Where(x => x != null).ToList();
             foreach (var remoteNews in publications)
             {
                 var newsId = await this.newsService.AddAsync(remoteNews, source.Id);
-                if (newsId.HasValue && remoteNews != null)
+                if (newsId.HasValue)
                 {
                     context.WriteLine($"NEW: {remoteNews.Title}");
-                    await this.newsService.SaveImageAsync(remoteNews.ImageUrl, newsId.Value, instance.UseProxy);
+                    try
+                    {
+                        await this.newsService.SaveImageAsync(remoteNews.ImageUrl, newsId.Value, instance.UseProxy);
+                    }
+                    catch (Exception e) when (e is ImageFormatException || e is UriFormatException)
+                    {
+                        // The news is already saved; a malformed image URL or a file that is not a decodable image
+                        // must not abort the rest of the batch (it would never be retried anyway).
+                        context.WriteLine($"Image error ({remoteNews.ImageUrl}): {e.Message}");
+                    }
                 }
             }
         }
