@@ -29,7 +29,7 @@
             var size = codec.Info.Size;
             var width = Math.Min(maxWidth, size.Width);
             var height = Math.Max(1, (int)Math.Round((double)size.Height * width / size.Width));
-            using var source = Decode(codec, width, height);
+            using var source = Decode(codec, width, height, true);
             return ResizeAndEncode(source, width, height, format);
         }
 
@@ -46,7 +46,8 @@
             using var source = Decode(
                 codec,
                 (int)Math.Ceiling(size.Width * scale),
-                (int)Math.Ceiling(size.Height * scale));
+                (int)Math.Ceiling(size.Height * scale),
+                true);
 
             // The centered part of the decoded image that has the thumbnail's aspect ratio.
             var sourceScale = Math.Max((double)width / source.Width, (double)height / source.Height);
@@ -66,12 +67,15 @@
             return ResizeAndEncode(cropped, width, height, format);
         }
 
-        /// <summary>Encodes the image in another format, keeping its size.</summary>
+        /// <summary>
+        /// Encodes the image in another format, keeping its size. Unlike the thumbnails of downloaded images, an image
+        /// that is cut short is refused rather than encoded with its missing part left transparent.
+        /// </summary>
         /// <returns>The encoded image.</returns>
         public static byte[] Reencode(byte[] imageBytes, ThumbnailFormat format)
         {
             using var codec = CreateCodec(imageBytes);
-            using var source = Decode(codec, codec.Info.Width, codec.Info.Height);
+            using var source = Decode(codec, codec.Info.Width, codec.Info.Height, false);
             return Encode(source, format);
         }
 
@@ -90,7 +94,8 @@
 
         // Decodes at the smallest size the codec can produce directly that is still at least minWidth x minHeight:
         // JPEG decodes at 1/8 steps and WebP at any size, so a large photo never needs a full-size pixel buffer.
-        private static SKBitmap Decode(SKCodec codec, int minWidth, int minHeight)
+        // allowIncomplete keeps what decodes of an image that is cut short (as SKBitmap.Decode does), the rest left zero.
+        private static SKBitmap Decode(SKCodec codec, int minWidth, int minHeight, bool allowIncomplete)
         {
             var fullSize = codec.Info.Size;
             var scale = Math.Max((float)minWidth / fullSize.Width, (float)minHeight / fullSize.Height);
@@ -110,7 +115,16 @@
 
             var alphaType = codec.Info.AlphaType == SKAlphaType.Opaque ? SKAlphaType.Opaque : SKAlphaType.Premul;
             var info = new SKImageInfo(size.Width, size.Height, SKImageInfo.PlatformColorType, alphaType);
-            return SKBitmap.Decode(codec, info) ?? throw new InvalidDataException("The image could not be decoded.");
+            var bitmap = new SKBitmap(info, SKBitmapAllocFlags.ZeroPixels);
+            var result = bitmap.GetPixels() == IntPtr.Zero ? SKCodecResult.InternalError : codec.GetPixels(info, bitmap.GetPixels());
+            if (result == SKCodecResult.Success || (allowIncomplete && result == SKCodecResult.IncompleteInput))
+            {
+                return bitmap;
+            }
+
+            bitmap.Dispose();
+            throw new InvalidDataException(
+                result == SKCodecResult.IncompleteInput ? "The image is cut short." : "The image could not be decoded.");
         }
 
         // One cubic pass over a large reduction would alias, so halve with a box filter (linear sampling at exactly 1/2)

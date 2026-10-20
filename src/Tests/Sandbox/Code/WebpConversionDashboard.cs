@@ -25,9 +25,13 @@
                        };
             if (progress.Phase != WebpConversionPhase.Listing)
             {
-                rows.Add(progress.Phase == WebpConversionPhase.DeletingPngs
-                    ? Bar(Fraction(progress.Deleted, progress.PngsToDelete), "orange1")
-                    : Bar(Fraction(progress.Converted + progress.Failed, progress.Total), "springgreen2"));
+                rows.Add(progress.Phase switch
+                {
+                    WebpConversionPhase.DeletingPngs => Bar(Fraction(progress.Deleted, progress.PngsToDelete), "orange1"),
+                    WebpConversionPhase.RecreatingFromOriginals =>
+                        Bar(Fraction(progress.DamagedHandled, progress.Damaged), "mediumpurple1"),
+                    _ => Bar(Fraction(progress.Processed, progress.Total), "springgreen2"),
+                });
             }
 
             rows.Add(Text.Empty);
@@ -54,6 +58,11 @@
                 rows.Add(new Markup($"[red]× {Markup.Escape(error)}[/]"));
             }
 
+            if (progress.Note != null)
+            {
+                rows.Add(new Markup($"[yellow]! {Markup.Escape(progress.Note)}[/]"));
+            }
+
             rows.Add(Text.Empty);
             rows.Add(new Markup("[grey]Ctrl+C stops after the files in progress; running again resumes where it stopped.[/]"));
 
@@ -69,9 +78,13 @@
             WebpConversionPhase.Listing => $"Listing: {progress.Listed.ToString("N0", Culture)} keys",
             WebpConversionPhase.DeletingPngs =>
                 $"Deleting PNGs that have a WebP: {progress.Deleted.ToString("N0", Culture)}/{progress.PngsToDelete.ToString("N0", Culture)}",
+            WebpConversionPhase.RecreatingFromOriginals =>
+                $"Making the damaged thumbnails from the original images: {progress.DamagedHandled.ToString("N0", Culture)}"
+                + $"/{progress.Damaged.ToString("N0", Culture)}, made {progress.FromOriginals.ToString("N0", Culture)}",
             WebpConversionPhase.Failed => $"Failed: {progress.Error}",
-            _ => $"{progress.Phase}: {(progress.Converted + progress.Failed).ToString("N0", Culture)}/{progress.Total.ToString("N0", Culture)}"
-                 + $" ({Percent(progress.Converted + progress.Failed, progress.Total)}), converted {progress.Converted.ToString("N0", Culture)},"
+            _ => $"{progress.Phase}: {progress.Processed.ToString("N0", Culture)}/{progress.Total.ToString("N0", Culture)}"
+                 + $" ({Percent(progress.Processed, progress.Total)}), converted {progress.Converted.ToString("N0", Culture)},"
+                 + $" damaged {progress.Damaged.ToString("N0", Culture)} (from originals {progress.FromOriginals.ToString("N0", Culture)}),"
                  + $" failed {progress.Failed.ToString("N0", Culture)}, already WebP {progress.AlreadyWebp.ToString("N0", Culture)},"
                  + $" PNGs deleted {progress.Deleted.ToString("N0", Culture)}, {progress.FilesPerSecond.ToString("N1", Culture)} files/s,"
                  + $" {Bytes(progress.PngBytes)} -> {Bytes(progress.WebpBytes)}, elapsed {Time(progress.Elapsed)}"
@@ -85,9 +98,11 @@
             WebpConversionPhase.DeletingPngs =>
                 new Markup($"[orange1]●[/] [bold]Deleting the PNGs that already have a WebP[/]  {Count(progress.Deleted)} [grey]of[/] {Count(progress.PngsToDelete)}"),
             WebpConversionPhase.Converting =>
-                new Markup($"[springgreen2]●[/] [bold]Converting[/]  {Count(progress.Converted + progress.Failed)} [grey]of[/] {Count(progress.Total)}"),
+                new Markup($"[springgreen2]●[/] [bold]Converting[/]  {Count(progress.Processed)} [grey]of[/] {Count(progress.Total)}"),
+            WebpConversionPhase.RecreatingFromOriginals =>
+                new Markup($"[mediumpurple1]●[/] [bold]Making the damaged thumbnails from the original images[/]  {Count(progress.DamagedHandled)} [grey]of[/] {Count(progress.Damaged)}"),
             WebpConversionPhase.Done =>
-                new Markup($"[springgreen2]√ Done[/]  {Count(progress.Converted)} [grey]converted,[/] {Count(progress.Failed)} [grey]failed[/]"),
+                new Markup($"[springgreen2]√ Done[/]  {Count(progress.Converted)} [grey]converted,[/] {Count(progress.FromOriginals)} [grey]from originals,[/] {Count(progress.Failed)} [grey]failed[/]"),
             WebpConversionPhase.Stopped =>
                 new Markup("[yellow]■ Stopped[/]  [grey]run again to continue where it stopped[/]"),
             _ => new Markup($"[red]× Failed:[/] {Markup.Escape(progress.Error ?? string.Empty)}"),
@@ -105,24 +120,27 @@
                 $"[bold springgreen2]{Count(progress.Converted)}[/]",
                 "[grey]PNG read[/]",
                 Bytes(progress.PngBytes));
+            var fromOriginals = progress.Damaged > 0
+                ? $"[mediumpurple1]{Count(progress.FromOriginals)}[/] [grey]of {Count(progress.Damaged)} damaged[/]"
+                : "[grey]0[/]";
             grid.AddRow(
-                "[deepskyblue1]»[/] Already WebP",
-                $"[deepskyblue1]{Count(progress.AlreadyWebp)}[/]",
+                "[mediumpurple1]+[/] From originals",
+                fromOriginals,
                 "[grey]WebP written[/]",
                 $"[springgreen2]{Bytes(progress.WebpBytes)}[/]");
             grid.AddRow(
-                "[red]×[/] Failed",
-                progress.Failed > 0 ? $"[bold red]{Count(progress.Failed)}[/]" : "[grey]0[/]",
+                "[deepskyblue1]»[/] Already WebP",
+                $"[deepskyblue1]{Count(progress.AlreadyWebp)}[/]",
                 "[grey]Speed[/]",
                 $"{progress.FilesPerSecond.ToString("N1", Culture)} [grey]files/s[/]");
             grid.AddRow(
-                "[orange1]−[/] PNGs deleted",
-                progress.Deleted > 0 ? $"[orange1]{Count(progress.Deleted)}[/]" : "[grey]0[/]",
+                "[red]×[/] Failed",
+                progress.Failed > 0 ? $"[bold red]{Count(progress.Failed)}[/]" : "[grey]0[/]",
                 "[grey]Elapsed[/]",
                 Time(progress.Elapsed));
             grid.AddRow(
-                string.Empty,
-                string.Empty,
+                "[orange1]−[/] PNGs deleted",
+                progress.Deleted > 0 ? $"[orange1]{Count(progress.Deleted)}[/]" : "[grey]0[/]",
                 "[grey]Remaining[/]",
                 progress.Remaining is { } remaining ? $"[yellow]{Time(remaining)}[/]" : "[grey]–[/]");
             return grid;

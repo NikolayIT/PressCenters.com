@@ -9,9 +9,16 @@
     using System.Threading;
     using System.Threading.Tasks;
 
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
 
+    using PressCenters.Common;
+    using PressCenters.Data;
+    using PressCenters.Data.Common.Repositories;
+    using PressCenters.Data.Models;
+    using PressCenters.Services.Data;
     using PressCenters.Services.Data.Images;
+    using PressCenters.Services.Sources;
 
     using Spectre.Console;
 
@@ -23,9 +30,13 @@
     /// Rollout: deploy the code that links the .webp files (the pages fall back to the PNG while the WebP is missing),
     /// then run this with IMAGES_WEBP_DELETE_PNG=1: it converts everything and then deletes the PNGs that have a WebP.
     /// Once a run ends with nothing left to convert, the fallback can go.
+    /// A damaged PNG (one that does not decode, or is cut short) is made again from the article's original image
+    /// instead, as for a new article. The image URLs come from the database of ConnectionStrings:DefaultConnection
+    /// (only read), which must be the production one: with any other, e.g. a local copy, the damaged PNGs are left and
+    /// listed in the failures file, and a later run with the production database makes them.
     /// Environment: IMAGES_WEBP=1 selects this mode; IMAGES_WEBP_PARALLELISM (default 8); IMAGES_WEBP_PREFIX
     /// (default "news/", e.g. "news/42/" for a trial run); IMAGES_WEBP_LIMIT (convert at most that many);
-    /// IMAGES_WEBP_DELETE_PNG=1 (asks for confirmation in a terminal). Never touches the database.
+    /// IMAGES_WEBP_DELETE_PNG=1 (asks for confirmation in a terminal). Never writes to the database.
     /// </summary>
     public class ConvertThumbnailsToWebpSandbox
     {
@@ -34,6 +45,9 @@
         private const string FailuresFileName = "webp-conversion-failures.txt";
 
         private const int MaxAttempts = 3;
+
+        // The original images are on the sources' sites (mostly government ones): a few at a time.
+        private const int OriginalsParallelism = 4;
 
         public async Task Work(IServiceProvider serviceProvider)
         {
@@ -66,7 +80,7 @@
             try
             {
                 var progress = new WebpConversionProgress();
-                var work = Run(storage, progress, prefix, parallelism, limit, deletePngs, cancellation.Token);
+                var work = Run(serviceProvider, storage, progress, prefix, parallelism, limit, deletePngs, cancellation.Token);
                 if (interactive)
                 {
                     await AnsiConsole.Live(WebpConversionDashboard.Render(progress, target, options))
@@ -91,6 +105,11 @@
                 }
 
                 await work;
+                if (progress.Note != null && !interactive)
+                {
+                    Console.WriteLine(progress.Note);
+                }
+
                 if (progress.Failures.Count > 0)
                 {
                     var failuresFile = Path.Combine(Environment.CurrentDirectory, FailuresFileName);
@@ -105,6 +124,7 @@
         }
 
         private static async Task Run(
+            IServiceProvider serviceProvider,
             IImageStorage storage,
             WebpConversionProgress progress,
             string prefix,
@@ -139,6 +159,7 @@
                                           CancellationToken = cancellationToken,
                                       };
                 var converted = new ConcurrentQueue<string>();
+                var damaged = new ConcurrentQueue<DamagedThumbnail>();
                 progress.StartConverting();
                 await Parallel.ForEachAsync(
                     pending,
@@ -149,7 +170,18 @@
                         {
                             byte[] png = null;
                             await WithRetry(async () => png = await storage.DownloadAsync(thumbnail.Png, token), token);
-                            var webp = ImageThumbnails.Reencode(png, ThumbnailFormat.Webp);
+                            byte[] webp;
+                            try
+                            {
+                                webp = ImageThumbnails.Reencode(png, ThumbnailFormat.Webp);
+                            }
+                            catch (InvalidDataException e)
+                            {
+                                damaged.Enqueue(new DamagedThumbnail(thumbnail.Png, e.Message));
+                                progress.AddDamaged();
+                                return;
+                            }
+
                             await WithRetry(
                                 async () =>
                                 {
@@ -162,15 +194,21 @@
                         }
                         catch (Exception e) when (!token.IsCancellationRequested)
                         {
-                            progress.AddFailed(thumbnail.Png, e.Message);
+                            progress.AddConversionFailed(thumbnail.Png, e.Message);
                         }
                     });
+
+                var recreated = new ConcurrentQueue<string>();
+                if (!damaged.IsEmpty)
+                {
+                    await RecreateFromOriginals(serviceProvider, keys, damaged.ToList(), recreated, progress, cancellationToken);
+                }
 
                 // Only after all the conversions: a browser that asked for a WebP before it existed can get Cloudflare's
                 // cached 404 for a few minutes and then still needs the PNG. A PNG without a WebP is never deleted.
                 if (deletePngs)
                 {
-                    var pngs = alreadyWebp.Concat(converted).ToList();
+                    var pngs = alreadyWebp.Concat(converted).Concat(recreated).ToList();
                     progress.StartDeleting(pngs.Count);
                     await Parallel.ForEachAsync(
                         pngs,
@@ -201,6 +239,130 @@
             }
         }
 
+        // A damaged PNG thumbnail is made again from the article's original image, both sizes, as for a new article.
+        // The image URLs come from the database, which has to be the one behind this storage: in another one (e.g. the
+        // local development copy) the same ids are other articles, whose pictures would end up on these thumbnails. So
+        // it is used only when most of the news that have thumbnails here are in it.
+        private static async Task RecreateFromOriginals(
+            IServiceProvider serviceProvider,
+            HashSet<string> keys,
+            IReadOnlyCollection<DamagedThumbnail> damaged,
+            ConcurrentQueue<string> recreated,
+            WebpConversionProgress progress,
+            CancellationToken cancellationToken)
+        {
+            progress.StartRecreating();
+            var damagedByNews = damaged.GroupBy(x => (int)NewsId(x.Png)).ToDictionary(x => x.Key, x => x.ToList());
+            var originals = new Dictionary<int, (string ImageUrl, string TypeName)>();
+            try
+            {
+                var news = serviceProvider.GetRequiredService<IDeletableEntityRepository<News>>();
+                var connection = serviceProvider.GetRequiredService<ApplicationDbContext>().Database.GetDbConnection();
+                var newsIds = (await news.AllAsNoTrackingWithDeleted().Select(x => x.Id).ToListAsync(cancellationToken))
+                    .ToHashSet();
+                var thumbnailIds = keys.Where(IsThumbnail).Select(x => (int)NewsId(x)).ToHashSet();
+                var known = thumbnailIds.Count(newsIds.Contains);
+                if (known * 2 < thumbnailIds.Count)
+                {
+                    var details = $"the database '{connection.Database}' on '{connection.DataSource}' has only"
+                                  + $" {known.ToString("N0", CultureInfo.InvariantCulture)} of the"
+                                  + $" {thumbnailIds.Count.ToString("N0", CultureInfo.InvariantCulture)} news that have"
+                                  + " thumbnails here, so it is not the one behind this storage. Run again with"
+                                  + " ConnectionStrings:DefaultConnection set to the production database to make them";
+                    NotRecreated("not the production database", details);
+                    return;
+                }
+
+                foreach (var id in damagedByNews.Keys)
+                {
+                    var original = await news.AllAsNoTrackingWithDeleted()
+                        .Where(x => x.Id == id)
+                        .Select(x => new { x.ImageUrl, x.Source.TypeName })
+                        .FirstOrDefaultAsync(cancellationToken);
+                    if (original != null)
+                    {
+                        originals[id] = (original.ImageUrl, original.TypeName);
+                    }
+                }
+            }
+            catch (Exception e) when (!cancellationToken.IsCancellationRequested)
+            {
+                NotRecreated("the database could not be read", "the database could not be read: " + e.Message);
+                return;
+            }
+
+            var newsService = serviceProvider.GetRequiredService<INewsService>();
+            await Parallel.ForEachAsync(
+                damagedByNews,
+                new ParallelOptions { MaxDegreeOfParallelism = OriginalsParallelism, CancellationToken = cancellationToken },
+                async (entry, token) =>
+                {
+                    string problem;
+                    if (!originals.TryGetValue(entry.Key, out var original))
+                    {
+                        problem = "the news is not in the database";
+                    }
+                    else if (string.IsNullOrWhiteSpace(original.ImageUrl))
+                    {
+                        problem = "the news has no image URL";
+                    }
+                    else
+                    {
+                        try
+                        {
+                            problem = await newsService.SaveImageAsync(original.ImageUrl, entry.Key, UseProxy(original.TypeName))
+                                ? null
+                                : $"{original.ImageUrl} could not be downloaded";
+                        }
+                        catch (Exception e) when (!token.IsCancellationRequested)
+                        {
+                            problem = $"{original.ImageUrl}: {e.Message}";
+                        }
+                    }
+
+                    foreach (var thumbnail in entry.Value)
+                    {
+                        if (problem == null)
+                        {
+                            recreated.Enqueue(thumbnail.Png);
+                            progress.AddRecreated();
+                        }
+                        else
+                        {
+                            progress.AddNotRecreated(thumbnail.Png, $"{thumbnail.Damage} Not made from the original image: {problem}");
+                        }
+                    }
+                });
+
+            void NotRecreated(string reason, string details)
+            {
+                progress.SetNote($"The damaged PNGs were not made from the original images: {details}.");
+                foreach (var thumbnail in damaged)
+                {
+                    progress.AddNotRecreated(thumbnail.Png, $"{thumbnail.Damage} Not made from the original image: {reason}");
+                }
+            }
+        }
+
+        // As the source's scraper downloads it; a source class that no longer exists downloads directly.
+        private static bool UseProxy(string typeName)
+        {
+            try
+            {
+                return typeName != null && ReflectionHelpers.GetInstance<BaseSource>(typeName).UseProxy;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        // A news thumbnail, old (PNG) or new (WebP).
+        private static bool IsThumbnail(string key) =>
+            NewsImagePaths.WebpKeyForPng(key) != null
+            || (key.EndsWith(".webp", StringComparison.Ordinal)
+                && NewsImagePaths.WebpKeyForPng(NewsImagePaths.PngKeyForWebp(key)) != null);
+
         // Transient storage errors (timeouts, throttling) get two more tries; a PNG that does not decode does not.
         private static async Task WithRetry(Func<Task> action, CancellationToken cancellationToken)
         {
@@ -218,11 +380,13 @@
             }
         }
 
-        // "news/{n}/big_{id}.png" -> id (the key matched NewsImagePaths.WebpKeyForPng, so the id is all digits).
-        private static long NewsId(string pngKey)
+        // "news/{n}/big_{id}.png" (or .webp) -> id (the key is a thumbnail's, so the id is all digits).
+        private static long NewsId(string key)
         {
-            var name = Path.GetFileNameWithoutExtension(pngKey);
+            var name = Path.GetFileNameWithoutExtension(key);
             return long.Parse(name[(name.IndexOf('_') + 1)..], CultureInfo.InvariantCulture);
         }
+
+        private record DamagedThumbnail(string Png, string Damage);
     }
 }

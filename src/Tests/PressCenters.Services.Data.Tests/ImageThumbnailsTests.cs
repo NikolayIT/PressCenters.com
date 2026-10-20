@@ -118,6 +118,20 @@
         }
 
         [Fact]
+        public void ReencodeShouldRefuseAnImageThatIsCutShort()
+        {
+            // A stored thumbnail that is cut short is damaged, while a downloaded image that is cut short still makes
+            // thumbnails from the part that decodes.
+            var png = CreateImage(730, 487, SKEncodedImageFormat.Png);
+            var truncated = png.Take(png.Length * 6 / 10).ToArray();
+
+            var exception = Assert.Throws<InvalidDataException>(() => ImageThumbnails.Reencode(truncated, ThumbnailFormat.Webp));
+            Assert.Contains("cut short", exception.Message);
+            using var thumbnail = Decode(ImageThumbnails.CropToFill(truncated, 200, 120, ThumbnailFormat.Webp), ThumbnailFormat.Webp);
+            Assert.Equal(200, thumbnail.Width);
+        }
+
+        [Fact]
         public void GifsAndGrayscaleJpegsShouldBeDecoded()
         {
             var gif = Convert.FromBase64String("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7");

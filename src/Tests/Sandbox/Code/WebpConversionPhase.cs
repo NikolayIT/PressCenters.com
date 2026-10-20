@@ -5,6 +5,7 @@
         Listing,
         DeletingPngs,
         Converting,
+        RecreatingFromOriginals,
         Done,
         Stopped,
         Failed,

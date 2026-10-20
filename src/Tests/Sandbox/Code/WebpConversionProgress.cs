@@ -21,7 +21,15 @@
 
         private long listed;
 
+        private long processed;
+
         private long converted;
+
+        private long damaged;
+
+        private long damagedHandled;
+
+        private long fromOriginals;
 
         private long failed;
 
@@ -35,6 +43,9 @@
 
         public string Error { get; private set; }
 
+        /// <summary>Gets a remark about the run worth reading at its end, if any.</summary>
+        public string Note { get; private set; }
+
         public long Listed => Interlocked.Read(ref this.listed);
 
         /// <summary>Gets the number of PNG thumbnails to convert in this run.</summary>
@@ -45,7 +56,19 @@
 
         public long PngsToDelete { get; private set; }
 
+        /// <summary>Gets the number of PNG thumbnails to convert that were handled: converted, damaged or failed.</summary>
+        public long Processed => Interlocked.Read(ref this.processed);
+
         public long Converted => Interlocked.Read(ref this.converted);
+
+        /// <summary>Gets the number of PNG thumbnails that do not decode, or are cut short.</summary>
+        public long Damaged => Interlocked.Read(ref this.damaged);
+
+        /// <summary>Gets the number of damaged PNG thumbnails whose original image was tried.</summary>
+        public long DamagedHandled => Interlocked.Read(ref this.damagedHandled);
+
+        /// <summary>Gets the number of damaged PNG thumbnails whose WebP was made from the original image.</summary>
+        public long FromOriginals => Interlocked.Read(ref this.fromOriginals);
 
         public long Failed => Interlocked.Read(ref this.failed);
 
@@ -60,14 +83,14 @@
         public TimeSpan Elapsed => this.elapsed.Elapsed;
 
         public double FilesPerSecond =>
-            this.converting.Elapsed.TotalSeconds < 1 ? 0 : (this.Converted + this.Failed) / this.converting.Elapsed.TotalSeconds;
+            this.converting.Elapsed.TotalSeconds < 1 ? 0 : this.Processed / this.converting.Elapsed.TotalSeconds;
 
         public TimeSpan? Remaining
         {
             get
             {
                 var rate = this.FilesPerSecond;
-                var left = this.Total - this.Converted - this.Failed;
+                var left = this.Total - this.Processed;
                 return this.Phase == WebpConversionPhase.Converting && rate > 0 ? TimeSpan.FromSeconds(left / rate) : null;
             }
         }
@@ -90,6 +113,12 @@
             this.Phase = WebpConversionPhase.Converting;
         }
 
+        public void StartRecreating()
+        {
+            this.converting.Stop();
+            this.Phase = WebpConversionPhase.RecreatingFromOriginals;
+        }
+
         public void StartDeleting(long count)
         {
             this.converting.Stop();
@@ -97,12 +126,39 @@
             this.Phase = WebpConversionPhase.DeletingPngs;
         }
 
+        public void SetNote(string note) => this.Note = note;
+
         public void AddConverted(string pngKey, long pngLength, long webpLength)
         {
             Interlocked.Increment(ref this.converted);
+            Interlocked.Increment(ref this.processed);
             Interlocked.Add(ref this.pngBytes, pngLength);
             Interlocked.Add(ref this.webpBytes, webpLength);
             this.Last = new ConvertedThumbnail(pngKey, pngLength, webpLength);
+        }
+
+        public void AddDamaged()
+        {
+            Interlocked.Increment(ref this.damaged);
+            Interlocked.Increment(ref this.processed);
+        }
+
+        public void AddConversionFailed(string key, string message)
+        {
+            Interlocked.Increment(ref this.processed);
+            this.AddFailed(key, message);
+        }
+
+        public void AddRecreated()
+        {
+            Interlocked.Increment(ref this.fromOriginals);
+            Interlocked.Increment(ref this.damagedHandled);
+        }
+
+        public void AddNotRecreated(string key, string message)
+        {
+            Interlocked.Increment(ref this.damagedHandled);
+            this.AddFailed(key, message);
         }
 
         public void AddDeleted() => Interlocked.Increment(ref this.deleted);
