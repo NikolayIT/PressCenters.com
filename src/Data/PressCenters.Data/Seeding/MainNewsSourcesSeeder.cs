@@ -36,8 +36,8 @@
                                           "PressCenters.Services.Sources.MainNews.BtaBgMainNewsProvider"),
                                       ("Mediapool.bg", "https://www.mediapool.bg",
                                           "PressCenters.Services.Sources.MainNews.MediapoolBgMainNewsProvider"),
-                                      ("AP", "https://www.apnews.com",
-                                          "PressCenters.Services.Sources.MainNews.ApMainNewsProvider"),
+                                      /*("AP", "https://www.apnews.com",
+                                          "PressCenters.Services.Sources.MainNews.ApMainNewsProvider"),*/
                                       ("БНР", "https://bnr.bg",
                                           "PressCenters.Services.Sources.MainNews.BnrBgMainNewsProvider"),
                                       ("The Guardian", "https://www.theguardian.com",
@@ -58,6 +58,19 @@
                             Url = mainNewsSource.Url,
                         });
                 }
+            }
+
+            // Commenting a provider out above only stops seeding it: an existing row keeps its homepage tile and keeps
+            // being fetched by MainNewsGetterJob. Soft-delete the rows of the providers taken off the homepage.
+            var removedTypeNames = new[]
+                                   {
+                                       "PressCenters.Services.Sources.MainNews.ApMainNewsProvider",
+                                   };
+            var removedSources = dbContext.MainNewsSources.Where(x => removedTypeNames.Contains(x.TypeName)).ToList();
+            foreach (var removedSource in removedSources)
+            {
+                removedSource.IsDeleted = true;
+                removedSource.DeletedOn = DateTime.UtcNow;
             }
         }
     }

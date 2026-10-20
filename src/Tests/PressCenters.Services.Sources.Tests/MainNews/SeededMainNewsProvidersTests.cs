@@ -24,7 +24,6 @@
         [InlineData("PressCenters.Services.Sources.MainNews.EuronewsMainNewsProvider", "euronews.com")]
         [InlineData("PressCenters.Services.Sources.MainNews.BtaBgMainNewsProvider", "bta.bg")]
         [InlineData("PressCenters.Services.Sources.MainNews.MediapoolBgMainNewsProvider", "mediapool.bg")]
-        [InlineData("PressCenters.Services.Sources.MainNews.ApMainNewsProvider", "apnews.com")]
         [InlineData("PressCenters.Services.Sources.MainNews.BnrBgMainNewsProvider", "bnr")]
         [InlineData("PressCenters.Services.Sources.MainNews.GuardianMainNewsProvider", "theguardian.com")]
         public void SeededProviderShouldReturnAValidMainNews(string typeName, string expectedHost)
