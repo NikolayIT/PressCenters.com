@@ -45,5 +45,12 @@
         {
             Assert.Null(NewsImagePaths.WebpKeyForPng(key));
         }
+
+        [Fact]
+        public void PngKeyForWebpShouldGiveTheOldPngThumbnail()
+        {
+            Assert.Equal("news/456/big_123456.png", NewsImagePaths.PngKeyForWebp(NewsImagePaths.BigKey(123456)));
+            Assert.Equal("news/456/small_123456.png", NewsImagePaths.PngKeyForWebp(NewsImagePaths.SmallKey(123456)));
+        }
     }
 }

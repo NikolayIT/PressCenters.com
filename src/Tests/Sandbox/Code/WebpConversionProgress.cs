@@ -84,16 +84,17 @@
             this.AlreadyWebp = alreadyWebp;
         }
 
-        public void StartDeleting(long count)
-        {
-            this.PngsToDelete = count;
-            this.Phase = WebpConversionPhase.DeletingPngs;
-        }
-
         public void StartConverting()
         {
             this.converting.Start();
             this.Phase = WebpConversionPhase.Converting;
+        }
+
+        public void StartDeleting(long count)
+        {
+            this.converting.Stop();
+            this.PngsToDelete = count;
+            this.Phase = WebpConversionPhase.DeletingPngs;
         }
 
         public void AddConverted(string pngKey, long pngLength, long webpLength)

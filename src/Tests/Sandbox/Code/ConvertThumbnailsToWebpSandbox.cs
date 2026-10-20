@@ -1,6 +1,7 @@
 ﻿namespace Sandbox.Code
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
@@ -19,8 +20,9 @@
     /// WebP files next to them (big_{id}.webp, small_{id}.webp) in the configured image storage: the R2 bucket when
     /// the "R2" section of appsettings.Production.json is filled in, otherwise the local folder (Images:LocalRoot).
     /// Resumable: a PNG that already has its WebP is skipped, so a run can be stopped with Ctrl+C and started again.
-    /// Rollout: run it, deploy the code that links the .webp files, run it again for the PNGs created meanwhile and,
-    /// once the site looks right, run it with IMAGES_WEBP_DELETE_PNG=1 to delete the PNGs that have a WebP.
+    /// Rollout: deploy the code that links the .webp files (the pages fall back to the PNG while the WebP is missing),
+    /// then run this with IMAGES_WEBP_DELETE_PNG=1: it converts everything and then deletes the PNGs that have a WebP.
+    /// Once a run ends with nothing left to convert, the fallback can go.
     /// Environment: IMAGES_WEBP=1 selects this mode; IMAGES_WEBP_PARALLELISM (default 8); IMAGES_WEBP_PREFIX
     /// (default "news/", e.g. "news/42/" for a trial run); IMAGES_WEBP_LIMIT (convert at most that many);
     /// IMAGES_WEBP_DELETE_PNG=1 (asks for confirmation in a terminal). Never touches the database.
@@ -43,7 +45,8 @@
             var deletePngs = Environment.GetEnvironmentVariable("IMAGES_WEBP_DELETE_PNG") == "1";
             var interactive = AnsiConsole.Profile.Capabilities.Interactive;
             if (deletePngs && interactive
-                && !AnsiConsole.Confirm($"Delete the PNG thumbnails that have a WebP from [deepskyblue1]{Markup.Escape(target)}[/]?", false))
+                && !AnsiConsole.Confirm(
+                    $"Convert, then delete the PNG thumbnails that have a WebP from [deepskyblue1]{Markup.Escape(target)}[/]?", false))
             {
                 deletePngs = false;
             }
@@ -135,26 +138,7 @@
                                           MaxDegreeOfParallelism = parallelism,
                                           CancellationToken = cancellationToken,
                                       };
-                if (deletePngs && alreadyWebp.Count > 0)
-                {
-                    progress.StartDeleting(alreadyWebp.Count);
-                    await Parallel.ForEachAsync(
-                        alreadyWebp,
-                        parallelOptions,
-                        async (png, token) =>
-                        {
-                            try
-                            {
-                                await WithRetry(() => storage.DeleteAsync(png, token), token);
-                                progress.AddDeleted();
-                            }
-                            catch (Exception e) when (!token.IsCancellationRequested)
-                            {
-                                progress.AddFailed(png, "delete: " + e.Message);
-                            }
-                        });
-                }
-
+                var converted = new ConcurrentQueue<string>();
                 progress.StartConverting();
                 await Parallel.ForEachAsync(
                     pending,
@@ -173,12 +157,7 @@
                                     await storage.UploadAsync(thumbnail.Webp, stream, NewsImagePaths.ContentType, token);
                                 },
                                 token);
-                            if (deletePngs)
-                            {
-                                await WithRetry(() => storage.DeleteAsync(thumbnail.Png, token), token);
-                                progress.AddDeleted();
-                            }
-
+                            converted.Enqueue(thumbnail.Png);
                             progress.AddConverted(thumbnail.Png, png.Length, webp.Length);
                         }
                         catch (Exception e) when (!token.IsCancellationRequested)
@@ -186,6 +165,29 @@
                             progress.AddFailed(thumbnail.Png, e.Message);
                         }
                     });
+
+                // Only after all the conversions: a browser that asked for a WebP before it existed can get Cloudflare's
+                // cached 404 for a few minutes and then still needs the PNG. A PNG without a WebP is never deleted.
+                if (deletePngs)
+                {
+                    var pngs = alreadyWebp.Concat(converted).ToList();
+                    progress.StartDeleting(pngs.Count);
+                    await Parallel.ForEachAsync(
+                        pngs,
+                        parallelOptions,
+                        async (png, token) =>
+                        {
+                            try
+                            {
+                                await WithRetry(() => storage.DeleteAsync(png, token), token);
+                                progress.AddDeleted();
+                            }
+                            catch (Exception e) when (!token.IsCancellationRequested)
+                            {
+                                progress.AddFailed(png, "delete: " + e.Message);
+                            }
+                        });
+                }
 
                 progress.Finish(WebpConversionPhase.Done);
             }

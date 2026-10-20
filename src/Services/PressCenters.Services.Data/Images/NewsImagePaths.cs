@@ -28,5 +28,11 @@
         /// </summary>
         public static string WebpKeyForPng(string key) =>
             key != null && PngThumbnailKey.IsMatch(key) ? Path.ChangeExtension(key, ".webp") : null;
+
+        /// <summary>
+        /// The key of the old PNG thumbnail that a WebP key replaces; the pages fall back to it while the PNGs are
+        /// converted.
+        /// </summary>
+        public static string PngKeyForWebp(string key) => Path.ChangeExtension(key, ".png");
     }
 }

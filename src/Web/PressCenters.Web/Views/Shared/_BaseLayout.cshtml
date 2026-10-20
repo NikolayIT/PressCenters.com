@@ -30,6 +30,15 @@
         // Apply the theme before the first paint (no flash of the light page). The "theme" cookie is written by the
         // navbar toggle in site.js; without it the site is light.
         document.documentElement.setAttribute('data-bs-theme', /(?:^|;\s*)theme=dark(?:;|$)/.test(document.cookie) ? 'dark' : 'light');
+
+        // While the old PNG news thumbnails are converted to WebP, an image whose WebP is not there yet loads the PNG
+        // from its data-fallback. Registered here, before any image loads; "error" does not bubble, hence capture.
+        document.addEventListener('error', function (e) {
+            var image = e.target;
+            if (image.tagName === 'IMG' && image.dataset.fallback && image.getAttribute('src') !== image.dataset.fallback) {
+                image.src = image.dataset.fallback;
+            }
+        }, true);
     </script>
     @this.Html.Raw(this.JavaScriptSnippet.FullScript)
 </head>

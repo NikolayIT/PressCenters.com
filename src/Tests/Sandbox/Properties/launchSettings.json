@@ -1,26 +1,19 @@
 {
   "profiles": {
-    "Convert thumbnails to WebP": {
-      "commandName": "Project",
-      "commandLineArgs": "sandbox",
-      "environmentVariables": {
-        "IMAGES_WEBP": "1"
-      }
-    },
-    "Convert thumbnails to WebP (trial: 200 newest)": {
-      "commandName": "Project",
-      "commandLineArgs": "sandbox",
-      "environmentVariables": {
-        "IMAGES_WEBP": "1",
-        "IMAGES_WEBP_LIMIT": "200"
-      }
-    },
-    "Delete the PNG thumbnails that have a WebP": {
+    "Convert thumbnails to WebP and delete the PNGs": {
       "commandName": "Project",
       "commandLineArgs": "sandbox",
       "environmentVariables": {
         "IMAGES_WEBP": "1",
         "IMAGES_WEBP_DELETE_PNG": "1"
+      }
+    },
+    "Convert thumbnails to WebP (trial: 200 newest, keeps the PNGs)": {
+      "commandName": "Project",
+      "commandLineArgs": "sandbox",
+      "environmentVariables": {
+        "IMAGES_WEBP": "1",
+        "IMAGES_WEBP_LIMIT": "200"
       }
     },
     "Backfill news (GetAllNewsSandbox)": {

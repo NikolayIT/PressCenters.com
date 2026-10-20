@@ -111,9 +111,11 @@ API returns these URLs). `ImageThumbnails` decodes JPEG, PNG, GIF, WebP, BMP and
 the build/publish output.
 
 Until October 2026 the news thumbnails were PNGs (`big_{id}.png`). `ConvertThumbnailsToWebpSandbox` (Sandbox with
-`IMAGES_WEBP=1`; see its doc comment for the other `IMAGES_WEBP_*` variables) converts them to `.webp` next to the PNGs
-in the configured storage, resumably, with a live Spectre.Console view. Rollout: run it, deploy the code that links
-`.webp`, run it again for the PNGs created meanwhile, then optionally once more with `IMAGES_WEBP_DELETE_PNG=1`.
+`IMAGES_WEBP=1`, or the "Convert thumbnails to WebP and delete the PNGs" launch profile; see its doc comment for the
+other `IMAGES_WEBP_*` variables) converts them to `.webp` in the configured storage, resumably, with a live
+Spectre.Console view, and with `IMAGES_WEBP_DELETE_PNG=1` deletes each converted PNG at the end of the run. Meanwhile
+the news pages fall back to the PNG when the WebP is missing (`data-fallback` + the error handler in `_BaseLayout`);
+once a run finds nothing left to convert, that fallback can be removed.
 
 The R2 credentials live only in the git-ignored `appsettings.Production.json` files (Web and Sandbox); the
 repo is public, so never put them in `appsettings.json` or in code. The Sandbox loads
