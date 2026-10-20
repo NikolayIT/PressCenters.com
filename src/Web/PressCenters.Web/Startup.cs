@@ -174,15 +174,21 @@
 
             // Until September 2026 the thumbnails were served from wwwroot as /images/news/{id % 1000}/{big|small}_{id}.png.
             // They now live on Cloudflare R2 behind GlobalConstants.ImagesBaseUrl, so anyone still holding an old URL
-            // (search engines, social previews, hot-links) is sent to the same key on the new host. Only active when
-            // the base URL is an absolute host; with the local wwwroot fallback the static files handler serves them.
+            // (search engines, social previews, hot-links) is sent to the same key on the new host; for a thumbnail, to its
+            // WebP, as the PNGs are deleted once converted (October 2026). Only active when the base URL is an absolute
+            // host; with the local wwwroot fallback the static files handler serves them.
             if (Uri.IsWellFormedUriString(GlobalConstants.ImagesBaseUrl, UriKind.Absolute))
             {
                 app.UseRewriter(
-                    new RewriteOptions().AddRedirect(
-                        "(?i)^images/news/(.+)$",
-                        $"{GlobalConstants.ImagesBaseUrl}/news/$1",
-                        StatusCodes.Status301MovedPermanently));
+                    new RewriteOptions()
+                        .AddRedirect(
+                            @"(?i)^images/news/(\d+/(?:big|small)_\d+)\.png$",
+                            $"{GlobalConstants.ImagesBaseUrl}/news/$1.webp",
+                            StatusCodes.Status301MovedPermanently)
+                        .AddRedirect(
+                            "(?i)^images/news/(.+)$",
+                            $"{GlobalConstants.ImagesBaseUrl}/news/$1",
+                            StatusCodes.Status301MovedPermanently));
             }
 
             app.UseWebOptimizer();
