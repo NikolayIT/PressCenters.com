@@ -1,5 +1,6 @@
 ﻿namespace PressCenters.Web.Controllers
 {
+    using System;
     using System.Linq;
     using System.Net.Mime;
     using System.Text;
@@ -31,6 +32,8 @@
 
         public async Task<IActionResult> Sitemap(int id)
         {
+            // Without an id (/Sitemaps/Sitemap) or with a huge one, (id - 1) * UrlsPerFile was a negative OFFSET -> 500.
+            id = Math.Clamp(id, 1, (int.MaxValue / UrlsPerFile) + 1);
             var sb = new StringBuilder();
             sb.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             sb.AppendLine("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");

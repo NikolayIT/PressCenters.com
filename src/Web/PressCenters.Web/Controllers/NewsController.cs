@@ -16,6 +16,10 @@
     {
         private const int ItemsPerPage = 10;
 
+        // Every word adds a nested Where with its own FREETEXT predicate. Unbounded, a long search string (a few
+        // hundred words) overflowed the stack while EF Core compiled the query, which kills the whole process.
+        private const int MaxSearchWords = 10;
+
         private readonly IDeletableEntityRepository<News> newsRepository;
 
         public NewsController(IDeletableEntityRepository<News> newsRepository)
@@ -25,11 +29,12 @@
 
         public IActionResult List(int id, string search)
         {
-            id = Math.Max(1, id);
+            // The upper bound keeps (id - 1) * ItemsPerPage from overflowing into a negative OFFSET (a SQL error).
+            id = Math.Clamp(id, 1, (int.MaxValue / ItemsPerPage) + 1);
             var skip = (id - 1) * ItemsPerPage;
             var query = this.newsRepository.All();
             var words = search?.Split(' ').Select(x => x.Trim())
-                .Where(x => !string.IsNullOrWhiteSpace(x) && x.Length >= 2).ToList();
+                .Where(x => !string.IsNullOrWhiteSpace(x) && x.Length >= 2).Distinct().Take(MaxSearchWords).ToList();
             if (words != null)
             {
                 foreach (var word in words)

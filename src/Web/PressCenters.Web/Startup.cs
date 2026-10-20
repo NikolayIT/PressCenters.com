@@ -14,6 +14,7 @@
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Rewrite;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -89,6 +90,12 @@
                     options.CheckConsentNeeded = context => true;
                     options.MinimumSameSitePolicy = SameSiteMode.None;
                 });
+
+            // The cookie policy drops non-essential cookies until the visitor accepts the cookie banner, and the
+            // TempData cookie is non-essential by default. That broke the contact form for those visitors (the
+            // redirect to ThankYou found no TempData and returned 404 after the message was already saved) and
+            // hid the Identity status messages. TempData is a functional cookie, not tracking.
+            services.Configure<CookieTempDataProviderOptions>(options => options.Cookie.IsEssential = true);
 
             services.AddControllersWithViews();
             services.AddRazorPages();

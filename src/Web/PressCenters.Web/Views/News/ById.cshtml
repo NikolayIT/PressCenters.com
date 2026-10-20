@@ -8,7 +8,9 @@
 <h3 class="g-mb-15">@this.Model.Title</h3>
 @if (this.User.IsInRole(GlobalConstants.AdministratorRoleName))
 {
-    <a asp-area="Administration" asp-controller="News" asp-action="UpdateRemoteNews" asp-route-id="@this.Model.Id" class="btn btn-secondary">Update</a>
+    <form method="post" asp-area="Administration" asp-controller="News" asp-action="UpdateRemoteNews" asp-route-id="@this.Model.Id" class="d-inline">
+        <button type="submit" class="btn btn-secondary">Update</button>
+    </form>
 
     <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#softDeleteModal">Soft delete</a>
     <div class="modal fade" id="softDeleteModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -18,7 +20,9 @@
                 <div class="modal-body">Are you sure you want to soft delete this news?</div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <a asp-area="Administration" asp-controller="News" asp-action="SoftDelete" asp-route-id="@this.Model.Id" class="btn btn-danger">Soft delete</a>
+                    <form method="post" asp-area="Administration" asp-controller="News" asp-action="SoftDelete" asp-route-id="@this.Model.Id">
+                        <button type="submit" class="btn btn-danger">Soft delete</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -32,7 +36,9 @@
                 <div class="modal-body">Are you sure you want to hard delete this news?</div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <a asp-area="Administration" asp-controller="News" asp-action="HardDelete" asp-route-id="@this.Model.Id" class="btn btn-danger">Hard delete</a>
+                    <form method="post" asp-area="Administration" asp-controller="News" asp-action="HardDelete" asp-route-id="@this.Model.Id">
+                        <button type="submit" class="btn btn-danger">Hard delete</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -50,7 +56,7 @@
 
 <div class="d-flex g-font-size-12 g-color-gray-dark-v4 g-mb-20">
     <div class="flex-grow-1 align-self-center">
-        <a href="@this.Model.SourceUrl" taget="_blank">@this.Model.SourceName</a>
+        <a href="@this.Model.SourceUrl" target="_blank">@this.Model.SourceName</a>
         <span class="g-mx-6">/</span>
         <time>@this.Model.CreatedOnAsString</time>
         @if (this.Model.OriginalUrl != null)

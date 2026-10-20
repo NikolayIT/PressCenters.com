@@ -1,5 +1,6 @@
 ﻿namespace PressCenters.Web.Controllers
 {
+    using System.Net;
     using System.Threading.Tasks;
 
     using Microsoft.AspNetCore.Mvc;
@@ -30,6 +31,7 @@
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(ContactFormViewModel model)
         {
             if (!this.ModelState.IsValid)
@@ -38,7 +40,7 @@
             }
 
             // TODO: Extract to IP provider (service)
-            var ip = this.HttpContext.Connection.RemoteIpAddress.ToString();
+            var ip = this.HttpContext.Connection.RemoteIpAddress?.ToString();
             var contactFormEntry = new ContactFormEntry
                                    {
                                        Name = model.Name,
@@ -50,12 +52,14 @@
             await this.contactsRepository.AddAsync(contactFormEntry);
             await this.contactsRepository.SaveChangesAsync();
 
+            // The message is plain text typed by an anonymous visitor: encode it so it cannot inject markup (links,
+            // forms, tracking images) into the HTML e-mail, and keep its line breaks.
             await this.emailSender.SendEmailAsync(
                 model.Email,
                 model.Name,
                 GlobalConstants.SystemEmail,
                 model.Title,
-                model.Content);
+                WebUtility.HtmlEncode(model.Content).ReplaceLineEndings("<br />"));
 
             this.TempData[RedirectedFromContactForm] = true;
 

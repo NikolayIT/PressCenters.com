@@ -29,15 +29,15 @@
                     new[] { validationContext.MemberName });
             }
 
-            var httpClient = new HttpClient();
-            var content = new FormUrlEncodedContent(
+            using var httpClient = new HttpClient();
+            using var content = new FormUrlEncodedContent(
                 new[]
                     {
                         new KeyValuePair<string, string>("secret", configuration["GoogleReCaptcha:Secret"]),
                         new KeyValuePair<string, string>("response", value.ToString()),
                         //// new KeyValuePair<string, string>("remoteip", remoteIp),
                     });
-            var httpResponse = httpClient.PostAsync($"https://www.google.com/recaptcha/api/siteverify", content)
+            using var httpResponse = httpClient.PostAsync($"https://www.google.com/recaptcha/api/siteverify", content)
                 .GetAwaiter().GetResult();
             if (httpResponse.StatusCode != HttpStatusCode.OK)
             {
