@@ -30,19 +30,24 @@
                 5,
                 throwOnEmpty: false);
 
+        // The news list, 10 per page, newest first. Not the ids one by one: a missing id (above the newest one, or a
+        // deleted news) answers with the newest news, which got imported again under each of those ids.
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            // Newest first (52189 is from 2026-10-22).
-            for (var i = 52300; i >= 40000; i--)
+            for (var i = 1; i <= 600; i++)
             {
-                var remoteNews = this.GetPublication($"{this.BaseUrl}news/{i}/0");
-                if (remoteNews == null)
+                var news = this.GetPublications(
+                    $"Новини?page={i}", "a[href^='https://bfunion.bg/news/']", "/news/", throwOnEmpty: false);
+                Console.WriteLine($"Page {i} => {news.Count} news");
+                if (news.Count == 0)
                 {
-                    continue;
+                    yield break;
                 }
 
-                Console.WriteLine($"№{i} => {remoteNews.PostDate.ToShortDateString()} => {remoteNews.Title}");
-                yield return remoteNews;
+                foreach (var remoteNews in news)
+                {
+                    yield return remoteNews;
+                }
             }
         }
 

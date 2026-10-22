@@ -31,8 +31,9 @@
                 Console.WriteLine($"Page {i} => {news.Count} news");
                 foreach (var remoteNews in news)
                 {
-                    // The last news from egov.government.bg is from 2025-03-27; the older ones here are МИР's.
-                    if (remoteNews.PostDate < new DateTime(2025, 3, 27))
+                    // МИДТ took over on 2026-05-08 (the minister's handover); the older news here are МИР's. МЕУ's own
+                    // news after 2025-03-27, the last one in the database, went away with egov.government.bg.
+                    if (remoteNews.PostDate < new DateTime(2026, 5, 8))
                     {
                         yield break;
                     }

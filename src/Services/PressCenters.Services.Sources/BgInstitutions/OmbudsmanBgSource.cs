@@ -12,6 +12,10 @@
     /// </summary>
     public class OmbudsmanBgSource : BaseSource
     {
+        // The new CMS took the old site's news over under new ids; those, up to this date, are in the database under
+        // the old site's ids.
+        private static readonly DateTime MigratedNewsEnd = new DateTime(2026, 9, 11);
+
         // A new CMS since 2026-09: the news are ?go=news&p=detail&newsId={id}, and the old /bg/n/{slug}-{id} URLs
         // redirect to the home page.
         public override string BaseUrl { get; } = "https://www.ombudsman.bg/";
@@ -34,6 +38,11 @@
 
                 foreach (var remoteNews in news)
                 {
+                    if (remoteNews.PostDate < MigratedNewsEnd)
+                    {
+                        yield break;
+                    }
+
                     yield return remoteNews;
                 }
             }
