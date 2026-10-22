@@ -15,6 +15,25 @@ A failing `ParseRemoteNews` / `GetNews` test with a 5xx or `NullReferenceExcepti
 - Fix = rewrite the parser for the new site (*camp-B*), or just repoint `BaseUrl` if the markup is
   unchanged (*camp-A*, like Sac).
 
+The 2026-10 pass found five more migrations, each with its own trap:
+
+- **Sac** went from Lotus Domino to WordPress (`/novini/{year}/{slug}/`; the old `/news/bg/{id}` answer
+  410 Gone). The new site re-published the old articles under new slugs, so its `GetAllPublications`
+  stops at the migration date instead of re-importing them as duplicates.
+- **Egov**: `egov.government.bg` 301s to `midt.gov.bg` — МЕУ merged with МИР into МИДТ. Same class (the
+  `TypeName` keys the DB row); the seeder renames the source.
+- **Ombudsman** moved to a query-string CMS (`?go=news&p=detail&newsId={id}`; the old `/bg/n/{slug}-{id}`
+  redirect to the home page), so `ExtractIdFromUrl` reads the `newsId` parameter.
+- **Acf** now links its articles by Cyrillic slugs, while the stored ids are the old transliterated
+  ones. `ExtractIdFromUrl` transliterates (`седем-граждански-…` → `sedem-grazhdanski-…`), or the newest
+  items already in the DB would come back as duplicates. **Check this whenever a site's URLs change**:
+  dedup is on `(SourceId, RemoteId)` only.
+- **McGov**: `/новини/` became a hub of events; the news archive is `/вид-новина/новини/`.
+
+Also watch for a listing that still parses but is no longer the news list (McGov), and for a parser that
+silently falls back to `DateTime.Now` or reads the *modified* date (Mod, Damtn) — the test's date
+assertion is what catches those.
+
 WordPress tips: news may be a **custom post type** (`/wp-json/wp/v2/news`) or a **category**
 (`/category/новини/`); the default `/wp-json/wp/v2/posts` and `/feed/` are often empty. Elementor sites
 (McGov) have generic classes — use `og:title` (strip the site suffix), `.elementor-icon-box-title` for
@@ -42,26 +61,39 @@ Gotchas:
 - **DvParliament** broke because `dv.parliament.bg` started blocking the prod egress IP (the live issue
   advanced while prod froze) — fixed by `UseProxy`.
 
-## 3. It is almost never the TLS cipher fingerprint — it's HTTP version + runtime + egress
+## 3. The TLS handshake, the User-Agent, HTTP version and egress
 
-Schannel `curl.exe` (same TLS library as .NET) reaches the sites that "block .NET", so the cipher/JA3
-fingerprint is **not** the cause. Three things actually matter and they compound:
+Four things matter and they compound:
 
-- **HTTP/2 vs HTTP/1.1** — opt in per source via `UseHttp2` (default is HTTP/1.1). Some anti-bot reject
-  HTTP/1.1 from non-browser clients (`bfunion.bg`: 403 on 1.1, 200 on 2.0); others reject .NET's HTTP/2
-  fingerprint and want 1.1. It's opt-in, not global, because of that split.
-- **Runtime fingerprint (net10.0)** — net10.0's `HttpClient` is blocked by some sites that **older .NET
-  and curl reach**. So verify reachability with the **actual net10.0 source test, not a PowerShell probe**
-  — PowerShell (older runtime) returned 200 for mon.bg/minfin/bfunion/mvr while net10.0 got 403.
+- **The TLS handshake (Cloudflare, since 2026-09)** — Cloudflare's bot management answers a TLS ClientHello
+  without the `status_request` (OCSP stapling) extension with a "Just a moment..." challenge (403), on every
+  egress. .NET's Schannel handshake sends that extension only when certificate revocation is checked; Schannel
+  `curl.exe` checks revocation by default, which is why it reached the sites that "block .NET" with the very
+  same TLS library. `CheckCertificateRevocation => true` (on `BaseSource` and `BaseMainNewsProvider`; the jobs
+  pass it to `SaveImageAsync` for the images) revived **Mon, Bfunion, Ime** and the **AP** provider. Over
+  HTTP/1.1 only (.NET's HTTP/2 is challenged either way), directly and through the Cloudflare relay (it passes
+  the client's handshake on); the Azure relays are challenged regardless. To compare handshakes, fetch
+  `https://tls.peet.ws/api/all`: JA4 `t13d2012…` with the extension, `t13d2011…` without.
+- **The User-Agent** — ime.bg's WAF answers 403 to a UA of Chrome 120 or older, so
+  `GlobalConstants.DefaultUserAgent` claims Chrome 141 since 2026-10. Bump it when a site starts refusing it.
+- **HTTP/2 vs HTTP/1.1** — opt in per source via `UseHttp2` (default is HTTP/1.1). Some paths accept .NET
+  only over HTTP/2 (MinFin and Mvr through the Cloudflare relay, see Egress); others reject .NET's HTTP/2
+  fingerprint and want 1.1 (everything behind the Cloudflare challenge). It's opt-in, not global, because of
+  that split. Verify with the **actual net10.0 source test, not a PowerShell probe** — PowerShell (older
+  runtime) returned 200 for mon.bg/minfin/bfunion/mvr while net10.0 got 403.
 - **Egress** — when net10.0-direct is blocked, the **Cloudflare relay reaches the site but accepts .NET
-  only over HTTP/2**. So `UseProxy + UseHttp2` *together* is the unlock that revived **Mon, MinFin,
-  Bfunion, Mvr** (Azure relays are IP-blocked by these sites; the Cloudflare worker needs h2).
+  only over HTTP/2** (and, for the sites behind the Cloudflare challenge, only with the handshake above, over
+  HTTP/1.1). So `UseProxy + UseHttp2` *together* is the unlock for **MinFin, Mvr** (Azure relays are
+  IP-blocked by these sites).
 
-Still genuinely stuck (no net10.0 path — would need a residential proxy / real browser):
-- **Ciaf** (`caciaf.bg`) — 403 to direct *and* the Cloudflare relay.
-- **Ime** (`ime.bg`) — Cloudflare bot-management: direct 403, and the Cloudflare relay gets a **202
-  challenge** (worker → Cloudflare-site), Azure relays 403.
-- **Gallup** — SSL handshake / 525 → site-side certificate problem.
+Still genuinely stuck (no net10.0 path — would need a real browser):
+- **Mfa** (`mfa.bg`) — since 2026-10 behind Radware Bot Manager: a JS/captcha "Radware Page" with **HTTP
+  200** to every client, the relays included, and on the feeds too.
+- **Gallup** — the site itself is broken behind Cloudflare: HTTP answers "error code: 1001", HTTPS has no
+  certificate for the host.
+
+(**Ciaf** and **Ime**, on this list until 2026-10, are not: Ciaf moved to `ciaf.bg` and is reachable, Ime
+was the handshake and the User-Agent.)
 
 **Escape hatch — read an unprotected feed.** When the HTML is bot-blocked on *every* egress (net10.0
 direct **and** all four relays), look for an RSS / sitemap endpoint before declaring it stuck — feeds are
@@ -73,9 +105,10 @@ feed's first `<item>` — title + `<link>` (strip the `?ref=rss` query) + the th
 HTML-encoded `<description>` — instead of scraping the page. `BaseMainNewsProvider.GetContent` exposes the
 raw response so a provider can parse non-HTML payloads itself.
 
-To classify fast, run the **source's own test** (net10.0): 403 → add `UseHttp2`; still 403 → add
-`UseProxy` (Cloudflare relay + h2); 403 even via the relay, or a 202/SSL error → stuck, needs new egress
-(or an unprotected RSS/sitemap feed — see the escape hatch above).
+To classify fast, run the **source's own test** (net10.0): a "Just a moment..." page → add
+`CheckCertificateRevocation` (HTTP/1.1); another 403 → add `UseHttp2`; still 403 → add `UseProxy` (Cloudflare
+relay + h2); 403 even via the relay, a 202/SSL error or a captcha page → stuck, needs new egress (or an
+unprotected RSS/sitemap feed — see the escape hatch above).
 
 ## 4. "Stale in prod but tests pass" — quiet vs. changed listing
 
@@ -85,13 +118,18 @@ To classify fast, run the **source's own test** (net10.0): 403 → add `UseHttp2
 - **Mon / Mvr / Bfunion / MinFin** combined *both* problems — changed markup **and** a net10.0-direct
   block — so each needed a parser rewrite **plus** `UseProxy + UseHttp2` (§3). Don't stop at the first
   cause. **DvParliament** was the opposite: markup unchanged, pure egress block → just `UseProxy`.
+- The public site shows the freshness of every source without DB access: `/Sources/List` has the ids, and
+  `/Rss/Latest/{id}` the 20 newest news of one source (`pubDate` = the post date).
+- Some are stale because the *category* died, not the scraper: МЗ "Министерски съвет"
+  (`/novini/ministerski-savet/` is gone, its last news is from 2023-06) and МЕ "Акценти" (`hot-news.html`, last used 2024-12).
 
 ## Quick checklist
 
 1. Run the source's test → note the exact error (status code / assertion / NRE).
 2. Load the site root. Up? → migration or stale URL. Down/5xx everywhere? → wait it out.
 3. Fetch the listing URL the scraper uses → 404? site changed → find the new path.
-4. On 403: compare .NET **H2 vs H1.1**, then **direct vs relay**. 403 on all → residential proxy.
+4. On 403: a "Just a moment..." page → `CheckCertificateRevocation` (§3); else compare .NET **H2 vs H1.1**,
+   then **direct vs relay**. 403 on all → residential proxy. Try a current Chrome User-Agent too.
 5. Cyrillic-slug URLs work from .NET/AngleSharp; for curl/Python use
    `urllib.parse.quote(url, safe="%:/?&=#+")` and beware double-encoding already-encoded hrefs.
 6. The DB is the truth for "working in prod": `SELECT MAX(CreatedOn) ... GROUP BY SourceId`.

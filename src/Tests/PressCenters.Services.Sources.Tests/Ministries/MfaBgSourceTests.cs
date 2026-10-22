@@ -7,6 +7,8 @@
 
     using Xunit;
 
+    // Since 2026-10 mfa.bg answers every client, the relays included, with a Radware bot-manager challenge page.
+    [Trait("Category", "ExternallyBlocked")]
     public class MfaBgSourceTests
     {
         [Theory]

@@ -30,13 +30,20 @@
             return new RemoteMainNews(title, url, imageUrl);
         }
 
-        // Each slide paints its photo as a CSS background-image on an inner element. Pick the first real picture,
-        // skipping the lazy-load `data:` placeholder and the gradient-only overlay (which carries no url()).
+        // Each slide shows its photo as a <picture> (since 2026-10: the img is the 5:3 crop, the source the 32:9 one),
+        // or, before that, as a CSS background-image on an inner element. Pick the first real picture, skipping the
+        // lazy-load `data:` placeholder and the gradient-only overlay (which carries no url()).
         private static string ExtractSlideImageUrl(IElement slide)
         {
             if (slide == null)
             {
                 return null;
+            }
+
+            var pictureUrl = slide.QuerySelector("picture img")?.GetAttribute("src");
+            if (!string.IsNullOrWhiteSpace(pictureUrl) && !pictureUrl.StartsWith("data:", StringComparison.OrdinalIgnoreCase))
+            {
+                return pictureUrl;
             }
 
             foreach (var element in slide.QuerySelectorAll("[style*='background-image']"))

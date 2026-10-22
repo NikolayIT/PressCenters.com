@@ -59,8 +59,12 @@
             var imageElement = document.QuerySelector(".entry-content img");
             var imageUrl = imageElement?.GetAttribute("src");
 
-            var timeElement = document.QuerySelector(".updated");
-            var time = DateTime.Parse(timeElement?.TextContent);
+            // The publish date, not .updated (the last modification): the site re-saves old posts, e.g. on 2026-10-12
+            // posts from July and August got that day.
+            var publishedAsString = document.QuerySelector(".post-date time")?.GetAttribute("datetime");
+            var time = publishedAsString != null
+                ? DateTime.ParseExact(publishedAsString, "yyyy-MM-dd", CultureInfo.InvariantCulture)
+                : DateTime.Parse(document.QuerySelector(".updated")?.TextContent);
 
             contentElement.RemoveRecursively(imageElement);
             this.NormalizeUrlsRecursively(contentElement);

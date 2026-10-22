@@ -21,7 +21,7 @@
         {
             for (var i = 1; i <= this.NewsListPagesCount; i++)
             {
-                var news = this.GetPublications($"{this.NewsListUrl}?page={i}", ".news-article a");
+                var news = this.GetPublications($"{this.NewsListUrl}?p={i}", ".news-article a");
                 Console.WriteLine($"Page {i} => {news.Count} news");
                 foreach (var remoteNews in news)
                 {

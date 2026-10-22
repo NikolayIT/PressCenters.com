@@ -58,9 +58,9 @@
                 return null;
             }
 
-            // The publish date sits as plain text right after the title heading (e.g. "21.09.2012 г.").
-            var headerText = document.QuerySelector("h3")?.ParentElement?.TextContent ?? string.Empty;
-            var dateMatch = Regex.Match(headerText, @"\d{2}\.\d{2}\.\d{4}");
+            // The publish date is plain text in the row after the title's (e.g. "21.09.2012 г.").
+            var dateText = document.QuerySelector("h3")?.Closest(".row")?.NextElementSibling?.TextContent ?? string.Empty;
+            var dateMatch = Regex.Match(dateText, @"\d{2}\.\d{2}\.\d{4}");
             var time = dateMatch.Success
                            ? DateTime.ParseExact(dateMatch.Value, "dd.MM.yyyy", CultureInfo.InvariantCulture)
                            : DateTime.Now;

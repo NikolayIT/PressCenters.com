@@ -55,19 +55,17 @@
         [Fact]
         public void ParseRemoteEpidemicNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://www.mh.government.bg/bg/novini/epidemichna-obstanovka/4721";
+            // Not the weekly morbili report (4721): the ministry rewrites that one in place, text and date.
+            const string NewsUrl = "https://www.mh.government.bg/bg/novini/epidemichna-obstanovka/4645";
             var provider = new MhGovernmentBgEpidemicSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Седмични данни за разпространението на морбили в страната", news.Title);
-            Assert.Contains("Към 8 юни са съобщени общо 364 заболели от морбили лица у нас", news.Content);
+            Assert.Equal("Справка за епидемичната обстановка в страната за периода 05.01.2026 г. – 11.01.2026 г.", news.Title);
+            Assert.Contains("През изминалата седмица са регистрирани общо 6 073 случая на остри заразни заболявания", news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
             Assert.Null(news.ImageUrl);
-
-            // The ministry re-dated this weekly morbili report to 22 June 2026 (the article body still cites
-            // the 8 June figures); the parser reads the page's displayed .news-date, so track the new date.
-            Assert.Equal(new DateTime(2026, 6, 22), news.PostDate);
-            Assert.Equal("epidemichna-obstanovka/4721", news.RemoteId);
+            Assert.Equal(new DateTime(2026, 1, 15), news.PostDate);
+            Assert.Equal("epidemichna-obstanovka/4645", news.RemoteId);
         }
 
         [Fact]
