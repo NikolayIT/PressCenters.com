@@ -14,6 +14,10 @@
     /// </summary>
     public class McGovernmentBgSource : BaseSource
     {
+        // The WordPress site re-published the old site's news under new slugs; those, before this date, are in the
+        // database under the old site's ids (a backfill without this stop imported 815 of them a second time).
+        private static readonly DateTime OldSiteNewsEnd = new DateTime(2026, 5, 1);
+
         public override string BaseUrl { get; } = "https://mc.government.bg/";
 
         public override bool UseProxy => true;
@@ -37,6 +41,11 @@
 
                 foreach (var remoteNews in news)
                 {
+                    if (remoteNews.PostDate < OldSiteNewsEnd)
+                    {
+                        yield break;
+                    }
+
                     yield return remoteNews;
                 }
             }

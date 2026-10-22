@@ -27,7 +27,14 @@ The 2026-10 pass found five more migrations, each with its own trap:
 - **Acf** now links its articles by Cyrillic slugs, while the stored ids are the old transliterated
   ones. `ExtractIdFromUrl` transliterates (`седем-граждански-…` → `sedem-grazhdanski-…`), or the newest
   items already in the DB would come back as duplicates. **Check this whenever a site's URLs change**:
-  dedup is on `(SourceId, RemoteId)` only.
+  dedup is on `(SourceId, RemoteId)` only. Transliteration is not exact either: the old Latin slugs were
+  cut at another length (`…-na-vap` vs `…-na-vapr`), so a backfill can still bring back a few.
+- Before a backfill, check that the ids match **deep in the history, not only the newest items**: a
+  migrated site often re-publishes its whole archive under the new ids, and then
+  `BACKFILL_STOP_EXISTING` never triggers. McGov did exactly that (the newest ids matched, the
+  pre-2026-05 ones did not) and a 2026-10-22 backfill imported 815 old news a second time (soft-deleted
+  again). Its `GetAllPublications` now stops at the migration date, like Sac's and Ombudsman's; cap a
+  first run with `BACKFILL_MAX_PER_SOURCE` near the expected gap.
 - **McGov**: `/новини/` became a hub of events; the news archive is `/вид-новина/новини/`.
 
 Also watch for a listing that still parses but is no longer the news list (McGov), and for a parser that
