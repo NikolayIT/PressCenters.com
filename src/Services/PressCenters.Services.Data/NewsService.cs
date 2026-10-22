@@ -116,10 +116,13 @@
 
             var directUrl = new Uri(imageUrl).GetLeftPart(UriPartial.Query); // Remove hash fragment
 
-            using var client = new HttpClient(new HttpClientHandler { CheckCertificateRevocationList = checkCertificateRevocation })
+            // Accept-Encoding, as a browser sends it: bfunion.bg answers 403 to an image request without it.
+            var handler = new HttpClientHandler
             {
-                Timeout = TimeSpan.FromSeconds(120),
+                AutomaticDecompression = DecompressionMethods.All,
+                CheckCertificateRevocationList = checkCertificateRevocation,
             };
+            using var client = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(120), };
 
             // Prefer HTTP/2, and fail over across the relays: some image hosts (e.g. minfin.bg) block this egress
             // directly but answer the Cloudflare relay over HTTP/2, and the relays are not interchangeable. Not for
