@@ -12,6 +12,9 @@
         [Theory]
         [InlineData("https://acf.bg/bg/kmet-na-oblasten-grad-s-ekstravagantn/", "kmet-na-oblasten-grad-s-ekstravagantn")]
         [InlineData("https://acf.bg/bg/vaprosi-kam-ministar-mladen-marinov-v", "vaprosi-kam-ministar-mladen-marinov-v")]
+        [InlineData("https://acf.bg/%d1%81%d0%b5%d0%b4%d0%b5%d0%bc-%d0%b3%d1%80%d0%b0%d0%b6%d0%b4%d0%b0%d0%bd%d1%81%d0%ba%d0%b8-%d0%be%d1%80%d0%b3%d0%b0%d0%bd%d0%b8%d0%b7%d0%b0%d1%86%d0%b8%d0%b8-%d0%bf%d1%80%d0%b5%d0%b4%d0%bb%d0%be/", "sedem-grazhdanski-organizatsii-predlo")]
+        [InlineData("https://acf.bg/съдът-оправда-окончателно-сигнализи/", "sadat-opravda-okonchatelno-signalizi")]
+        [InlineData("https://acf.bg/знак-за-бездействие-неизследваните-о/", "znak-za-bezdeystvie-neizsledvanite-o")]
         public void ExtractIdFromPressUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new AcfBgSource();
@@ -26,31 +29,29 @@
             var provider = new AcfBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Въпроси към министър Младен Маринов във връзка с казуса \"Осемте джуджета\"", news.Title);
+            Assert.Equal("Въпроси към министър Младен Маринов във връзка с казуса „Осемте джуджета“", news.Title);
             Assert.Contains("По-долу публикуваме въпросите, които журналистът Николай Стайков от екипа", news.Content);
             Assert.Contains("бившия шеф на столичното следствие, сега адвокат, Петьо Петров. Моля за Вашия коментар.", news.Content);
-            Assert.DoesNotContain("Сподели", news.Content);
-            Assert.DoesNotContain("22.07.2020", news.Content);
+            Assert.DoesNotContain("Абонирай се", news.Content);
+            Assert.DoesNotContain("22 юли 2020", news.Content);
             Assert.Equal("https://acf.bg/wp-content/uploads/2020/07/New-Project-22.jpg", news.ImageUrl);
             Assert.Equal(new DateTime(2020, 7, 22), news.PostDate);
             Assert.Equal("vaprosi-kam-ministar-mladen-marinov-v", news.RemoteId);
         }
 
         [Fact]
-        public void ParseRemoteNewsWithoutImageShouldWorkCorrectly()
+        public void ParseRemoteNewsWithCyrillicUrlShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://acf.bg/bg/chast-3-na-osemte-dzhudzheta-edin-golyam-2/";
+            const string NewsUrl = "https://acf.bg/%d1%81%d0%b5%d0%b4%d0%b5%d0%bc-%d0%b3%d1%80%d0%b0%d0%b6%d0%b4%d0%b0%d0%bd%d1%81%d0%ba%d0%b8-%d0%be%d1%80%d0%b3%d0%b0%d0%bd%d0%b8%d0%b7%d0%b0%d1%86%d0%b8%d0%b8-%d0%bf%d1%80%d0%b5%d0%b4%d0%bb%d0%be/";
             var provider = new AcfBgSource();
             var news = provider.GetPublication(NewsUrl);
-            Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Част 3 на „Осемте джуджета”: Един голям плик с евро за Еврото", news.Title);
-            Assert.Contains("Историята на „Осемте джуджета” и намесата на бивши и настоящи магистрати в конфликта в групата фирми „Изамет” продължава", news.Content);
-            Assert.Contains("към когото имаше анонимни обаждания на погребални теми и вандалски действия спрямо жилището му на 18 -19 юни 2020 г.", news.Content);
-            Assert.DoesNotContain("Сподели", news.Content);
-            Assert.DoesNotContain("30.07.2020", news.Content);
-            Assert.Null(news.ImageUrl);
-            Assert.Equal(new DateTime(2020, 7, 30), news.PostDate);
-            Assert.Equal("chast-3-na-osemte-dzhudzheta-edin-golyam-2", news.RemoteId);
+            Assert.Equal("Седем граждански организации предложиха Андрей Янкулов и Таня Радуловска за членове на новия Висш съдебен съвет", news.Title);
+            Assert.Contains("Седем граждански организации предложиха Андрей Янкулов и Таня", news.Content);
+            Assert.Contains("за членове на Висшия съдебен съвет (ВСС) от квотата на Народното събрание.", news.Content);
+            Assert.DoesNotContain("Абонирай се", news.Content);
+            Assert.Equal("https://acf.bg/wp-content/uploads/2026/08/image-28.jpg", news.ImageUrl);
+            Assert.Equal(new DateTime(2026, 8, 26), news.PostDate);
+            Assert.Equal("sedem-grazhdanski-organizatsii-predlo", news.RemoteId);
         }
 
         [Fact]
@@ -58,7 +59,7 @@
         {
             var provider = new AcfBgSource();
             var result = provider.GetLatestPublications();
-            Assert.Equal(3, result.Count());
+            Assert.Equal(10, result.Count());
         }
     }
 }

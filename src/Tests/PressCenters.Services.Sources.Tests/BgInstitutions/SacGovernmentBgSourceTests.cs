@@ -1,5 +1,6 @@
 ﻿namespace PressCenters.Services.Sources.Tests.BgInstitutions
 {
+    using System;
     using System.Linq;
 
     using PressCenters.Services.Sources.BgInstitutions;
@@ -8,8 +9,8 @@
     public class SacGovernmentBgSourceTests
     {
         [Theory]
-        [InlineData("https://sac.justice.bg/news/bg/2021113-1", "2021113-1")]
-        [InlineData("https://sac.justice.bg/news/bg/2010331-0", "2010331-0")]
+        [InlineData("https://sac.justice.bg/novini/2026/vanya-ancheva-if-predsedatel-vas/", "vanya-ancheva-if-predsedatel-vas")]
+        [InlineData("https://sac.justice.bg/novini/2026/kpk-vks-izbor-reshenie-7562-2026", "kpk-vks-izbor-reshenie-7562-2026")]
         public void ExtractIdFromUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new SacGovernmentBgSource();
@@ -20,32 +21,35 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://sac.justice.bg/news/bg/20131221-0";
+            const string NewsUrl = "https://sac.justice.bg/novini/2026/vanya-ancheva-if-predsedatel-vas/";
             var provider = new SacGovernmentBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Делегация от Върховния административен съд осъществи работно посещение във Върховния трибунал на Кралство Испания", news.Title);
-            Assert.Contains("Върховният административен съд на Република България, в качеството си на бенефициент по проект", news.Content);
-            Assert.Contains("В знак на благодарност, българската делегация връчи почетен плакет и алманах със 100 годишната история на Върховния административен съд на Република България.", news.Content);
+            Assert.Equal("Съдия Ваня Анчева беше определена за изпълняващ функциите председател на Върховния административен съд от Пленума на ВСС", news.Title);
+            Assert.StartsWith("<p>Председателят на Седмо отделение на Върховния административен съд съдия Ваня Анчева беше определена", news.Content);
+            Assert.Contains("Общият й юридически стаж е над 38 години.", news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
-            Assert.DoesNotContain("84a98da63f64ee144225814500483d3e/body/0.B9A", news.Content);
-            Assert.Equal("https://sac.justice.bg/home.nsf/9a2be833279bc3dcc2257beb0020cf53/84a98da63f64ee144225814500483d3e/body/0.B9A?OpenElement&FieldElemFormat=jpg", news.ImageUrl);
-            Assert.Equal("20131221-0", news.RemoteId);
+            Assert.DoesNotContain("Още от същата категория", news.Content);
+            Assert.DoesNotContain("vanya-ancheva-1.webp", news.Content);
+            Assert.Equal("https://sac.justice.bg/wp-content/uploads/2026/10/vanya-ancheva-1.webp", news.ImageUrl);
+            Assert.Equal(new DateTime(2026, 10, 1), news.PostDate);
+            Assert.Equal("vanya-ancheva-if-predsedatel-vas", news.RemoteId);
         }
 
         [Fact]
         public void ParseRemoteNewsWithoutImageShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://sac.justice.bg/news/bg/2021114-1";
+            const string NewsUrl = "https://sac.justice.bg/novini/2026/kpk-vks-izbor-reshenie-7562-2026/";
             var provider = new SacGovernmentBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("Общото събрание на съдиите от Върховния касационен съд и Върховния административен съд избра Соня Янкулова за съдия в Конституционния съд на Република България", news.Title);
-            Assert.Contains("Общото събрание на съдиите от Върховния касационен съд и Върховния административен съд, което се проведе днес, избра Соня Янкулова за съдия в Конституционния съд на Република България.", news.Content);
-            Assert.Contains("Медиите имаха възможност да наблюдават директно процедурата по избора чрез видео стрийминг в интернет сайтовете на двете върховни съдилища.", news.Content);
+            Assert.Equal("Кандидатът Ивайло Йосифов Иванов не е избран за член на КПК, постановява ВАС, с което потвърди решението на общото събрание на съдиите на ВКС", news.Title);
+            Assert.Contains("Върховният административен съд отхвърли като неоснователна жалбата на Ивайло Йосифов Иванов от гр. Русе", news.Content);
+            Assert.Contains("за действителни са приети 55 от общо 56 подадени бюлетини", news.Content);
             Assert.DoesNotContain(news.Title, news.Content);
             Assert.Null(news.ImageUrl);
-            Assert.Equal("2021114-1", news.RemoteId);
+            Assert.Equal(new DateTime(2026, 8, 21), news.PostDate);
+            Assert.Equal("kpk-vks-izbor-reshenie-7562-2026", news.RemoteId);
         }
 
         [Fact]

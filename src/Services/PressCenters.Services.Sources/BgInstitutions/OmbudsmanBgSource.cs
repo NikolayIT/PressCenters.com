@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.Text.RegularExpressions;
+    using System.Linq;
 
     using AngleSharp.Dom;
 
@@ -12,30 +12,49 @@
     /// </summary>
     public class OmbudsmanBgSource : BaseSource
     {
+        // A new CMS since 2026-09: the news are ?go=news&p=detail&newsId={id}, and the old /bg/n/{slug}-{id} URLs
+        // redirect to the home page.
         public override string BaseUrl { get; } = "https://www.ombudsman.bg/";
 
         public override bool UseProxy => true;
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("bg/p/novini", ".m-title a", count: 5);
+            this.GetPublications("?go=news", "article a", "newsId=", 5);
+
+        public override IEnumerable<RemoteNews> GetAllPublications()
+        {
+            for (var i = 1; i <= 300; i++)
+            {
+                var news = this.GetPublications($"?go=news&page={i}", "article a", "newsId=", throwOnEmpty: false);
+                Console.WriteLine($"№{i} => {news.Count} news ({news.DefaultIfEmpty().Min(x => x?.PostDate)} - {news.DefaultIfEmpty().Max(x => x?.PostDate)})");
+                if (news.Count == 0)
+                {
+                    break;
+                }
+
+                foreach (var remoteNews in news)
+                {
+                    yield return remoteNews;
+                }
+            }
+        }
+
+        internal override string ExtractIdFromUrl(string url) => this.GetUrlParameterValue(url, "newsId");
 
         protected override RemoteNews ParseDocument(IDocument document, string url)
         {
-            var titleElement = document.QuerySelector(".m-article h2");
-            var title = titleElement.TextContent.Trim();
+            var title = document.QuerySelector(".news_grid_main article h1")?.TextContent;
+            var timeAsString = document.QuerySelector(".news_grid_main article time")?.GetAttribute("datetime");
+            var contentElement = document.QuerySelector(".news_grid_main article .post_txt");
+            if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(timeAsString) || contentElement == null)
+            {
+                return null;
+            }
 
-            var timeElement = document.QuerySelector(".m-article .text-muted");
-            var timeAsString = timeElement.TextContent.Split(",")[1].Trim();
-            var time = DateTime.ParseExact(timeAsString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
+            var time = DateTime.ParseExact(timeAsString, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-            var imageElement = document.QuerySelector(".m-article .m-news-image");
-            var imageUrl = imageElement?.Attributes?["src"]?.Value;
+            var imageUrl = document.QuerySelector(".news_grid_main article figure img")?.GetAttribute("src");
 
-            var contentElement = document.QuerySelector(".m-article");
-            contentElement.RemoveRecursively(titleElement);
-            contentElement.RemoveRecursively(timeElement);
-            contentElement.RemoveRecursively(document.QuerySelector(".m-article a"));
-            contentElement.RemoveRecursively(document.QuerySelector(".m-article .justify-content-center"));
             this.NormalizeUrlsRecursively(contentElement);
             var content = contentElement.InnerHtml.Trim();
 

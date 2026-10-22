@@ -18,15 +18,17 @@
 
         public override bool UseProxy => true;
 
+        // /новини/ became a hub of events and a few hand-picked posts (2026-10); the news archive, newest first, is
+        // the "новини" term of the "вид-новина" taxonomy.
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
-            this.GetPublications("новини/", ".elementor-heading-title a", "новини/", 5);
+            this.GetPublications("вид-новина/новини/", ".elementor-heading-title a", "/новини/", 5);
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
             for (var page = 1; page <= 400; page++)
             {
-                var address = page == 1 ? "новини/" : $"новини/page/{page}/";
-                var news = this.GetPublications(address, ".elementor-heading-title a", "новини/", throwOnEmpty: false);
+                var address = page == 1 ? "вид-новина/новини/" : $"вид-новина/новини/page/{page}/";
+                var news = this.GetPublications(address, ".elementor-heading-title a", "/новини/", throwOnEmpty: false);
                 Console.WriteLine($"Page {page} => {news.Count} news");
                 if (news.Count == 0)
                 {

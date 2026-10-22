@@ -28,9 +28,7 @@
             var provider = new McGovernmentBgSource();
             var result = provider.GetLatestPublications();
 
-            // The /новини/ archive's page-1 loop currently shows 3 articles (the lead post renders as an
-            // <h1>, the rest as <h4>, all under .elementor-heading-title).
-            Assert.Equal(3, result.Count());
+            Assert.Equal(5, result.Count());
         }
     }
 }

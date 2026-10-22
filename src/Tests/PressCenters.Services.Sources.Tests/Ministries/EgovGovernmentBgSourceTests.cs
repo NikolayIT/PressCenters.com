@@ -10,8 +10,8 @@
     public class EgovGovernmentBgSourceTests
     {
         [Theory]
-        [InlineData("https://egov.government.bg/wps/portal/ministry-meu/press-center/news/BBKoalitia", "BBKoalitia")]
-        [InlineData("https://egov.government.bg/wps/portal/ministry-meu/press-center/news/EI/", "EI")]
+        [InlineData("https://midt.gov.bg/bg/news/1590", "1590")]
+        [InlineData("https://midt.gov.bg/bg/news/196/", "196")]
         public void ExtractIdFromPressUrlShouldWorkCorrectly(string url, string id)
         {
             var provider = new EgovGovernmentBgSource();
@@ -22,27 +22,39 @@
         [Fact]
         public void ParseRemoteNewsShouldWorkCorrectly()
         {
-            const string NewsUrl = "https://egov.government.bg/wps/portal/ministry-meu/press-center/news/dogovormeuio";
+            const string NewsUrl = "https://midt.gov.bg/bg/news/1590";
             var provider = new EgovGovernmentBgSource();
             var news = provider.GetPublication(NewsUrl);
             Assert.Equal(NewsUrl, news.OriginalUrl);
-            Assert.Equal("МЕУ възложи на \"Информационно обслужване\" изграждането на мобилно приложение за е-идентификация", news.Title);
-            Assert.Contains("Министерство на електронното управление възложи на „Информационно обслужване“ АД", news.Content);
-            Assert.Contains("За повече информация, вижте Договора по-долу.", news.Content);
-            Assert.Contains("Договор за изграждане на мобилно приложение за електронна идентификация и електронно подписване", news.Content);
-            Assert.DoesNotContain("Последна актуализация", news.Content);
-            Assert.DoesNotContain(".jpg", news.Content);
-            Assert.Equal("https://egov.government.bg/wps/wcm/connect/egov.government.bg-2818/baa42359-f696-4e9f-8f49-1aa44f99c983/MEU.jpg?MOD=AJPERES&CACHEID=ROOTWORKSPACE.Z18_PPGAHG800PLV6060GL92MR3OU3-baa42359-f696-4e9f-8f49-1aa44f99c983-oEusV8c", news.ImageUrl);
-            Assert.Equal(new DateTime(2022, 4, 28), news.PostDate);
-            Assert.Equal("dogovormeuio", news.RemoteId);
+            Assert.Equal("Министър Василев: Иновациите и стратегическите партньорства са ключови за сигурността на Европа", news.Title);
+            Assert.Contains("Министерството на иновациите и дигиталната трансформация е институционален партньор", news.Content);
+            Assert.Contains("Регионалната среща на върха по въпросите на отбраната и сигурността 2026", news.Content);
+            Assert.DoesNotContain("20261021_131448.jpg", news.Content);
+            Assert.DoesNotContain("Зам.-министър Йосифова", news.Content);
+            Assert.Equal("https://midt.gov.bg/upload/4015/20261021_131448.jpg", news.ImageUrl);
+            Assert.Equal(new DateTime(2026, 10, 21), news.PostDate);
+            Assert.Equal("1590", news.RemoteId);
         }
 
-        [Fact(Skip = "egov.government.bg lists news via a WebSphere Portal searchfeed whose digest token and numeric scope id both rotate (now ERROR_WITH_SCOPE_ID); the page only exposes unstable !ut/p/z1 portal-state links. Article parsing still works (see ParseRemoteNews), but the listing can't be scraped reliably without rediscovering those rotating ids.")]
+        [Fact]
+        public void ParseRemoteNewsWithAbbreviatedMarchShouldWorkCorrectly()
+        {
+            const string NewsUrl = "https://midt.gov.bg/bg/news/196";
+            var provider = new EgovGovernmentBgSource();
+            var news = provider.GetPublication(NewsUrl);
+            Assert.Equal("Министър Младенова и посланикът на Турция обсъдиха задълбочаване на сътрудничеството в сферата на инвестициите и иновациите", news.Title);
+            Assert.Contains("Инвестициите на турски компании у нас достигат близо 3 млрд. долара", news.Content);
+            Assert.Equal("https://midt.gov.bg/upload/210/1-4.jpg", news.ImageUrl);
+            Assert.Equal(new DateTime(2026, 3, 31), news.PostDate);
+            Assert.Equal("196", news.RemoteId);
+        }
+
+        [Fact]
         public void GetNewsShouldReturnResults()
         {
             var provider = new EgovGovernmentBgSource();
             var result = provider.GetLatestPublications();
-            Assert.Equal(4, result.Count());
+            Assert.Equal(5, result.Count());
         }
     }
 }
