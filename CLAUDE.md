@@ -67,7 +67,9 @@ organized into folders by category: `BgInstitutions`, `Ministries`, `Municipalit
   date, image URL). Uses **AngleSharp** for HTML parsing/CSS selectors.
 - Optional: `GetAllPublications()` for full backfills, `ExtractIdFromUrl(url)` override,
   `UseProxy => true` (routes fetches through a random relay host via
-  `PressCenters.Common.ProxyUrlBuilder` over `GlobalConstants.ProxyHosts`), custom `Encoding` or `Headers`.
+  `PressCenters.Common.ProxyUrlBuilder` over `GlobalConstants.ProxyHosts`), `UseHttp2`,
+  `CheckCertificateRevocation` (the TLS handshake Cloudflare's bot challenge wants; see TROUBLESHOOTING.md),
+  custom `Encoding` or `Headers`.
 
 `BaseSource.GetPublication()` orchestrates fetch → parse → normalize (trims title/content, clamps
 future dates, normalizes image URL, sets `OriginalUrl`, derives `RemoteId` via `ExtractIdFromUrl`,

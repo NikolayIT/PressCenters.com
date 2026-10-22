@@ -7,7 +7,6 @@
 
     using Xunit;
 
-    [Trait("Category", "ExternallyBlocked")]
     public class ImeBgSourceTests
     {
         [Theory]
@@ -48,8 +47,8 @@
             Assert.Contains("Данните за юли показват упоритостта на инфлацията както в еврозоната, така и в България.", news.Content);
             Assert.Contains("По статията работи и Никол Вълканова, стажант в ИПИ", news.Content);
             Assert.DoesNotContain("25-08-2023", news.Content);
-            Assert.Equal("https://ime.bg/wp-content/uploads/2023/08/shop_111-915x290.png", news.ImageUrl);
-            Assert.Equal(new DateTime(2023, 8, 25), news.PostDate);
+            Assert.Equal("https://ime.bg/wp-content/uploads/2023/08/shop_111.png", news.ImageUrl);
+            Assert.Equal(new DateTime(2023, 8, 25, 14, 36, 30), news.PostDate);
             Assert.Equal("kolko-byrzo-se-topi-inflatsiya-istoricheski-analogii", news.RemoteId);
         }
 

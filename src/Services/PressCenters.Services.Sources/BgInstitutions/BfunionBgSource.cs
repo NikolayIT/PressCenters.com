@@ -13,11 +13,11 @@
     {
         public override string BaseUrl { get; } = "https://bfunion.bg/";
 
-        // bfunion.bg 403s .NET's direct fetch (net10.0 fingerprint); the Cloudflare relay reaches it, and
-        // that relay accepts .NET only over HTTP/2.
+        // bfunion.bg is behind Cloudflare's bot challenge: the Azure relays are always challenged, the Cloudflare relay and
+        // a direct fetch let .NET through with the revocation-checking TLS handshake, over HTTP/1.1 (see BaseSource).
         public override bool UseProxy => true;
 
-        public override bool UseHttp2 => true;
+        public override bool CheckCertificateRevocation => true;
 
         // Each card now also carries a Facebook "share" link whose href embeds the article URL
         // (…/sharer.php?u=https://bfunion.bg/news/{id}/0), so it survives the "/news/" filter and steals a
@@ -32,7 +32,8 @@
 
         public override IEnumerable<RemoteNews> GetAllPublications()
         {
-            for (var i = 52000; i >= 40000; i--)
+            // Newest first (52189 is from 2026-10-22).
+            for (var i = 52300; i >= 40000; i--)
             {
                 var remoteNews = this.GetPublication($"{this.BaseUrl}news/{i}/0");
                 if (remoteNews == null)

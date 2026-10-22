@@ -11,8 +11,10 @@
         public const string AdministratorRoleName = "Administrator";
         public const string ProUserRoleName = "ProUser";
 
+        // Keep the Chrome version reasonably current: some sites block old browsers (ime.bg answers 403 to Chrome 120
+        // and older, as of 2026-10).
         public const string DefaultUserAgent =
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36";
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36";
 
         // Relay hosts that proxied scraper/image requests are spread across — a random host is chosen per
         // request via ProxyUrlBuilder.Wrap — so a burst of scraping is not pinned to one egress IP that a

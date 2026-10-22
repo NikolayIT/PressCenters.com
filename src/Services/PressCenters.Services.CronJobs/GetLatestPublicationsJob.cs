@@ -51,7 +51,8 @@
                     context.WriteLine($"NEW: {remoteNews.Title}");
                     try
                     {
-                        await this.newsService.SaveImageAsync(remoteNews.ImageUrl, newsId.Value, instance.UseProxy);
+                        await this.newsService.SaveImageAsync(
+                            remoteNews.ImageUrl, newsId.Value, instance.UseProxy, instance.CheckCertificateRevocation);
                     }
                     catch (Exception e) when (e is InvalidDataException || e is UriFormatException)
                     {

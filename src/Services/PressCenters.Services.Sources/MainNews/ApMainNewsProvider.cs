@@ -4,6 +4,8 @@
     {
         public override string BaseUrl { get; } = "https://www.apnews.com";
 
+        public override bool CheckCertificateRevocation => true;
+
         public override RemoteMainNews GetMainNews()
         {
             var document = this.GetDocument(this.BaseUrl);

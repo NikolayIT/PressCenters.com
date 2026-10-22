@@ -15,6 +15,10 @@
 
         public virtual bool UseProxy => false;
 
+        // As BaseSource.CheckCertificateRevocation: sites behind Cloudflare's bot challenge (apnews.com) let .NET through
+        // only with the revocation-checking TLS handshake, over HTTP/1.1.
+        public virtual bool CheckCertificateRevocation => false;
+
         public abstract RemoteMainNews GetMainNews();
 
         public IDocument GetDocument(string url)
@@ -36,10 +40,15 @@
             // Request and transparently decompress gzip/brotli. Some sites (e.g. Euronews) only serve their
             // full markup when the client advertises Accept-Encoding the way a real browser does; without it
             // they return a near-empty shell, which previously made the scraper silently see no article.
-            using var handler = new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All };
+            using var handler = new HttpClientHandler
+            {
+                AutomaticDecompression = DecompressionMethods.All,
+                CheckCertificateRevocationList = this.CheckCertificateRevocation,
+            };
             using var httpClient = new HttpClient(handler);
             httpClient.DefaultRequestHeaders.Add("User-Agent", GlobalConstants.DefaultUserAgent);
-            var request = httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, url) { Version = new Version(2, 0) }).GetAwaiter().GetResult();
+            var version = this.CheckCertificateRevocation ? HttpVersion.Version11 : HttpVersion.Version20;
+            var request = httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, url) { Version = version }).GetAwaiter().GetResult();
             return request.Content.ReadAsStringAsync().GetAwaiter().GetResult();
         }
 

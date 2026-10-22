@@ -13,11 +13,11 @@
     {
         public override string BaseUrl { get; } = "https://www.mon.bg/";
 
-        // mon.bg blocks .NET's direct fetch and the Azure relay IPs; only the Cloudflare relay reaches it,
-        // and that relay needs HTTP/2.
+        // mon.bg is behind Cloudflare's bot challenge: the Azure relays are always challenged, the Cloudflare relay and a
+        // direct fetch let .NET through with the revocation-checking TLS handshake, over HTTP/1.1 (see BaseSource).
         public override bool UseProxy => true;
 
-        public override bool UseHttp2 => true;
+        public override bool CheckCertificateRevocation => true;
 
         public override IEnumerable<RemoteNews> GetLatestPublications() =>
             this.GetPublications("novini", "a.card-link", "/news/", 5);

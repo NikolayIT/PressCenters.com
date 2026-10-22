@@ -43,15 +43,18 @@
                     }
 
                     var useProxy = false;
+                    var checkCertificateRevocation = false;
                     if (newsItem.TypeName != null)
                     {
                         var source = ReflectionHelpers.GetInstance<BaseSource>(newsItem.TypeName);
                         useProxy = source.UseProxy;
+                        checkCertificateRevocation = source.CheckCertificateRevocation;
                     }
 
                     try
                     {
-                        var result = await newsService.SaveImageAsync(newsItem.ImageUrl, newsItem.Id, useProxy);
+                        var result = await newsService.SaveImageAsync(
+                            newsItem.ImageUrl, newsItem.Id, useProxy, checkCertificateRevocation);
                         Console.Write(result ? "." : $"_{newsItem.Id}_");
                     }
                     catch (InvalidDataException)

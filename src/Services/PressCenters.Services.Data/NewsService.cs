@@ -107,7 +107,7 @@
             return string.Join(" ", words);
         }
 
-        public async Task<bool> SaveImageAsync(string imageUrl, int newsId, bool useProxy = false)
+        public async Task<bool> SaveImageAsync(string imageUrl, int newsId, bool useProxy = false, bool checkCertificateRevocation = false)
         {
             if (string.IsNullOrWhiteSpace(imageUrl))
             {
@@ -116,13 +116,21 @@
 
             var directUrl = new Uri(imageUrl).GetLeftPart(UriPartial.Query); // Remove hash fragment
 
-            using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(120), };
+            using var client = new HttpClient(new HttpClientHandler { CheckCertificateRevocationList = checkCertificateRevocation })
+            {
+                Timeout = TimeSpan.FromSeconds(120),
+            };
 
-            // Prefer HTTP/2 like the page fetch, and fail over across the relays: some image hosts
-            // (e.g. minfin.bg) block this egress directly but answer the Cloudflare relay over HTTP/2,
-            // and the relays are not interchangeable.
-            client.DefaultRequestVersion = HttpVersion.Version20;
-            client.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrLower;
+            // Prefer HTTP/2, and fail over across the relays: some image hosts (e.g. minfin.bg) block this egress
+            // directly but answer the Cloudflare relay over HTTP/2, and the relays are not interchangeable. Not for
+            // the sites behind Cloudflare's bot challenge (bfunion.bg), which let .NET through only over HTTP/1.1 with
+            // the revocation-checking TLS handshake, as the page fetch does (see BaseSource.CheckCertificateRevocation).
+            if (!checkCertificateRevocation)
+            {
+                client.DefaultRequestVersion = HttpVersion.Version20;
+                client.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrLower;
+            }
+
             client.DefaultRequestHeaders.Add("User-Agent", GlobalConstants.DefaultUserAgent);
 
             HttpResponseMessage result = null;

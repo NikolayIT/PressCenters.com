@@ -29,9 +29,17 @@ namespace PressCenters.Services.Sources
         public virtual bool UseProxy => false;
 
         // HTTP/1.1 by default. Opt in to HTTP/2 for sites whose anti-bot rejects HTTP/1.1 from non-browser
-        // clients (e.g. bfunion.bg). Note: some sites reject .NET's HTTP/2 fingerprint instead (e.g. mon.bg),
-        // so this is deliberately opt-in rather than a global default.
+        // clients. Note: some sites reject .NET's HTTP/2 fingerprint instead (e.g. mon.bg), so this is
+        // deliberately opt-in rather than a global default.
         public virtual bool UseHttp2 => false;
+
+        // Cloudflare's bot management (mon.bg, bfunion.bg, ime.bg since 2026-09) answers a TLS ClientHello without
+        // the status_request (OCSP stapling) extension with a "Just a moment..." challenge, on every egress and
+        // through the relays too. .NET's Schannel handshake only sends that extension when certificate revocation
+        // is checked, so opting in makes it look like curl's and the browsers'. Over HTTP/1.1 only: .NET's HTTP/2
+        // is challenged either way. Opt-in because the check fails a request whose revocation status cannot be
+        // fetched.
+        public virtual bool CheckCertificateRevocation => false;
 
         /// <summary>
         /// Gets or sets a value indicating whether to bypass the proxy relay even when <see cref="UseProxy"/>
@@ -166,13 +174,16 @@ namespace PressCenters.Services.Sources
             // any custom Encoding decode below, so windows-1251 sources are unaffected.
             string Fetch(string target)
             {
-                using var handler = new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All };
+                using var handler = new HttpClientHandler
+                {
+                    AutomaticDecompression = DecompressionMethods.All,
+                    CheckCertificateRevocationList = this.CheckCertificateRevocation,
+                };
                 using var httpClient = new HttpClient(handler);
 
                 if (this.UseHttp2)
                 {
-                    // bfunion.bg returns 403 on HTTP/1.1 but 200 on HTTP/2. RequestVersionOrLower still falls
-                    // back to 1.1 for servers that don't offer h2.
+                    // RequestVersionOrLower still falls back to 1.1 for servers that don't offer h2.
                     httpClient.DefaultRequestVersion = HttpVersion.Version20;
                     httpClient.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrLower;
                 }

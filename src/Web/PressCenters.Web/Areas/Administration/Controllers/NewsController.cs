@@ -47,7 +47,7 @@
             }
 
             await this.newsService.UpdateAsync(id, remoteNews);
-            await this.newsService.SaveImageAsync(remoteNews.ImageUrl, id, true);
+            await this.newsService.SaveImageAsync(remoteNews.ImageUrl, id, true, executor.CheckCertificateRevocation);
 
             return this.RedirectToAction("ById", "News", new { area = string.Empty, id });
         }

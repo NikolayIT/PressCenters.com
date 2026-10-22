@@ -85,7 +85,10 @@
                                 try
                                 {
                                     await newsService.SaveImageAsync(
-                                        remoteNews.ImageUrl, newsId.Value, provider.UseProxy && !noProxy);
+                                        remoteNews.ImageUrl,
+                                        newsId.Value,
+                                        provider.UseProxy && !noProxy,
+                                        provider.CheckCertificateRevocation);
                                 }
                                 catch (Exception e)
                                 {

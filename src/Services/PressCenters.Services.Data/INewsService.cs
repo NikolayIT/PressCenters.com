@@ -17,7 +17,9 @@
         /// <summary>
         /// Downloads the article image, generates the big and small thumbnails and stores them in the
         /// configured <see cref="Images.IImageStorage"/> under <see cref="Images.NewsImagePaths"/> keys.
+        /// <paramref name="useProxy"/> and <paramref name="checkCertificateRevocation"/> are the source's
+        /// UseProxy and CheckCertificateRevocation.
         /// </summary>
-        Task<bool> SaveImageAsync(string imageUrl, int newsId, bool useProxy = false);
+        Task<bool> SaveImageAsync(string imageUrl, int newsId, bool useProxy = false, bool checkCertificateRevocation = false);
     }
 }
