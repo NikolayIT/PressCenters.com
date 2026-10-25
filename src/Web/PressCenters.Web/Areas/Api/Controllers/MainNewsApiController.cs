@@ -8,6 +8,7 @@
     using PressCenters.Data.Common.Repositories;
     using PressCenters.Data.Models;
     using PressCenters.Services.Data;
+    using PressCenters.Services.Data.Images;
     using PressCenters.Web.Areas.Api.Models;
 
     [Route("api/main-news")]
@@ -51,7 +52,7 @@
             {
                 Type = x.SourceName,
                 Title = x.Title,
-                ImageUrl = $"{GlobalConstants.SystemBaseUrl}/images/mainnews/{x.SourceId}.png",
+                ImageUrl = NewsImagePaths.MainNewsUrl(GlobalConstants.SystemBaseUrl, x.SourceId, x.CreatedOn),
                 OriginalUrl = x.OriginalUrl,
                 Time = x.CreatedOn,
             });

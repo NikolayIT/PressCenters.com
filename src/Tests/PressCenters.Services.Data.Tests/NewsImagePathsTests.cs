@@ -1,5 +1,7 @@
 ﻿namespace PressCenters.Services.Data.Tests
 {
+    using System;
+
     using PressCenters.Services.Data.Images;
 
     using Xunit;
@@ -44,6 +46,25 @@
         public void WebpKeyForPngShouldIgnoreEverythingElse(string key)
         {
             Assert.Null(NewsImagePaths.WebpKeyForPng(key));
+        }
+
+        [Theory]
+        [InlineData(null, "/images/mainnews/7.png?t=")]
+        [InlineData("https://presscenters.com", "https://presscenters.com/images/mainnews/7.png?t=")]
+        [InlineData("https://presscenters.com/", "https://presscenters.com/images/mainnews/7.png?t=")]
+        public void MainNewsUrlShouldCarryTheStorysTime(string siteUrl, string expectedStart)
+        {
+            var createdOn = new DateTime(2026, 10, 25, 15, 34, 7);
+
+            Assert.Equal(expectedStart + createdOn.ToBinary(), NewsImagePaths.MainNewsUrl(siteUrl, 7, createdOn));
+        }
+
+        [Fact]
+        public void MainNewsUrlShouldChangeWithEveryNewStoryOfTheSource()
+        {
+            var createdOn = new DateTime(2026, 10, 25, 15, 34, 7);
+
+            Assert.NotEqual(NewsImagePaths.MainNewsUrl(null, 7, createdOn), NewsImagePaths.MainNewsUrl(null, 7, createdOn.AddMinutes(20)));
         }
 
         [Fact]

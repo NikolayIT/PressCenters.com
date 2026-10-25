@@ -3,6 +3,7 @@
     using System;
 
     using PressCenters.Data.Models;
+    using PressCenters.Services.Data.Images;
     using PressCenters.Services.Mapping;
 
     public class MainNewsViewModel : IMapFrom<MainNews>
@@ -11,7 +12,7 @@
 
         public string Title { get; set; }
 
-        public string LocalImageUrl => $"/images/mainnews/{this.SourceId}.png";
+        public string LocalImageUrl => NewsImagePaths.MainNewsUrl(null, this.SourceId, this.CreatedOn);
 
         public string OriginalUrl { get; set; }
 
